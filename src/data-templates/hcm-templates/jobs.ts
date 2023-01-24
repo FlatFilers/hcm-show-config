@@ -5,12 +5,11 @@ import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
 const Jobs = new FF.Sheet(
   'Jobs',
   {
-    //May need to validate against exisitng Job Codes in DB - call out the ID already exists & this would be an update and not a create
+    //Validate against exisitng Job Codes in DB - call out the ID already exists & this would be an update and not a create
 
     job_code: FF.TextField({
       label: 'Job Code',
-      description:
-        'Unique Identifier for a Job Profile. Also known as Job Profile ID. ',
+      description: 'Unique Identifier for a Job. Also known as Job ID. ',
       primary: true,
       required: true,
       unique: true,
@@ -118,7 +117,7 @@ const Jobs = new FF.Sheet(
       unique: false,
     }),
 
-    // Will need to validate against a list of Job Family IDs that exists in the DB (will need to figure out how to handle this - Reference Sheet or Dynamic API Lookup against DB). The Name will make sense to the user - will we want to use this for mapping?  The ID will be required for loading to the system. How can we handle this? Will we have the ability to refresh the list ad-hoc?
+    // Will need to validate against a list of Job Family IDs in the DB. The Name will make sense to the user - will we want to use this for mapping?  The ID will be required for loading to the system. How can we handle this? Will we have the ability to refresh the list ad-hoc?
 
     job_family: FF.TextField({
       label: 'Job Family',
@@ -136,10 +135,38 @@ const Jobs = new FF.Sheet(
     allowCustomFields: false,
 
     //Function that receives a row with all required fields fully present and optional fields typed optional?:string. Best used to compute derived values, can also be used to update existing fields.
-    recordCompute: (record, _session, _logger) => {},
+    recordCompute: (record: FlatfileRecord<any>, _session, logger?: any) => {},
 
     //Asynchronous function that is best for HTTP/API calls. External calls can be made to fill in values from external services. This takes records so it is easier to make bulk calls.
-    batchRecordsCompute: async (payload: FlatfileRecords<any>) => {},
+
+    batchRecordsCompute: async (payload: FlatfileRecords<any>) => {
+      // Sends records to an imaginary API endpoint that validates linkedIn urls
+      // and writes the valid / invalid status to the record
+      const urlsToValidate = await payload.records.map(
+        async (record: FlatfileRecord) => {
+          return record.get('linkedIn')
+        }
+      )
+      const response = await fetch('your-api-to-check-linkedin-urls', {
+        method: 'POST',
+        headers: { Accept: 'application/json' },
+        body: JSON.stringify(urlsToValidate),
+      })
+      // Suppose response has the format:
+      // {
+      //    'https://linkedin.com/valid-url': 'valid',
+      //    'https://linkedin.com/invalid-url': 'invalid',
+      //    ...
+      // }
+      if (response.ok) {
+        const result = await response.json()
+        payload.records.map(async (record: FlatfileRecord) => {
+          const linkedInValid =
+            result[record.get('linkedIn') as string] === 'valid'
+          record.set('linkedInValid', linkedInValid)
+        })
+      }
+    },
   }
 )
 
