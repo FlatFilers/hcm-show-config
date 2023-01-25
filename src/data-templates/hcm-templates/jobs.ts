@@ -164,7 +164,7 @@ const Jobs = new FF.Sheet(
           const linkedInValid =
             result[record.get('linkedIn') as string] === 'valid'
           record.set('linkedInValid', linkedInValid)
-          record.addWarning('linkedInValid'], "Record set based on API response");
+          record.addWarning('linkedInValid', 'Record set based on API response')
         })
       }
     },
