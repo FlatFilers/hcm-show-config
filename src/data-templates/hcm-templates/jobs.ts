@@ -117,7 +117,7 @@ const Jobs = new FF.Sheet(
       unique: false,
     }),
 
-    // Will need to validate against a list of Job Family IDs in the DB. The Name will make sense to the user - will we want to use this for mapping?  The ID will be required for loading to the system. How can we handle this? Will we have the ability to refresh the list ad-hoc?
+    // Multi-Select Field. Will need to validate against a list of Job Family IDs in the DB. The Name will make sense to the user - will we want to use this for mapping?  The ID will be required for loading to the system. How can we handle this? Will we have the ability to refresh the list ad-hoc?
 
     job_family: FF.TextField({
       label: 'Job Family',
