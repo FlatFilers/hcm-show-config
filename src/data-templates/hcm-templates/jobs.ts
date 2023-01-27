@@ -19,7 +19,7 @@ const Jobs = new FF.Sheet(
 
     effective_date: SmartDateField({
       label: 'Effective Date',
-      formatString: 'YYYY-MM-DD',
+      formatString: 'yyyy-MM-dd',
       description:
         'On update of a job, this is the date the change to the Job will take effect. Will default to today if not submitted. During implementation, we recommend using a date of 01-01-1900 for the initial entry.',
       primary: false,

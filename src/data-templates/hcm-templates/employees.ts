@@ -111,7 +111,7 @@ const Employees = new FF.Sheet(
 
     hire_date: SmartDateField({
       label: 'Hire Date',
-      formatString: 'YYYY-MM-DD',
+      formatString: 'yyyy-MM-dd',
       description: '',
       primary: false,
       required: true,
@@ -122,7 +122,7 @@ const Employees = new FF.Sheet(
 
     end_employement_date: SmartDateField({
       label: 'End Employment Date',
-      formatString: 'YYYY-MM-DD',
+      formatString: 'yyyy-MM-dd',
       description: '',
       primary: false,
       required: false,
@@ -256,7 +256,7 @@ const Employees = new FF.Sheet(
 
     address_effective_date: SmartDateField({
       label: 'Effective Date',
-      formatString: 'YYYY-MM-DD',
+      formatString: 'yyyy-MM-dd',
       description: '',
       primary: false,
       required: false,
