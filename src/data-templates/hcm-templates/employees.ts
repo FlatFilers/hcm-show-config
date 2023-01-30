@@ -39,7 +39,7 @@ const Employees = new FF.Sheet(
 
     // This will need to be validated based on the name_country field, the ID value, and Country Name Requirements.
 
-    nameTitle: FF.TextField({
+    title: FF.TextField({
       label: 'Title',
       description: '',
       primary: false,
@@ -49,7 +49,7 @@ const Employees = new FF.Sheet(
 
     // This will need to be validated based on Country Name Requirements
 
-    nameFirstName: FF.TextField({
+    firstName: FF.TextField({
       label: 'First Name',
       description: '',
       primary: false,
@@ -59,7 +59,7 @@ const Employees = new FF.Sheet(
 
     // This will need to be validated based on Country Name Requirements
 
-    nameMiddleName: FF.TextField({
+    middleName: FF.TextField({
       label: 'Middle Name',
       description: '',
       primary: false,
@@ -69,7 +69,7 @@ const Employees = new FF.Sheet(
 
     // This will need to be validated based on Country Name Requirements
 
-    nameLastName: FF.TextField({
+    lastName: FF.TextField({
       label: 'Last Name',
       description: '',
       primary: false,
@@ -79,7 +79,7 @@ const Employees = new FF.Sheet(
 
     // This will need to be validated based on the name_country field, the ID value, and Country Name Requirements
 
-    nameSocialSuffix: FF.TextField({
+    socialSuffix: FF.TextField({
       label: 'Social Suffix',
       description: '',
       primary: false,
@@ -184,7 +184,7 @@ const Employees = new FF.Sheet(
 
     // This will need to be a valid time type based on the list of time types configured in DB
 
-    positionTimeTyper: FF.TextField({
+    positionTimeType: FF.TextField({
       label: 'Position Time Type',
       description: '',
       primary: false,
