@@ -7,7 +7,7 @@ const Jobs = new FF.Sheet(
   {
     //Validate against exisitng Job Codes in DB - call out the ID already exists & this would be an update and not a create
 
-    job_code: FF.TextField({
+    jobCode: FF.TextField({
       label: 'Job Code',
       description: 'Unique Identifier for a Job. Also known as Job ID. ',
       primary: true,
@@ -17,7 +17,7 @@ const Jobs = new FF.Sheet(
 
     // May want to throw a warning if missing to say this will default to today. May also want to default to 01-01-1900
 
-    effective_date: SmartDateField({
+    effectiveDate: SmartDateField({
       label: 'Effective Date',
       formatString: 'yyyy-MM-dd',
       description:
@@ -38,7 +38,7 @@ const Jobs = new FF.Sheet(
       unique: false,
     }),
 
-    job_name: FF.TextField({
+    jobName: FF.TextField({
       label: 'Job Name',
       description: 'The name of the job.',
       primary: false,
@@ -48,7 +48,7 @@ const Jobs = new FF.Sheet(
 
     // May want to default this to True or allow this to be specified dynamically
 
-    include_job_code_in_name: FF.BooleanField({
+    includeJobCodeInName: FF.BooleanField({
       label: 'Include Job Code in Name',
       description:
         'Boolean attribute identifying whether Job Code should be included in Name (Display ID within HCM.Show).',
@@ -57,7 +57,7 @@ const Jobs = new FF.Sheet(
       unique: false,
     }),
 
-    private_title: FF.TextField({
+    privateTitle: FF.TextField({
       label: 'Private Title',
       description:
         'Private Job Title. This field is the same as Job Title Default in the HCM.Show',
@@ -66,7 +66,7 @@ const Jobs = new FF.Sheet(
       unique: false,
     }),
 
-    job_summary: FF.TextField({
+    jobSummary: FF.TextField({
       label: 'Job Summary',
       description: 'Text attribute identifying Job Profile Summary.',
       primary: false,
@@ -76,7 +76,7 @@ const Jobs = new FF.Sheet(
 
     // Will Flatfile support Rich Text formatting?
 
-    job_description: FF.TextField({
+    jobDescription: FF.TextField({
       label: 'Job Description',
       description: 'Rich text attribute identifying Job Description.',
       primary: false,
@@ -86,7 +86,7 @@ const Jobs = new FF.Sheet(
 
     // Will Flatfile support Rich Text formatting?
 
-    additional_job_description: FF.TextField({
+    additionalJobDescription: FF.TextField({
       label: 'Additional Job Description',
       description:
         'The Additional Job Description is only available when the Recruiting functional area is enabled. Use job posting templates to control where the Additional Job Description displays. Example: Define a Job Description for external job postings and an Additional Job Description for internal job postings. ',
@@ -97,7 +97,7 @@ const Jobs = new FF.Sheet(
 
     // May want to default this to True or allow this to be specified dynamically
 
-    work_shift_required: FF.BooleanField({
+    workShiftRequired: FF.BooleanField({
       label: 'Work Shift Required',
       description:
         'Boolean attribute indicating whether a work shift is required for workers in this job.',
@@ -108,7 +108,7 @@ const Jobs = new FF.Sheet(
 
     // May want to default this to True or allow this to be specified dynamically
 
-    public_job: FF.BooleanField({
+    publicJob: FF.BooleanField({
       label: 'Public Job',
       description:
         'Boolean attribute indicating whether the job profile is considered a public job.',
@@ -119,7 +119,7 @@ const Jobs = new FF.Sheet(
 
     // Multi-Select Field. Will need to validate against a list of Job Family IDs in the DB. The Name will make sense to the user - will we want to use this for mapping?  The ID will be required for loading to the system. How can we handle this? Will we have the ability to refresh the list ad-hoc?
 
-    job_family: FF.TextField({
+    jobFamily: FF.TextField({
       label: 'Job Family',
       description: 'Element containing the Job Family data for a job.',
       primary: false,
