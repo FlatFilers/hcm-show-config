@@ -7,6 +7,8 @@ import { validateRegex } from '../../validations-plugins/common/common'
 const Employees = new FF.Sheet(
   'Employees',
   {
+    //Validations
+    //Enter a unique Employee ID. The ID is already in use by [Employee][EmployeeNew].
     //Validate against exisitng Employee in DB - call out the ID already exists & this would be an update and not a create
 
     employeeId: FF.TextField({
@@ -21,7 +23,7 @@ const Employees = new FF.Sheet(
 
     managerId: FF.TextField({
       label: 'Manager ID',
-      description: '',
+      description: "The Employee ID for the Employee's Manager",
       primary: false,
       required: true,
       unique: false,
@@ -31,57 +33,69 @@ const Employees = new FF.Sheet(
 
     nameCountry: FF.TextField({
       label: 'Country',
-      description: '',
+      description: 'The Country that the name is in reference to.',
       primary: false,
       required: false,
       unique: false,
     }),
 
-    // This will need to be validated based on the name_country field, the ID value, and Country Name Requirements.
+    //Validations
+    //Title is not set up for this country. (Country Name Requirements)
+    //[title] is not a valid title value for [country]. (nameCountry + title)
+    //Title is required for this country. (Country Name Requirements)
 
     title: FF.TextField({
       label: 'Title',
-      description: '',
+      description: 'Contains the prefixes for a name.',
       primary: false,
       required: false,
       unique: false,
     }),
 
-    // This will need to be validated based on Country Name Requirements
+    //Validations
+    //First Name is not set up for this country. (Country Name Requirements)
+    //First Name is required for this country. (Country Name Requirements)
 
     firstName: FF.TextField({
       label: 'First Name',
-      description: '',
+      description: 'The First Name (Given Name) for a person. ',
       primary: false,
       required: false,
       unique: false,
     }),
 
-    // This will need to be validated based on Country Name Requirements
+    //Validations
+    //Middle Name is not set up for this country. (Country Name Requirements)
+    //Middle Name is required for this country. (Country Name Requirements)
 
     middleName: FF.TextField({
       label: 'Middle Name',
-      description: '',
+      description: 'The Middle Name for a person. ',
       primary: false,
       required: false,
       unique: false,
     }),
 
-    // This will need to be validated based on Country Name Requirements
+    //Validations
+    //Last Name is not set up for this country. (Country Name Requirements)
+    //Last Name is required for this country. (Country Name Requirements)
 
     lastName: FF.TextField({
       label: 'Last Name',
-      description: '',
+      description: 'The Last Name (Family Name) for a person. ',
       primary: false,
       required: false,
       unique: false,
     }),
 
-    // This will need to be validated based on the name_country field, the ID value, and Country Name Requirements
+    //Validations
+    //Social Suffix is not set up for this country. (Country Name Requirements)
+    //[social suffix] is not a valid social suffix value for [country]. (nameCountry + title)
+    //Social Suffix is required for this country. (Country Name Requirements)
 
     socialSuffix: FF.TextField({
       label: 'Social Suffix',
-      description: '',
+      description: 'Contains the suffixes for a name.',
       primary: false,
       required: false,
       unique: false,
@@ -91,7 +105,7 @@ const Employees = new FF.Sheet(
 
     employeeType: FF.TextField({
       label: 'Employee Type',
-      description: '',
+      description: "The worker's employee type.",
       primary: false,
       required: true,
       unique: false,
@@ -101,7 +115,7 @@ const Employees = new FF.Sheet(
 
     hireReason: FF.TextField({
       label: 'Hire Reason',
-      description: '',
+      description: 'The reason for hiring the worker.',
       primary: false,
       required: true,
       unique: false,
@@ -112,18 +126,22 @@ const Employees = new FF.Sheet(
     hireDate: SmartDateField({
       label: 'Hire Date',
       formatString: 'yyyy-MM-dd',
-      description: '',
+      description:
+        "The worker's Hire Date. The Hire Date must be on or after the effective date of any changes to the position or location.",
       primary: false,
       required: true,
       unique: false,
     }),
 
-    // Required if Employee Type = Fixed Term, Cannot be before Hire Date
+    // Validations
+    //End Employment Date must be after Hire Date.
+    //The end employment date is required for Fixed Term employees types and cannot be entered for non-fixed term employee types.
 
     endEmploymentDate: SmartDateField({
       label: 'End Employment Date',
       formatString: 'yyyy-MM-dd',
-      description: '',
+      description:
+        'The End Employment Date for the position of fixed term or temporary employees.',
       primary: false,
       required: false,
       unique: false,
@@ -133,7 +151,7 @@ const Employees = new FF.Sheet(
 
     jobCode: FF.ReferenceField({
       label: 'Job Code',
-      description: '',
+      description: 'The Job Profile for the Employee.',
       sheetKey: 'Jobs',
       foreignKey: 'jobName',
       relationship: 'has-many',
@@ -142,13 +160,13 @@ const Employees = new FF.Sheet(
       unique: false,
     }),
 
-    // If left blank, will default to job title
+    // If left blank, will default to job code title
 
     positionTitle: FF.TextField({
       label: 'Position Title',
-      description: '',
+      description: "The Position Title of the Employee's position.",
       primary: false,
-      required: true,
+      required: false,
       unique: false,
     }),
 
@@ -156,7 +174,7 @@ const Employees = new FF.Sheet(
 
     businessTitle: FF.TextField({
       label: 'Business Title',
-      description: '',
+      description: "The Position Title of the Employee's position.",
       primary: false,
       required: false,
       unique: false,
@@ -166,17 +184,21 @@ const Employees = new FF.Sheet(
 
     location: FF.TextField({
       label: 'Location',
-      description: '',
+      description: 'The Location of the Employee.',
       primary: false,
       required: true,
       unique: false,
     }),
 
-    // This will need to be a valid Workspace based on the list of Locations configured in DB (if Location Usage = Business Site and validate that Superior Location = Location)
+    //Validation
+    //Select another location. The work space isn't valid for this location: [work space1][work space2]
+    //Work space must be active.
+    //The field is required for location and can't be blank: Work Space. Specify a value for the field.
+    //This will need to be a valid Workspace based on the list of Locations configured in DB (if Location Usage = Business Site and validate that Superior Location = Location)
 
     workspace: FF.TextField({
       label: 'Workspace',
-      description: '',
+      description: "The physical location of the worker's position.",
       primary: false,
       required: true,
       unique: false,
@@ -186,33 +208,42 @@ const Employees = new FF.Sheet(
 
     positionTimeType: FF.TextField({
       label: 'Position Time Type',
-      description: '',
+      description:
+        'The time type for the Employee. Example: part time or full time.',
       primary: false,
       required: true,
       unique: false,
     }),
 
-    // This will need to be validated based on the ID Value and Workshift Country = Country of Location.
+    //Validation
+    //Work shift is not valid for the location.
+    //This will need to be validated based on the ID Value and Workshift Country = Country of Location.
 
     workShift: FF.TextField({
       label: 'Work Shift',
-      description: '',
+      description: 'The Work Shift of the Employee',
       primary: false,
       required: false,
       unique: false,
     }),
 
-    // May default to Locations hours
+    //Validation
+    //May default to Locations hours
+    //Enter a value of 168 hours or fewer.
 
     defaultWeeklyHours: FF.NumberField({
       label: 'Default Weekly Hours',
-      description: '',
+      description: 'The default weekly hours of the Employee',
       primary: false,
       required: true,
       unique: false,
     }),
 
-    // May default to Locations hours
+    //Validation
+    //May default to Locations hours
+    //FTE must be 999 or less.
+    //The scheduled weekly hours cannot be negative.
+    //Enter a value of 168 hours or fewer.
 
     scheduledWeeklyHours: FF.NumberField({
       label: 'Scheduled Weekly Hours',
@@ -222,21 +253,26 @@ const Employees = new FF.Sheet(
       unique: false,
     }),
 
-    // This will need to be a valid Pay Rate based on the list of Pay Rate Types configured in DB
+    //Validation
+    //This will need to be a valid Pay Rate based on the list of Pay Rate Types configured in DB
+    //Enter an active Pay Rate Type.
 
     payRateType: FF.TextField({
       label: 'Pay Rate Type',
-      description: '',
+      description:
+        'Contains a reference that identifies a specific instance of Pay Rate Type to retrieve for the Employee',
       primary: false,
       required: true,
       unique: false,
     }),
 
-    // Multi-Select field. This will need to be a valid Job Classification based on the list of Job Classifications configured in DB
+    //Validation
+    //Multi-Select field. This will need to be a valid Job Classification based on the list of Job Classifications configured in DB
+    //Additional Job Classifications are not valid for the Location
 
     additionalJobClassification: FF.TextField({
       label: 'Additional Job Classification',
-      description: '',
+      description: 'The Job Classifications that can be used for the position',
       primary: false,
       required: false,
       unique: false,
@@ -246,7 +282,8 @@ const Employees = new FF.Sheet(
 
     workderCompensationCode: FF.TextField({
       label: 'Worker Compensation Code',
-      description: '',
+      description:
+        "The worker's Compensation Code Override. The Compensation Code Override replaces the worker's compensation code. If a value is never entered, Workday will use the value from the Job Profile.",
       primary: false,
       required: false,
       unique: false,
@@ -257,7 +294,7 @@ const Employees = new FF.Sheet(
     addressEffectiveDate: SmartDateField({
       label: 'Effective Date',
       formatString: 'yyyy-MM-dd',
-      description: '',
+      description: 'Effective date of address.',
       primary: false,
       required: false,
       unique: false,
@@ -267,13 +304,14 @@ const Employees = new FF.Sheet(
 
     addressCountry: FF.TextField({
       label: 'Country',
-      description: '',
+      description: 'Country for the address.',
       primary: false,
       required: false,
       unique: false,
     }),
 
     // Address Line Fields - requirements will be by Country and determined by Countries and their Address Components
+    // Address Line Fields - Accepted fields will be by Country and determined by Countries and their Address Components
 
     addressLine1: FF.TextField({
       label: 'Address Line 1',
@@ -406,7 +444,7 @@ const Employees = new FF.Sheet(
     }),
     municipality: FF.TextField({
       label: 'Municipality',
-      description: '',
+      description: 'City part of the address.',
       primary: false,
       required: false,
       unique: false,
@@ -444,7 +482,8 @@ const Employees = new FF.Sheet(
 
     countryRegion: FF.TextField({
       label: 'Country Region',
-      description: '',
+      description:
+        'The region part of the address. Typically this contains the state/province information.',
       primary: false,
       required: false,
       unique: false,
@@ -478,10 +517,14 @@ const Employees = new FF.Sheet(
       unique: false,
     }),
 
-    // Must be validated by Country (had previously used npm package)
+    //Validations
+    //Must be validated by Country (had previously used npm package)
+    //[postal code] is not a valid postal code for [region]
+    //Enter a postal code in the valid format: [PostalCodeValidationMessage]
+    // Postal Code is required for [countryWithMustHavePostalCode]
     postalCode: FF.TextField({
       label: 'Postal Code',
-      description: '',
+      description: 'The postal code part of the address. ',
       primary: false,
       required: false,
       unique: false,
@@ -535,7 +578,18 @@ const Employees = new FF.Sheet(
 
     municipalityLocal: FF.TextField({
       label: 'Municipality Local',
-      description: '',
+      description: 'City in local script part of the address.',
+      primary: false,
+      required: false,
+      unique: false,
+    }),
+
+    // Will need to check against DB and / or Autogenerated
+
+    addressId: FF.TextField({
+      label: 'Address ID',
+      description:
+        'New ID value used in address updates. The ID cannot already be in use by another address.',
       primary: false,
       required: false,
       unique: false,
@@ -562,7 +616,8 @@ const Employees = new FF.Sheet(
       unique: false,
     }),
 
-    // Numbers only, must match format specified by country - have used npm package in the past for this
+    // Validation
+    //Numbers only, must match format specified by country - have used npm package in the past for this
 
     phoneNumber: FF.NumberField({
       label: 'Phone Number',
@@ -636,11 +691,22 @@ const Employees = new FF.Sheet(
       },
     }),
 
+    // Will need to check against DB and / or Autogenerated
+
+    phoneId: FF.TextField({
+      label: 'Phone ID',
+      description:
+        'New ID value used in phone updates. The ID cannot already be in use by another phone.',
+      primary: false,
+      required: false,
+      unique: false,
+    }),
+
     //Email addresses must be in the format of 'xxx@yy.com'. Valid examples: john.doe@aol.com, jane@aol.com.
 
     emailAddress: FF.TextField({
       label: 'Email Address',
-      description: '',
+      description: '	Email Address Information ',
       primary: false,
       required: false,
       unique: false,
@@ -654,7 +720,7 @@ const Employees = new FF.Sheet(
     }),
     emailComment: FF.TextField({
       label: 'Email Comment',
-      description: '',
+      description: 'Email comments. ',
       primary: false,
       required: false,
       unique: false,
@@ -702,6 +768,17 @@ const Employees = new FF.Sheet(
         BILLING: 'Billing',
         SHIPPING: 'Shipping',
       },
+    }),
+
+    // Will need to check against DB and / or Autogenerated
+
+    emailId: FF.TextField({
+      label: 'Phone ID',
+      description:
+        'New ID value used in email address updates. The ID cannot already be in use by another email address.',
+      primary: false,
+      required: false,
+      unique: false,
     }),
   },
 
