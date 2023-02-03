@@ -32,7 +32,7 @@ const Employees = new FF.Sheet(
     // This will need to be a valid country based on the list of Countries configured in DB
 
     nameCountry: FF.TextField({
-      label: 'Country',
+      label: 'Name Country',
       description: 'The Country that the name is in reference to.',
       primary: false,
       required: false,
@@ -303,7 +303,7 @@ const Employees = new FF.Sheet(
     // This will need to be a valid country based on the list of Countries configured in DB, if any address field is provided - this is field is required
 
     addressCountry: FF.TextField({
-      label: 'Country',
+      label: 'Address Country',
       description: 'Country for the address.',
       primary: false,
       required: false,
@@ -533,7 +533,7 @@ const Employees = new FF.Sheet(
     // If Type = Home - Public = False, Type = Work - Public = True
 
     addressPublic: FF.BooleanField({
-      label: 'Public',
+      label: 'Address Public',
       description: '',
       primary: false,
       required: false,
@@ -543,7 +543,7 @@ const Employees = new FF.Sheet(
     // One and only one Address can be primary by type
 
     addressPrimary: FF.BooleanField({
-      label: 'Primary',
+      label: 'Address Primary',
       description: '',
       primary: false,
       required: false,
@@ -553,7 +553,7 @@ const Employees = new FF.Sheet(
     // Sourced from Communication Types in DB, only two valid values: Home or Work
 
     addressType: FF.OptionField({
-      label: 'Type',
+      label: 'Address Type',
       description: '',
       primary: false,
       required: false,
@@ -567,7 +567,7 @@ const Employees = new FF.Sheet(
     // Sourced from Communication Usage Behavior Type in DB, Valid values are driven by Type (ex: Other - Home can only be used for Home types & Other - Work can only be used for Work types)
 
     addressUseFor: FF.TextField({
-      label: 'Use For',
+      label: 'Address Use For',
       description: '',
       primary: false,
       required: false,
@@ -598,7 +598,7 @@ const Employees = new FF.Sheet(
     // This will need to be a valid country based on the list of Countries configured in DB, this becomes required if any other phone field is provided
 
     phoneCountry: FF.TextField({
-      label: 'Country',
+      label: 'Phone Country',
       description:
         'Country ISO code. If the Country ISO code is specified, then this ISO code will be used to determine the Country Phone Code for (eliminate space between f and o) the phone. Pass this ISO code to distinguish between multiple countries sharing the same Country Phone Code. (For example, 1 is the Country Phone Code that is shared by USA, Canada, Dominican Republic, Bermuda, Jamaica, and Puerto Rico.) ',
       primary: false,
@@ -646,7 +646,7 @@ const Employees = new FF.Sheet(
     // If Type = Home - Public = False, Type = Work - Public = True
 
     phonePublic: FF.BooleanField({
-      label: 'Public',
+      label: 'Phone Public',
       description: '',
       primary: false,
       required: false,
@@ -656,7 +656,7 @@ const Employees = new FF.Sheet(
     // One and only one phone can be primary by type
 
     phonePrimary: FF.BooleanField({
-      label: 'Primary',
+      label: 'Phone Primary',
       description: '',
       primary: false,
       required: false,
@@ -666,7 +666,7 @@ const Employees = new FF.Sheet(
     // Sourced from Communication Types in DB, only two valid values: Home or Work
 
     phoneType: FF.OptionField({
-      label: 'Type',
+      label: 'Phone Type',
       description: '',
       primary: false,
       required: false,
@@ -680,7 +680,7 @@ const Employees = new FF.Sheet(
     // Can only be Billing or Shipping regardless of type
 
     phoneUseFor: FF.OptionField({
-      label: 'Use For',
+      label: 'Phone Use For',
       description: '',
       primary: false,
       required: false,
@@ -728,7 +728,7 @@ const Employees = new FF.Sheet(
     // If Type = Home - Public = False, Type = Work - Public = True
 
     emailPublic: FF.BooleanField({
-      label: 'Public',
+      label: 'Email Public',
       description: '',
       primary: false,
       required: false,
@@ -738,14 +738,14 @@ const Employees = new FF.Sheet(
     // One and only one email can be primary by type
 
     emailPrimary: FF.BooleanField({
-      label: 'Primary',
+      label: 'Email Primary',
       description: '',
       primary: false,
       required: false,
       unique: false,
     }),
     emailType: FF.OptionField({
-      label: 'Type',
+      label: 'Email Type',
       description: '',
       primary: false,
       required: false,
@@ -759,7 +759,7 @@ const Employees = new FF.Sheet(
     // Can only be Billing or Shipping regardless of type
 
     emailUseFor: FF.OptionField({
-      label: 'Use For',
+      label: 'Email Use For',
       description: '',
       primary: false,
       required: false,
