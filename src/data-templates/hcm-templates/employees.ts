@@ -280,7 +280,7 @@ const Employees = new FF.Sheet(
 
     // Multi-Select field. This will need to be a valid Worker Compensation Code based on the list of Worker Compensation Codes configured in DB
 
-    workderCompensationCode: FF.TextField({
+    workerCompensationCode: FF.TextField({
       label: 'Worker Compensation Code',
       description:
         "The worker's Compensation Code Override. The Compensation Code Override replaces the worker's compensation code. If a value is never entered, Workday will use the value from the Job Profile.",
