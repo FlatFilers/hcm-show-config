@@ -790,11 +790,12 @@ const Employees = new FF.Sheet(
 
     //Function that receives a row with all required fields fully present and optional fields typed optional?:string. Best used to compute derived values, can also be used to update existing fields.
     recordCompute: (record: FlatfileRecord<any>, _session, logger?: any) => {
-      // Add validation for Address, Phone, or Email is required for creation of Employee
+      //Add validation for addressCountry, phoneNumber, or emailAddress is required for creation of Employee
     },
 
     //Asynchronous function that is best for HTTP/API calls. External calls can be made to fill in values from external services. This takes records so it is easier to make bulk calls.
     batchRecordsCompute: async (payload: FlatfileRecords<any>) => {},
+    //Use for API based validations (ex: employeeId)
   }
 )
 
