@@ -720,7 +720,7 @@ const Employees = new FF.Sheet(
     }),
     emailComment: FF.TextField({
       label: 'Email Comment',
-      description: 'Email comments. ',
+      description: 'Email comments.',
       primary: false,
       required: false,
       unique: false,
@@ -791,6 +791,12 @@ const Employees = new FF.Sheet(
     //Function that receives a row with all required fields fully present and optional fields typed optional?:string. Best used to compute derived values, can also be used to update existing fields.
     recordCompute: (record: FlatfileRecord<any>, _session, logger?: any) => {
       //Add validation for addressCountry, phoneNumber, or emailAddress is required for creation of Employee
+      //Add validation for addressCountry to be required if any other address field is provided
+      //Add validation for phoneNumber to be required if any other phone field is provided
+      //Add validation for emailAddress to be required if any other email field is provided
+      //Add validation for addressPublic, addressPrimary, addressType to be required if addressCountry is provided
+      //Add validation for phonePublic, phonePrimary, phoneType, deviceType, and either phoneCountry or internationalPhoneCode to be required if phoneNumber is provided
+      //Add validation for emailPublic, emailPrimary, emailType to be required if emailAddress is provided
     },
 
     //Asynchronous function that is best for HTTP/API calls. External calls can be made to fill in values from external services. This takes records so it is easier to make bulk calls.
