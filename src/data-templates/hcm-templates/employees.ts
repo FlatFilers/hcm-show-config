@@ -1,8 +1,8 @@
-import * as FF from '@flatfile/configure'
-import { SmartDateField } from '../fields/SmartDateField'
-import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
-import { emailReg } from '../../validations-plugins/regex/regex'
-import { validateRegex } from '../../validations-plugins/common/common'
+import * as FF from '@flatfile/configure';
+import { SmartDateField } from '../fields/SmartDateField';
+import { FlatfileRecord, FlatfileRecords, TPrimitive } from '@flatfile/hooks';
+import { emailReg } from '../../validations-plugins/regex/regex';
+import { validateRegex } from '../../validations-plugins/common/common';
 
 const Employees = new FF.Sheet(
   'Employees',
@@ -715,7 +715,7 @@ const Employees = new FF.Sheet(
           v,
           emailReg,
           "Email addresses must be in the format of 'xxx@yy.com'. Valid examples: john.doe@aol.com, jane@aol.com."
-        )
+        );
       },
     }),
     emailComment: FF.TextField({
@@ -791,6 +791,17 @@ const Employees = new FF.Sheet(
     //Function that receives a row with all required fields fully present and optional fields typed optional?:string. Best used to compute derived values, can also be used to update existing fields.
     recordCompute: (record: FlatfileRecord<any>, _session, logger?: any) => {
       //Add validation for addressCountry, phoneNumber, or emailAddress is required for creation of Employee
+      if (
+        !stringExists(record.get('addressCountry')) &&
+        !stringExists(record.get('phoneNumber')) &&
+        !stringExists(record.get('emailAddress'))
+      ) {
+        const message =
+          'One of the following contact methods is required: Address Country, Phone Number, or Email Address.';
+        record.addError('addressCountry', message);
+        record.addError('phoneNumber', message);
+        record.addError('emailAddress', message);
+      }
       //Add validation for addressCountry to be required if any other address field is provided
       //Add validation for phoneNumber to be required if any other phone field is provided
       //Add validation for emailAddress to be required if any other email field is provided
@@ -803,6 +814,12 @@ const Employees = new FF.Sheet(
     batchRecordsCompute: async (payload: FlatfileRecords<any>) => {},
     //Use for API based validations (ex: employeeId)
   }
-)
+);
 
-export default Employees
+const stringExists = (value: TPrimitive) => {
+  return (
+    value !== undefined && value !== null && (value as string).trim() !== ''
+  );
+};
+
+export default Employees;
