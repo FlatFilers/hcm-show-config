@@ -1,8 +1,8 @@
-import * as FF from '@flatfile/configure'
-import { SmartDateField } from '../fields/SmartDateField'
-import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
-import { emailReg } from '../../validations-plugins/regex/regex'
-import { validateRegex } from '../../validations-plugins/common/common'
+import * as FF from '@flatfile/configure';
+import { SmartDateField } from '../fields/SmartDateField';
+import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks';
+import { emailReg } from '../../validations-plugins/regex/regex';
+import { validateRegex } from '../../validations-plugins/common/common';
 
 const Employees = new FF.Sheet(
   'Employees',
@@ -715,7 +715,7 @@ const Employees = new FF.Sheet(
           v,
           emailReg,
           "Email addresses must be in the format of 'xxx@yy.com'. Valid examples: john.doe@aol.com, jane@aol.com."
-        )
+        );
       },
     }),
     emailComment: FF.TextField({
@@ -794,8 +794,51 @@ const Employees = new FF.Sheet(
     },
 
     //Asynchronous function that is best for HTTP/API calls. External calls can be made to fill in values from external services. This takes records so it is easier to make bulk calls.
-    batchRecordsCompute: async (payload: FlatfileRecords<any>) => {},
-  }
-)
+    batchRecordsCompute: async (payload: FlatfileRecords<any>) => {
+      // if (!process.env.API_BASE_URL) {
+      //   throw new Error('API_BASE_URL is not defined');
+      // }
 
-export default Employees
+      // TODO: move this code to a better place--validations?
+
+      // TODO: Where do we assume errors will happen and be handled?
+      // hireReason is required, should we handle errors here or let them happen?
+      const hireReasons: string[] = payload.records.map(
+        (r) => r.get('hireReason') as string
+      );
+
+      const url = `https://f884efa5c126.ngrok.io/api/v1/hire-reasons`;
+
+      const hireReasonsResponse = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          // TODO: authentication
+        },
+        body: JSON.stringify(hireReasons),
+      });
+
+      // TODO: what do we do here
+      if (!hireReasonsResponse.ok) {
+        throw new Error('Failed to get hire reasons from API');
+      }
+
+      type HireReasonResult = {
+        originalString: string;
+        id: string | undefined;
+      };
+      const hireReasonsData =
+        (await hireReasonsResponse.json()) as HireReasonResult[];
+
+      payload.records.forEach((record) => {
+        const hireReasonId = hireReasonsData.find(
+          (d) => d.originalString === record.get('hireReason')
+        )?.id;
+
+        record.set('hireReason', hireReasonId || null);
+      });
+    },
+  }
+);
+
+export default Employees;
