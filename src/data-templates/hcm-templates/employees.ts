@@ -3,6 +3,38 @@ import { SmartDateField } from '../fields/SmartDateField';
 import { FlatfileRecord, FlatfileRecords, TPrimitive } from '@flatfile/hooks';
 import { emailReg } from '../../validations-plugins/regex/regex';
 import { validateRegex } from '../../validations-plugins/common/common';
+const axios = require('axios');
+
+async function executeValidation(event: any) {
+  const workbookId = event.context.workbookId;
+  const sheetId = event.context.sheetId;
+
+  try {
+    await axios.post(
+      `v1/workbooks/${workbookId}/sheets/${sheetId}/validate`,
+      {}
+    );
+  } catch (error) {
+    console.log(`validation error: ${JSON.stringify(error, null, 2)}`);
+  }
+}
+
+const executeValidationAction = new FF.Action(
+  {
+    slug: 'executeValidation',
+    label: 'Execute Validation',
+    description: 'Executes Validations on the Data in this Sheet',
+  },
+  async (e) => {
+    try {
+      await executeValidation(e);
+    } catch (error) {
+      console.log(
+        `executeValidationAction[error]: ${JSON.stringify(error, null, 2)}`
+      );
+    }
+  }
+);
 
 const Employees = new FF.Sheet(
   'Employees',
@@ -797,7 +829,7 @@ const Employees = new FF.Sheet(
         !stringExists(record.get('emailAddress'))
       ) {
         const message =
-          'One of the following contact methods is required: Address Country, Phone Number, or Email Address.';
+          'One of the following contact methods is required: Address Country, Phone Number, or Email Address!';
         record.addError('addressCountry', message);
         record.addError('phoneNumber', message);
         record.addError('emailAddress', message);
@@ -813,6 +845,9 @@ const Employees = new FF.Sheet(
     //Asynchronous function that is best for HTTP/API calls. External calls can be made to fill in values from external services. This takes records so it is easier to make bulk calls.
     batchRecordsCompute: async (payload: FlatfileRecords<any>) => {},
     //Use for API based validations (ex: employeeId)
+    actions: {
+      executeValidationAction,
+    },
   }
 );
 
