@@ -224,4 +224,26 @@ describe('Workbook tests ->', () => {
       'Phone Country or International Phone Code must be provided if Phone Number is present.'
     );
   });
+
+  test('if emailAddress is present emailPublic, emailPrimary, emailType are required', async () => {
+    inputRow['emailAddress'] = 'user@example.com';
+    inputRow['emailPublic'] = null;
+    inputRow['emailPrimary'] = null;
+    inputRow['emailType'] = null;
+
+    const res = await testSheet.testMessage(inputRow);
+
+    const emailPublic = res.find((row) => row.field === 'emailPublic');
+    expect(emailPublic?.message).toEqual(
+      'Email Public must be provided if Email Address is present.'
+    );
+    const emailPrimary = res.find((row) => row.field === 'emailPrimary');
+    expect(emailPrimary?.message).toEqual(
+      'Email Primary must be provided if Email Address is present.'
+    );
+    const emailType = res.find((row) => row.field === 'emailType');
+    expect(emailType?.message).toEqual(
+      'Email Type must be provided if Email Address is present.'
+    );
+  });
 });

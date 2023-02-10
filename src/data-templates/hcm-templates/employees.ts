@@ -1011,6 +1011,26 @@ const Employees = new FF.Sheet(
       }
 
       //Add validation for emailPublic, emailPrimary, emailType to be required if emailAddress is provided
+      if (isNotNil(record.get('emailAddress'))) {
+        if (isNil(record.get('emailPublic'))) {
+          record.addError(
+            'emailPublic',
+            'Email Public must be provided if Email Address is present.'
+          );
+        }
+        if (isNil(record.get('emailPrimary'))) {
+          record.addError(
+            'emailPrimary',
+            'Email Primary must be provided if Email Address is present.'
+          );
+        }
+        if (isNil(record.get('emailType'))) {
+          record.addError(
+            'emailType',
+            'Email Type must be provided if Email Address is present.'
+          );
+        }
+      }
     },
 
     //Asynchronous function that is best for HTTP/API calls. External calls can be made to fill in values from external services. This takes records so it is easier to make bulk calls.
