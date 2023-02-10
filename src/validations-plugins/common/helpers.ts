@@ -145,7 +145,7 @@ export const isNumber = (x: unknown): x is number => typeof x === 'number';
  * @example
  * pipe(fn1, fn2, ...);
  */
-const pipe = (...fns: Array<any>) => fns.reduce((acc, fn) => fn(acc));
+export const pipe = (...fns: Array<any>) => fns.reduce((acc, fn) => fn(acc));
 
 /**
  * Converts `String.prototype.toLowerCase()` to a normal fn so it can be used with `pipe`.
@@ -155,7 +155,7 @@ const pipe = (...fns: Array<any>) => fns.reduce((acc, fn) => fn(acc));
  * @example
  * pipe(value, toLowerCase);
  */
-const toLowerCase = (value: string): string => value.toLowerCase();
+export const toLowerCase = (value: string): string => value.toLowerCase();
 
 /**
  * Converts `String.prototype.trim()` to a normal fn so it can be used with `pipe`.
@@ -165,7 +165,7 @@ const toLowerCase = (value: string): string => value.toLowerCase();
  * @example
  * pipe(value, trim);
  */
-const trim = (value: string): string => value.trim();
+export const trim = (value: string): string => value.trim();
 
 /**
  * Allows us to combine multiple validations in a quick and easy way.
@@ -173,7 +173,7 @@ const trim = (value: string): string => value.trim();
  * @example
  * runValidations(fn1, fn2, fn3, ...);
  */
-const runValidations = (...fns: Array<any>): Array<FF.Message> => {
+export const runValidations = (...fns: Array<any>): Array<FF.Message> => {
   return fns.reduce((acc, fn) => [...acc, fn()], []).filter(isNotNil);
 };
 

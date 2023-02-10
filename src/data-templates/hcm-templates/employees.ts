@@ -135,7 +135,7 @@ const Employees = new FF.Sheet(
       label: 'Name Country',
       description: 'The Country that the name is in reference to.',
       primary: false,
-      required: false,
+      required: true,
       unique: false,
     }),
 
@@ -300,7 +300,7 @@ const Employees = new FF.Sheet(
       label: 'Workspace',
       description: "The physical location of the worker's position.",
       primary: false,
-      required: true,
+      required: false,
       unique: false,
     }),
 
@@ -716,8 +716,9 @@ const Employees = new FF.Sheet(
       unique: false,
     }),
 
-    // Validation
+    //Validation
     //Numbers only, must match format specified by country - have used npm package in the past for this
+    //Can we "clean" this field to remove all foreign characters, but present the original value in an info message?
 
     phoneNumber: FF.NumberField({
       label: 'Phone Number',
@@ -1032,6 +1033,11 @@ const Employees = new FF.Sheet(
         }
       }
     },
+
+    //Add Validation that endEmploymentDate must be after hireDate.
+    //Add Validation for nameCountry to be required if any other name field is provided
+
+    //Add Transformation for when addressType = Home, addressPublic = True. Add info message saying "Address Public was set to True when Address Type is Home." If addressType is cleared, should also clear out addressPublic.
 
     //Asynchronous function that is best for HTTP/API calls. External calls can be made to fill in values from external services. This takes records so it is easier to make bulk calls.
     batchRecordsCompute: async (payload: FlatfileRecords<any>) => {},
