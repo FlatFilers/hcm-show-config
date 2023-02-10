@@ -131,8 +131,14 @@ dist
 # MacOS
 .DS_Store
 
+<<<<<<< HEAD
 # Flatfile
 .flatfile
 .flatfilerc
 .flatfilerc.*.example
 environments.json
+=======
+*.code-workspace
+
+.flatfile/
+>>>>>>> f937f9d (# This is a combination of 10 commits.)
