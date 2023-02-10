@@ -19,7 +19,7 @@
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts",
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
-    "deploy": "flatfile publish ./src/index.ts",
+    "deploy": "flatfile publish ./src/workflows/project-workflow/index.ts",
     "deploy:xdk": "flatfile publish ./examples/workbooks/xdk-simple-deploy.ts",
     "create:env": "flatfile create:env -n",
     "lint": "TIMING=1 eslint \"src/**/*.{ts,tsx,js,jsx}\" --fix",
@@ -47,6 +47,7 @@
     "@flatfile/blueprint": "^0.0.5",
     "chrono-node": "^2.4.1",
     "date-fns": "^2.29.3",
-    "date-fns-tz": "^1.3.7"
+    "date-fns-tz": "^1.3.7",
+    "tslib": "^2.5.0"
   }
 }
