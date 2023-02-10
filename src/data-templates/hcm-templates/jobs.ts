@@ -9,7 +9,7 @@ const Jobs = new FF.Sheet(
 
     jobCode: FF.TextField({
       label: 'Job Code',
-      description: 'Unique Identifier for a Job. Also known as Job ID. ',
+      description: 'Unique Identifier for a Job. Also known as Job ID.',
       primary: true,
       required: true,
       unique: true,
@@ -37,6 +37,9 @@ const Jobs = new FF.Sheet(
       required: false,
       unique: false,
     }),
+
+    //Validations
+    // //This Job Name along with one or more Job Families combination is already in the system. Combination of Job Name and Job Family has to be unique in the system.
 
     jobName: FF.TextField({
       label: 'Job Name',
