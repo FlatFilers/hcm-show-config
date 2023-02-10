@@ -1,6 +1,6 @@
-import * as FF from '@flatfile/configure'
-import { SmartDateField } from '../fields/SmartDateField'
-import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks'
+import * as FF from '@flatfile/configure';
+import { SmartDateField } from '../fields/SmartDateField';
+import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks';
 
 const Jobs = new FF.Sheet(
   'Jobs',
@@ -139,36 +139,8 @@ const Jobs = new FF.Sheet(
 
     //Asynchronous function that is best for HTTP/API calls. External calls can be made to fill in values from external services. This takes records so it is easier to make bulk calls.
 
-    batchRecordsCompute: async (payload: FlatfileRecords<any>) => {
-      // Sends records to an imaginary API endpoint that validates linkedIn urls
-      // and writes the valid / invalid status to the record
-      const urlsToValidate = await payload.records.map(
-        async (record: FlatfileRecord) => {
-          return record.get('linkedIn')
-        }
-      )
-      const response = await fetch('your-api-to-check-linkedin-urls', {
-        method: 'POST',
-        headers: { Accept: 'application/json' },
-        body: JSON.stringify(urlsToValidate),
-      })
-      // Suppose response has the format:
-      // {
-      //    'https://linkedin.com/valid-url': 'valid',
-      //    'https://linkedin.com/invalid-url': 'invalid',
-      //    ...
-      // }
-      if (response.ok) {
-        const result = await response.json()
-        payload.records.map(async (record: FlatfileRecord) => {
-          const linkedInValid =
-            result[record.get('linkedIn') as string] === 'valid'
-          record.set('linkedInValid', linkedInValid)
-          record.addWarning('linkedInValid', 'Record set based on API response')
-        })
-      }
-    },
+    batchRecordsCompute: async (payload: FlatfileRecords<any>) => {},
   }
-)
+);
 
-export default Jobs
+export default Jobs;
