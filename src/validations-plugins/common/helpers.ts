@@ -1,13 +1,13 @@
-import * as FF from '@flatfile/configure'
-import { FlatfileRecord } from '@flatfile/hooks'
+import * as FF from '@flatfile/configure';
+import { FlatfileRecord } from '@flatfile/hooks';
 
 /*
  * Types
  */
 
-type Nil = null | undefined
+type Nil = null | undefined;
 
-type Falsy = null | undefined | false | '' | 0
+type Falsy = null | undefined | false | '' | 0;
 
 /*
  * Guards
@@ -26,7 +26,7 @@ type Falsy = null | undefined | false | '' | 0
  *   ...
  * }
  */
-export const isNull = (x: unknown): x is null => x === null
+export const isNull = (x: unknown): x is null => x === null;
 
 /**
  * Helper function to determine if a value is undefined.
@@ -41,7 +41,7 @@ export const isNull = (x: unknown): x is null => x === null
  *   ...
  * }
  */
-export const isUndefined = (x: unknown): x is undefined => x === undefined
+export const isUndefined = (x: unknown): x is undefined => x === undefined;
 
 /**
  * Helper function to determine if a value is null, undefined or an empty string.
@@ -57,7 +57,7 @@ export const isUndefined = (x: unknown): x is undefined => x === undefined
  * }
  */
 export const isNil = (x: unknown): x is Nil =>
-  isNull(x) || isUndefined(x) || (isString(x) && x === '')
+  isNull(x) || isUndefined(x) || (isString(x) && x.trim() === '');
 
 /**
  * Helper function to determine if a value is NOT null or undefined.
@@ -72,7 +72,7 @@ export const isNil = (x: unknown): x is Nil =>
  *   ...
  * }
  */
-export const isNotNil = <T>(x: T | Nil): x is T => !isNil(x)
+export const isNotNil = <T>(x: T | Nil): x is T => !isNil(x);
 
 /**
  * Helper function to determine if a value is falsy.
@@ -88,7 +88,7 @@ export const isNotNil = <T>(x: T | Nil): x is T => !isNil(x)
  * }
  */
 export const isFalsy = (x: unknown): x is Falsy =>
-  x === 0 || Number.isNaN(x) || x === false || isNil(x)
+  x === 0 || Number.isNaN(x) || x === false || isNil(x);
 
 /**
  * Helper function to determine if a value is truthy.
@@ -103,7 +103,7 @@ export const isFalsy = (x: unknown): x is Falsy =>
  *   ...
  * }
  */
-export const isTruthy = (x: unknown): x is true => !isFalsy(x)
+export const isTruthy = (x: unknown): x is true => !isFalsy(x);
 
 /**
  * Helper function to determine if a value is a string.
@@ -118,7 +118,7 @@ export const isTruthy = (x: unknown): x is true => !isFalsy(x)
  *   ...
  * }
  */
-export const isString = (x: unknown): x is string => typeof x === 'string'
+export const isString = (x: unknown): x is string => typeof x === 'string';
 
 /**
  * Helper function to determine if a value is a number.
@@ -133,7 +133,7 @@ export const isString = (x: unknown): x is string => typeof x === 'string'
  *   ...
  * }
  */
-export const isNumber = (x: unknown): x is number => typeof x === 'number'
+export const isNumber = (x: unknown): x is number => typeof x === 'number';
 
 /*
  * Helpers
@@ -145,7 +145,7 @@ export const isNumber = (x: unknown): x is number => typeof x === 'number'
  * @example
  * pipe(fn1, fn2, ...);
  */
-const pipe = (...fns: Array<any>) => fns.reduce((acc, fn) => fn(acc))
+export const pipe = (...fns: Array<any>) => fns.reduce((acc, fn) => fn(acc));
 
 /**
  * Converts `String.prototype.toLowerCase()` to a normal fn so it can be used with `pipe`.
@@ -155,7 +155,7 @@ const pipe = (...fns: Array<any>) => fns.reduce((acc, fn) => fn(acc))
  * @example
  * pipe(value, toLowerCase);
  */
-const toLowerCase = (value: string): string => value.toLowerCase()
+export const toLowerCase = (value: string): string => value.toLowerCase();
 
 /**
  * Converts `String.prototype.trim()` to a normal fn so it can be used with `pipe`.
@@ -165,7 +165,7 @@ const toLowerCase = (value: string): string => value.toLowerCase()
  * @example
  * pipe(value, trim);
  */
-const trim = (value: string): string => value.trim()
+export const trim = (value: string): string => value.trim();
 
 /**
  * Allows us to combine multiple validations in a quick and easy way.
@@ -173,9 +173,9 @@ const trim = (value: string): string => value.trim()
  * @example
  * runValidations(fn1, fn2, fn3, ...);
  */
-const runValidations = (...fns: Array<any>): Array<FF.Message> => {
-  return fns.reduce((acc, fn) => [...acc, fn()], []).filter(isNotNil)
-}
+export const runValidations = (...fns: Array<any>): Array<FF.Message> => {
+  return fns.reduce((acc, fn) => [...acc, fn()], []).filter(isNotNil);
+};
 
 /**
  * Allows us to sequence multiple RecordHooks _synchronously_ on a `FlatfileRecord`.
@@ -186,4 +186,4 @@ const runValidations = (...fns: Array<any>): Array<FF.Message> => {
 export const runRecordHooks =
   (...fns: Array<(x: FlatfileRecord) => void>) =>
   (x: FlatfileRecord) =>
-    fns.map((f) => f(x))
+    fns.map((f) => f(x));
