@@ -160,4 +160,68 @@ describe('Workbook tests ->', () => {
       'Email Address must be provided if any email fields are present.'
     );
   });
+
+  test('if addressCountry is present addressPublic, addressPrimary, and addressType are required', async () => {
+    inputRow['addressCountry'] = 'USA';
+    inputRow['addressPublic'] = null;
+    inputRow['addressPrimary'] = null;
+    inputRow['addressType'] = null;
+
+    const res = await testSheet.testMessage(inputRow);
+
+    const addressPublic = res.find((row) => row.field === 'addressPublic');
+    expect(addressPublic?.message).toEqual(
+      'Address Public must be provided if Address Country is present.'
+    );
+    const addressPrimary = res.find((row) => row.field === 'addressPrimary');
+    expect(addressPrimary?.message).toEqual(
+      'Address Primary must be provided if Address Country is present.'
+    );
+    const addressType = res.find((row) => row.field === 'addressType');
+    expect(addressType?.message).toEqual(
+      'Address Type must be provided if Address Country is present.'
+    );
+  });
+
+  test('if phoneNumber is present phonePublic, phonePrimary, phoneType, deviceType, and either phoneCountry or internationalPhoneCode are required', async () => {
+    const d = {
+      ...inputRow,
+      phoneNumber: '123-123-1234',
+      phonePublic: null,
+      phonePrimary: null,
+      phoneType: null,
+      deviceType: null,
+      phoneCountry: null,
+      internationalPhoneCode: null,
+    };
+
+    const res = await testSheet.testMessage(d);
+
+    const phonePublic = res.find((row) => row.field === 'phonePublic');
+    expect(phonePublic?.message).toEqual(
+      'Phone Public must be provided if Phone Number is present.'
+    );
+    const phonePrimary = res.find((row) => row.field === 'phonePrimary');
+    expect(phonePrimary?.message).toEqual(
+      'Phone Primary must be provided if Phone Number is present.'
+    );
+    const phoneType = res.find((row) => row.field === 'phoneType');
+    expect(phoneType?.message).toEqual(
+      'Phone Type must be provided if Phone Number is present.'
+    );
+    const deviceType = res.find((row) => row.field === 'deviceType');
+    expect(deviceType?.message).toEqual(
+      'Device Type must be provided if Phone Number is present.'
+    );
+    const phoneCountry = res.find((row) => row.field === 'phoneCountry');
+    expect(phoneCountry?.message).toEqual(
+      'Phone Country or International Phone Code must be provided if Phone Number is present.'
+    );
+    const internationalPhoneCode = res.find(
+      (row) => row.field === 'internationalPhoneCode'
+    );
+    expect(internationalPhoneCode?.message).toEqual(
+      'Phone Country or International Phone Code must be provided if Phone Number is present.'
+    );
+  });
 });
