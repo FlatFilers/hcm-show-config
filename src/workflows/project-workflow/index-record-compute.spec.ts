@@ -4,6 +4,24 @@ import { Workbook } from '@flatfile/configure';
 import Jobs from '../../data-templates/hcm-templates/jobs';
 import Employees from '../../data-templates/hcm-templates/employees';
 
+jest.mock('axios', () => {
+  return {
+    post: jest.fn().mockResolvedValue({
+      status: 200,
+      data: [
+        {
+          originalString: 'New Hire',
+          id: 'abc123',
+        },
+        {
+          originalString: 'New Hire',
+          id: 'def456',
+        },
+      ],
+    }),
+  };
+});
+
 const inputRow: { [key: string]: string | number | null | undefined } = {
   employeeId: null,
   managerId: '21431',
