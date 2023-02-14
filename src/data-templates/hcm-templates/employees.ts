@@ -1069,7 +1069,6 @@ const Employees = new FF.Sheet(
         originalString: string;
         id: string | undefined;
       }
-      console.log('hireReasonsResponse.data', hireReasonsResponse.data);
       const hireReasonMapping = hireReasonsResponse.data as HireReasonResult[];
 
       payload.records.forEach((record) => {
