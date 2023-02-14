@@ -124,6 +124,8 @@ describe('Workbook tests -> batchRecordCompute ->', () => {
     });
 
     test('if the API call succeeds', async () => {
+      const hireReasonString = 'Hire Employee > New Hire > New Position';
+
       const mock = {
         status: 200,
         data: [
@@ -132,7 +134,7 @@ describe('Workbook tests -> batchRecordCompute ->', () => {
             id: 'abc123',
           },
           {
-            originalString: 'New Hire',
+            originalString: hireReasonString,
             id: 'def456',
           },
         ],
@@ -141,12 +143,10 @@ describe('Workbook tests -> batchRecordCompute ->', () => {
       // @ts-ignore
       axios.post.mockResolvedValue(mock);
 
-      inputRow['hireReason'] = 'Hire Employee > New Hire > New Position';
+      inputRow['hireReason'] = hireReasonString;
 
-      const res = await testSheet.testMessage(inputRow);
-
-      const hireReason = res.find((row) => row.field === 'hireReason');
-      expect(hireReason?.message).toEqual('1');
+      const res = await testSheet.testRecord(inputRow);
+      expect(res.hireReason).toEqual('def456');
     });
   });
 });
