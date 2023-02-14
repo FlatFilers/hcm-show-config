@@ -1040,7 +1040,45 @@ const Employees = new FF.Sheet(
     //Add Transformation for when addressType = Home, addressPublic = True. Add info message saying "Address Public was set to True when Address Type is Home." If addressType is cleared, should also clear out addressPublic.
 
     //Asynchronous function that is best for HTTP/API calls. External calls can be made to fill in values from external services. This takes records so it is easier to make bulk calls.
-    batchRecordsCompute: async (payload: FlatfileRecords<any>) => {},
+    batchRecordsCompute: async (payload: FlatfileRecords<any>) => {
+      // TODO: move this code to a better place--validations?
+
+      // TODO: Where do we assume errors will happen and be handled?
+      // hireReason is required, should we handle errors here or let them happen?
+      const hireReasons: string[] = payload.records.map(
+        (r) => r.get('hireReason') as string
+      );
+
+      const url = `https://hcm.show/api/v1/hire-reasons`;
+
+      const hireReasonsResponse = await axios.post(url, hireReasons, {
+        headers: {
+          'Content-Type': 'application/json',
+          // TODO: authentication
+        },
+      });
+
+      if (
+        !(hireReasonsResponse.status >= 200 && hireReasonsResponse.status < 300)
+      ) {
+        console.log('hireReasonsResponse', hireReasonsResponse);
+        throw new Error('Error fetching hire reasons');
+      }
+
+      interface HireReasonResult {
+        originalString: string;
+        id: string | undefined;
+      }
+      const hireReasonMapping = hireReasonsResponse.data as HireReasonResult[];
+
+      payload.records.forEach((record) => {
+        const hireReasonId = hireReasonMapping.find(
+          (d) => d.originalString === record.get('hireReason')
+        )?.id;
+
+        record.set('hireReason', hireReasonId || null);
+      });
+    },
     //Use for API based validations (ex: employeeId)
     actions: {
       executeValidationAction,
