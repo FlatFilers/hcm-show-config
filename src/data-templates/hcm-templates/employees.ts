@@ -1061,7 +1061,7 @@ const Employees = new FF.Sheet(
       if (
         !(hireReasonsResponse.status >= 200 && hireReasonsResponse.status < 300)
       ) {
-        // console.error('hireReasonsResponse', hireReasonsResponse);
+        console.log('hireReasonsResponse', hireReasonsResponse);
         throw new Error('Error fetching hire reasons');
       }
 

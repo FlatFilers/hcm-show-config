@@ -104,31 +104,49 @@ const workbook = new Workbook({
 describe('Workbook tests -> batchRecordCompute ->', () => {
   const testSheet = new SheetTester(workbook, 'Employees');
 
-  test('if the API call fails', async () => {
-    const mock = {
-      status: 400,
-      // data: [
-      //   {
-      //     originalString: 'New Hire',
-      //     id: 'abc123',
-      //   },
-      //   {
-      //     originalString: 'New Hire',
-      //     id: 'def456',
-      //   },
-      // ],
-    };
+  describe("validating the 'hireReason' field ->", () => {
+    test('if the API call fails', async () => {
+      const mock = {
+        status: 400,
+      };
 
-    // @ts-ignore
-    axios.post.mockResolvedValue(mock);
+      // @ts-ignore
+      axios.post.mockResolvedValue(mock);
 
-    inputRow['emailAddress'] = 'user@example.com';
-    inputRow['emailPublic'] = null;
-    inputRow['emailPrimary'] = null;
-    inputRow['emailType'] = null;
+      inputRow['emailAddress'] = 'user@example.com';
+      inputRow['emailPublic'] = null;
+      inputRow['emailPrimary'] = null;
+      inputRow['emailType'] = null;
 
-    expect(testSheet.testMessage(inputRow)).rejects.toThrow(
-      'Error fetching hire reasons'
-    );
+      expect(testSheet.testMessage(inputRow)).rejects.toThrow(
+        'Error fetching hire reasons'
+      );
+    });
+
+    test('if the API call succeeds', async () => {
+      const mock = {
+        status: 200,
+        data: [
+          {
+            originalString: 'New Hire',
+            id: 'abc123',
+          },
+          {
+            originalString: 'New Hire',
+            id: 'def456',
+          },
+        ],
+      };
+
+      // @ts-ignore
+      axios.post.mockResolvedValue(mock);
+
+      inputRow['hireReason'] = 'Hire Employee > New Hire > New Position';
+
+      const res = await testSheet.testMessage(inputRow);
+
+      const hireReason = res.find((row) => row.field === 'hireReason');
+      expect(hireReason?.message).toEqual('1');
+    });
   });
 });
