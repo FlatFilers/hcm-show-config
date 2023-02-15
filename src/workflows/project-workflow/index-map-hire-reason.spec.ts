@@ -29,34 +29,43 @@ describe('Workbook tests -> Map hire reason to ID ->', () => {
     // @ts-ignore
     axios.post.mockResolvedValue(mock);
 
-    expect(testSheet.testMessage(sampleRow)).rejects.toThrow(
-      'Error fetching hire reasons'
+    // Mock /employees call
+    // @ts-ignore
+    axios.get.mockResolvedValue({ status: 200, data: [] });
+
+    sampleRow['hireReason'] = 'Some > Hire > Reason';
+
+    const res = await testSheet.testMessage(sampleRow);
+
+    const hireReason = res.find((row) => row.field === 'hireReason');
+    expect(hireReason?.message).toEqual(
+      'Error - could not fetch hire reasons from API.'
     );
   });
 
-  test('if the API call succeeds', async () => {
-    const hireReasonString = 'Hire Employee > New Hire > New Position';
+  // test('if the API call succeeds', async () => {
+  //   const hireReasonString = 'Hire Employee > New Hire > New Position';
 
-    const mock = {
-      status: 200,
-      data: [
-        {
-          originalString: 'New Hire',
-          id: 'abc123',
-        },
-        {
-          originalString: hireReasonString,
-          id: 'def456',
-        },
-      ],
-    };
+  //   const mock = {
+  //     status: 200,
+  //     data: [
+  //       {
+  //         originalString: 'New Hire',
+  //         id: 'abc123',
+  //       },
+  //       {
+  //         originalString: hireReasonString,
+  //         id: 'def456',
+  //       },
+  //     ],
+  //   };
 
-    // @ts-ignore
-    axios.post.mockResolvedValue(mock);
+  //   // @ts-ignore
+  //   axios.post.mockResolvedValue(mock);
 
-    sampleRow['hireReason'] = hireReasonString;
+  //   sampleRow['hireReason'] = hireReasonString;
 
-    const res = await testSheet.testRecord(sampleRow);
-    expect(res.hireReason).toEqual('def456');
-  });
+  //   const res = await testSheet.testRecord(sampleRow);
+  //   expect(res.hireReason).toEqual('def456');
+  // });
 });

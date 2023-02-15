@@ -23,7 +23,13 @@ export const mapHireReasons = async (payload: FlatfileRecords<any>) => {
   if (
     !(hireReasonsResponse.status >= 200 && hireReasonsResponse.status < 300)
   ) {
-    throw new Error('Error fetching hire reasons');
+    payload.records.forEach((record) => {
+      record.addError(
+        'hireReason',
+        'Error - could not fetch hire reasons from API.'
+      );
+    });
+    return;
   }
 
   interface HireReasonResult {
