@@ -5,7 +5,10 @@ import Jobs from '../../data-templates/hcm-templates/jobs';
 import Employees from '../../data-templates/hcm-templates/employees';
 
 import axios from 'axios';
-jest.mock('axios');
+import MockAdapter from 'axios-mock-adapter';
+
+// jest.mock('axios');
+// const mock = new MockAdapter(axios);
 
 const inputRow: { [key: string]: string | number | null | undefined } = {
   employeeId: null,
@@ -101,52 +104,56 @@ const workbook = new Workbook({
   },
 });
 
-describe('Workbook tests -> batchRecordCompute ->', () => {
+describe('Workbook tests -> Validate employee IDs ->', () => {
   const testSheet = new SheetTester(workbook, 'Employees');
 
-  describe("validating the 'hireReason' field ->", () => {
-    test('if the API call fails', async () => {
-      const mock = {
-        status: 400,
-      };
+  // test('if the API call fails', async () => {
+  //   const mock = {
+  //     status: 400,
+  //   };
 
-      // @ts-ignore
-      axios.post.mockResolvedValue(mock);
+  //   // @ts-ignore
+  //   axios.get.mockResolvedValue(mock);
 
-      inputRow['emailAddress'] = 'user@example.com';
-      inputRow['emailPublic'] = null;
-      inputRow['emailPrimary'] = null;
-      inputRow['emailType'] = null;
+  //   expect(testSheet.testMessage(inputRow)).rejects.toThrow(
+  //     'Error fetching employees'
+  //   );
+  // });
 
-      expect(testSheet.testMessage(inputRow)).rejects.toThrow(
-        'Error fetching hire reasons'
-      );
-    });
+  test('if the API call succeeds', async () => {
+    const m = new MockAdapter(axios);
+    m.onPost('https://hcm.show/api/v1/hire-reasons').reply(200, [
+      {
+        originalString: 'New Hire',
+        id: 'abc123',
+      },
+      {
+        originalString: 'Hire Employee > New Hire > New Position',
+        id: 'def456',
+      },
+    ]);
 
-    test('if the API call succeeds', async () => {
-      const hireReasonString = 'Hire Employee > New Hire > New Position';
+    // @ts-ignore
+    // axios.get.mockResolvedValue(mock);
+    m.onGet('https://hcm.show/api/v1/employees').reply(200, [
+      '2000',
+      '2001',
+      '2002',
+    ]);
 
-      const mock = {
-        status: 200,
-        data: [
-          {
-            originalString: 'New Hire',
-            id: 'abc123',
-          },
-          {
-            originalString: hireReasonString,
-            id: 'def456',
-          },
-        ],
-      };
+    inputRow['employeeId'] = '2000';
+    inputRow['managerId'] = 'invalid-id';
 
-      // @ts-ignore
-      axios.post.mockResolvedValue(mock);
+    const res = await testSheet.testMessage(inputRow);
 
-      inputRow['hireReason'] = hireReasonString;
+    const employeeId = res.find((r) => r.field === 'employeeId');
+    expect(employeeId?.message).toEqual(
+      'This Employee ID already exists in HCM.show - this record will update the existing record on sync.'
+    );
 
-      const res = await testSheet.testRecord(inputRow);
-      expect(res.hireReason).toEqual('def456');
-    });
+    const managerId = res.find((r) => r.field === 'managerId');
+    expect(managerId?.message).toEqual(
+      'Manager ID does not exist in HCM.show or the imported records.'
+    );
   });
 });

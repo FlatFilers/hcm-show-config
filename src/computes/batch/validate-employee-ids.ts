@@ -1,0 +1,53 @@
+import { FlatfileRecords } from '@flatfile/hooks';
+import { isNotNil } from '../../validations-plugins/common/helpers';
+
+import axios from 'axios';
+
+export const validateEmployeeIds = async (payload: FlatfileRecords<any>) => {
+  const url = `https://hcm.show/api/v1/employees`;
+
+  const employeesResponse = await axios.get(url, {
+    headers: {
+      'Content-Type': 'application/json',
+      // TODO: authentication
+    },
+  });
+
+  // console.log('employeesResponse', employeesResponse);
+
+  if (!(employeesResponse.status >= 200 && employeesResponse.status < 300)) {
+    throw new Error('Error fetching employees');
+  }
+
+  const existingEmployeeIds = employeesResponse.data as string[];
+  const employeIdsFromRecords = payload.records
+    .filter((r) => isNotNil(r.get('employeeId')))
+    .map((r) => r.get('employeeId') as string);
+
+  payload.records.forEach((r) => {
+    // If this employee ID exists, show that this would be an update and not a create
+    if (
+      isNotNil(r.get('employeeId')) &&
+      existingEmployeeIds.includes(r.get('employeeId') as string)
+    ) {
+      r.addWarning(
+        'employeeId',
+        'This Employee ID already exists in HCM.show - this record will update the existing record on sync.'
+      );
+    }
+
+    // Manager ID needs to be a valid Employee ID from either the DB or the existing dataset.
+    const managerId = r.get('managerId') as string | null;
+
+    if (
+      isNotNil(managerId) &&
+      !existingEmployeeIds.includes(managerId) &&
+      !employeIdsFromRecords.includes(managerId)
+    ) {
+      r.addError(
+        'managerId',
+        'Manager ID does not exist in HCM.show or the imported records.'
+      );
+    }
+  });
+};

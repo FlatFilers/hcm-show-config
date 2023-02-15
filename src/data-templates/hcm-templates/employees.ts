@@ -1,14 +1,13 @@
 import * as FF from '@flatfile/configure';
 import { SmartDateField } from '../fields/SmartDateField';
-import { FlatfileRecord, FlatfileRecords, TPrimitive } from '@flatfile/hooks';
+import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks';
 import { emailReg } from '../../validations-plugins/regex/regex';
 import { validateRegex } from '../../validations-plugins/common/common';
-import {
-  isFalsy,
-  isNil,
-  isNotNil,
-} from '../../validations-plugins/common/helpers';
-const axios = require('axios');
+import { validateContactInformation } from '../../computes/record/validate-contact-information';
+import { validateEmployeeIds } from '../../computes/batch/validate-employee-ids';
+import { mapHireReasons } from '../../computes/batch/map-hire-reasons';
+
+import axios from 'axios';
 
 const phoneFields = [
   'phoneCountry',
@@ -891,147 +890,7 @@ const Employees = new FF.Sheet(
 
     //Function that receives a row with all required fields fully present and optional fields typed optional?:string. Best used to compute derived values, can also be used to update existing fields.
     recordCompute: (record: FlatfileRecord<any>, _session, logger?: any) => {
-      //Add validation for addressCountry, phoneNumber, or emailAddress is required for creation of Employee
-      if (
-        isNil(record.get('addressCountry')) &&
-        isNil(record.get('phoneNumber')) &&
-        isNil(record.get('emailAddress'))
-      ) {
-        const message =
-          'One of the following contact methods is required: Address Country, Phone Number, or Email Address!';
-        record.addError('addressCountry', message);
-        record.addError('phoneNumber', message);
-        record.addError('emailAddress', message);
-      }
-      //Add validation for addressCountry to be required if any other address field is provided
-      const addressFieldsMinusCountry = addressFields.filter(
-        (f) => f !== 'addressCountry'
-      );
-      const hasOtherAddressFields = addressFieldsMinusCountry.some(
-        (fieldName) => isNotNil(record.get(fieldName))
-      );
-
-      if (hasOtherAddressFields && isNil(record.get('addressCountry'))) {
-        record.addError(
-          'addressCountry',
-          'Address Country must be provided if any address fields are present.'
-        );
-      }
-
-      //Add validation for phoneNumber to be required if any other phone field is provided
-      const phoneFieldsMinusNumber = phoneFields.filter(
-        (f) => f !== 'phoneNumber'
-      );
-      const hasOtherPhoneFields = phoneFieldsMinusNumber.some((fieldName) =>
-        isNotNil(record.get(fieldName))
-      );
-
-      if (hasOtherPhoneFields && isFalsy(record.get('phoneNumber'))) {
-        record.addError(
-          'phoneNumber',
-          'Phone Number must be provided if any phone fields are present.'
-        );
-      }
-
-      //Add validation for emailAddress to be required if any other email field is provided
-      const emailFieldsMinusAddress = emailFields.filter(
-        (f) => f !== 'emailAddress'
-      );
-      const hasOtherEmailFields = emailFieldsMinusAddress.some((fieldName) =>
-        isNotNil(record.get(fieldName))
-      );
-
-      if (hasOtherEmailFields && isNil(record.get('emailAddress'))) {
-        record.addError(
-          'emailAddress',
-          'Email Address must be provided if any email fields are present.'
-        );
-      }
-
-      //Add validation for addressPublic, addressPrimary, addressType to be required if addressCountry is provided
-      if (isNotNil(record.get('addressCountry'))) {
-        if (isNil(record.get('addressPublic'))) {
-          record.addError(
-            'addressPublic',
-            'Address Public must be provided if Address Country is present.'
-          );
-        }
-        if (isNil(record.get('addressPrimary'))) {
-          record.addError(
-            'addressPrimary',
-            'Address Primary must be provided if Address Country is present.'
-          );
-        }
-        if (isNil(record.get('addressType'))) {
-          record.addError(
-            'addressType',
-            'Address Type must be provided if Address Country is present.'
-          );
-        }
-      }
-
-      //Add validation for phonePublic, phonePrimary, phoneType, deviceType, and either phoneCountry or internationalPhoneCode to be required if phoneNumber is provided
-      if (isNotNil(record.get('phoneNumber'))) {
-        if (isNil(record.get('phonePublic'))) {
-          record.addError(
-            'phonePublic',
-            'Phone Public must be provided if Phone Number is present.'
-          );
-        }
-        if (isNil(record.get('phonePrimary'))) {
-          record.addError(
-            'phonePrimary',
-            'Phone Primary must be provided if Phone Number is present.'
-          );
-        }
-        if (isNil(record.get('phoneType'))) {
-          record.addError(
-            'phoneType',
-            'Phone Type must be provided if Phone Number is present.'
-          );
-        }
-        if (isNil(record.get('deviceType'))) {
-          record.addError(
-            'deviceType',
-            'Device Type must be provided if Phone Number is present.'
-          );
-        }
-        if (
-          isNil(record.get('phoneCountry')) &&
-          isNil(record.get('internationalPhoneCode'))
-        ) {
-          record.addError(
-            'phoneCountry',
-            'Phone Country or International Phone Code must be provided if Phone Number is present.'
-          );
-          record.addError(
-            'internationalPhoneCode',
-            'Phone Country or International Phone Code must be provided if Phone Number is present.'
-          );
-        }
-      }
-
-      //Add validation for emailPublic, emailPrimary, emailType to be required if emailAddress is provided
-      if (isNotNil(record.get('emailAddress'))) {
-        if (isNil(record.get('emailPublic'))) {
-          record.addError(
-            'emailPublic',
-            'Email Public must be provided if Email Address is present.'
-          );
-        }
-        if (isNil(record.get('emailPrimary'))) {
-          record.addError(
-            'emailPrimary',
-            'Email Primary must be provided if Email Address is present.'
-          );
-        }
-        if (isNil(record.get('emailType'))) {
-          record.addError(
-            'emailType',
-            'Email Type must be provided if Email Address is present.'
-          );
-        }
-      }
+      validateContactInformation(record);
     },
 
     //Add Validation that endEmploymentDate must be after hireDate.
@@ -1041,43 +900,8 @@ const Employees = new FF.Sheet(
 
     //Asynchronous function that is best for HTTP/API calls. External calls can be made to fill in values from external services. This takes records so it is easier to make bulk calls.
     batchRecordsCompute: async (payload: FlatfileRecords<any>) => {
-      // TODO: move this code to a better place--validations?
-
-      // TODO: Where do we assume errors will happen and be handled?
-      // hireReason is required, should we handle errors here or let them happen?
-      const hireReasons: string[] = payload.records.map(
-        (r) => r.get('hireReason') as string
-      );
-
-      const url = `https://hcm.show/api/v1/hire-reasons`;
-
-      const hireReasonsResponse = await axios.post(url, hireReasons, {
-        headers: {
-          'Content-Type': 'application/json',
-          // TODO: authentication
-        },
-      });
-
-      if (
-        !(hireReasonsResponse.status >= 200 && hireReasonsResponse.status < 300)
-      ) {
-        console.log('hireReasonsResponse', hireReasonsResponse);
-        throw new Error('Error fetching hire reasons');
-      }
-
-      interface HireReasonResult {
-        originalString: string;
-        id: string | undefined;
-      }
-      const hireReasonMapping = hireReasonsResponse.data as HireReasonResult[];
-
-      payload.records.forEach((record) => {
-        const hireReasonId = hireReasonMapping.find(
-          (d) => d.originalString === record.get('hireReason')
-        )?.id;
-
-        record.set('hireReason', hireReasonId || null);
-      });
+      validateEmployeeIds(payload);
+      mapHireReasons(payload);
     },
     //Use for API based validations (ex: employeeId)
     actions: {
