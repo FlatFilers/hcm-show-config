@@ -43,29 +43,33 @@ describe('Workbook tests -> Map hire reason to ID ->', () => {
     );
   });
 
-  // test('if the API call succeeds', async () => {
-  //   const hireReasonString = 'Hire Employee > New Hire > New Position';
+  test('if the API call succeeds', async () => {
+    const hireReasonString = 'Hire Employee > New Hire > New Position';
 
-  //   const mock = {
-  //     status: 200,
-  //     data: [
-  //       {
-  //         originalString: 'New Hire',
-  //         id: 'abc123',
-  //       },
-  //       {
-  //         originalString: hireReasonString,
-  //         id: 'def456',
-  //       },
-  //     ],
-  //   };
+    const mock = {
+      status: 200,
+      data: [
+        {
+          originalString: 'New Hire',
+          id: 'abc123',
+        },
+        {
+          originalString: hireReasonString,
+          id: 'def456',
+        },
+      ],
+    };
 
-  //   // @ts-ignore
-  //   axios.post.mockResolvedValue(mock);
+    // Mock /employees call
+    // @ts-ignore
+    axios.get.mockResolvedValue({ status: 200, data: [] });
 
-  //   sampleRow['hireReason'] = hireReasonString;
+    // @ts-ignore
+    axios.post.mockResolvedValue(mock);
 
-  //   const res = await testSheet.testRecord(sampleRow);
-  //   expect(res.hireReason).toEqual('def456');
-  // });
+    sampleRow['hireReason'] = hireReasonString;
+
+    const res = await testSheet.testRecord(sampleRow);
+    expect(res.hireReason).toEqual('def456');
+  });
 });
