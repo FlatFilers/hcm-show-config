@@ -1,9 +1,9 @@
 import { SheetTester } from '@flatfile/configure';
 import { Workbook } from '@flatfile/configure';
 
-import Jobs from '../../data-templates/hcm-templates/jobs';
-import Employees from '../../data-templates/hcm-templates/employees';
-import { sampleRow } from '../../utils/testing/sample-row';
+import Jobs from '../../../data-templates/hcm-templates/jobs';
+import Employees from '../../../data-templates/hcm-templates/employees';
+import { sampleRow } from '../../../utils/testing/sample-row';
 
 import axios from 'axios';
 jest.mock('axios');
