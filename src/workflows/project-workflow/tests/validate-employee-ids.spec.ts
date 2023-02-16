@@ -1,10 +1,5 @@
 import { SheetTester } from '@flatfile/configure';
-import { Workbook } from '@flatfile/configure';
-
-import Jobs from '../../../data-templates/hcm-templates/jobs';
-import Employees from '../../../data-templates/hcm-templates/employees';
-
-import { sampleRow } from '../../../utils/testing/sample-row';
+import { sampleRow, sampleWorkbook } from '../../../utils/testing/samples';
 import axios from 'axios';
 
 jest.mock('../../../computes/batch/map-hire-reasons', () => {
@@ -19,18 +14,8 @@ jest.mock('axios', () => {
   };
 });
 
-const workbook = new Workbook({
-  name: 'HCM Workbook',
-  slug: 'HCMWorkbook-2',
-  namespace: 'HCM Workbook',
-  sheets: {
-    Jobs,
-    Employees,
-  },
-});
-
 describe('Workbook tests -> Validate employee IDs ->', () => {
-  const testSheet = new SheetTester(workbook, 'Employees');
+  const testSheet = new SheetTester(sampleWorkbook, 'Employees');
 
   test('if the API call fails', async () => {
     // @ts-ignore

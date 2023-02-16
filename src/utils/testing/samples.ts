@@ -1,3 +1,17 @@
+import { Workbook } from '@flatfile/configure';
+import Jobs from '../../data-templates/hcm-templates/jobs';
+import Employees from '../../data-templates/hcm-templates/employees';
+
+export const sampleWorkbook = new Workbook({
+  name: 'HCM Workbook',
+  slug: 'HCMWorkbook',
+  namespace: 'HCM Workbook',
+  sheets: {
+    Jobs,
+    Employees,
+  },
+});
+
 export const sampleRow: { [key: string]: string | number | null | undefined } =
   {
     employeeId: null,

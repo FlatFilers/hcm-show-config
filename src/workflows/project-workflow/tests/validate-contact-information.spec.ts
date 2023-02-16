@@ -1,10 +1,5 @@
 import { SheetTester } from '@flatfile/configure';
-import { Workbook } from '@flatfile/configure';
-
-import Jobs from '../../../data-templates/hcm-templates/jobs';
-import Employees from '../../../data-templates/hcm-templates/employees';
-
-import { sampleRow } from '../../../utils/testing/sample-row';
+import { sampleRow, sampleWorkbook } from '../../../utils/testing/samples';
 
 jest.mock('axios', () => {
   return {
@@ -27,19 +22,8 @@ jest.mock('axios', () => {
     }),
   };
 });
-
-const workbook = new Workbook({
-  name: 'HCM Workbook',
-  slug: 'HCMWorkbook-2',
-  namespace: 'HCM Workbook',
-  sheets: {
-    Jobs,
-    Employees,
-  },
-});
-
 describe('Workbook tests -> Validate contact information ->', () => {
-  const testSheet = new SheetTester(workbook, 'Employees');
+  const testSheet = new SheetTester(sampleWorkbook, 'Employees');
 
   test('address, phone, or email is required', async () => {
     sampleRow['addressCountry'] = '    ';
