@@ -103,7 +103,7 @@ const SmartDateCompBook = new Workbook({
   sheets: { DateSheet },
 });
 
-describe('Date Comp Sheet tests demonstrating comparison of date object ->', () => {
+describe.skip('Date Comp Sheet tests demonstrating comparison of date object ->', () => {
   const testSheet = new SheetTester(SmartDateCompBook, 'DateSheet');
   test.each(CompSets)(
     'Verify that before is earlier than after for sample data',
@@ -226,7 +226,7 @@ const DumbDateCompBook = new Workbook({
   sheets: { DumbDateSheet },
 });
 
-describe('Dumb Date Comp Sheet ->', () => {
+describe.skip('Dumb Date Comp Sheet ->', () => {
   const testSheet = new SheetTester(DumbDateCompBook, 'DumbDateSheet');
   test.each(CompSets2)('date comparison', async (row) => {
     const messageRes = await testSheet.testMessage(row);

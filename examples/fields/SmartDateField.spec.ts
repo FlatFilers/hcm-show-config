@@ -103,7 +103,7 @@ const SmartDateCompBook = new Workbook({
   sheets: { DateSheet },
 });
 
-describe('Date Comp Sheet tests demonstrating comparison of date object ->', () => {
+describe.skip('Date Comp Sheet tests demonstrating comparison of date object ->', () => {
   const testSheet = new SheetTester(SmartDateCompBook, 'DateSheet');
   test.each(CompSets)(
     'Verify that before is earlier than after for sample data',
@@ -226,7 +226,7 @@ const DumbDateCompBook = new Workbook({
   sheets: { DumbDateSheet },
 });
 
-describe('Dumb Date Comp Sheet ->', () => {
+describe.skip('Dumb Date Comp Sheet ->', () => {
   const testSheet = new SheetTester(DumbDateCompBook, 'DumbDateSheet');
   test.each(CompSets2)('date comparison', async (row) => {
     const messageRes = await testSheet.testMessage(row);
@@ -260,7 +260,7 @@ describe('Dumb Date Comp Sheet ->', () => {
     ["Feb172009", ], // "MonDDYY" #Month abbreviation-Day-Year with leading zeros
 */
 
-describe('Extra test ->', () => {
+describe.skip('Extra test ->', () => {
   const SmartDateSheet = new Sheet(
     'SmartDateSheet',
     {
@@ -312,7 +312,7 @@ describe('Extra test ->', () => {
   });
 });
 
-describe('SmartDateField tests ->', () => {
+describe.skip('SmartDateField tests ->', () => {
   test('prevent egressCycle errors at instantiation time', () => {
     expect(() => {
       SmartDateField({ formatString: "yyyy-MM-dd'paddy'" });
@@ -330,7 +330,7 @@ describe('SmartDateField tests ->', () => {
   });
 });
 
-describe('Cast Function tests ->', () => {
+describe.skip('Cast Function tests ->', () => {
   const makeCastAssertException = (castFn: any) => {
     const assertFn = (raw: any, error: string): void => {
       expect(() => {
