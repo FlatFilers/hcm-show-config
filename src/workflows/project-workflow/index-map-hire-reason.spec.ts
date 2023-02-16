@@ -72,4 +72,34 @@ describe('Workbook tests -> Map hire reason to ID ->', () => {
     const res = await testSheet.testRecord(sampleRow);
     expect(res.hireReason).toEqual('def456');
   });
+
+  test('if the hire reason string is missing from the API call result', async () => {
+    const mock = {
+      status: 200,
+      data: [
+        {
+          originalString: 'New Hire',
+          id: 'abc123',
+        },
+        {
+          originalString: 'Re-hire',
+          id: 'def456',
+        },
+      ],
+    };
+
+    // Mock /employees call
+    // @ts-ignore
+    axios.get.mockResolvedValue({ status: 200, data: [] });
+
+    // @ts-ignore
+    axios.post.mockResolvedValue(mock);
+
+    sampleRow['hireReason'] = 'invalid-string';
+
+    const res = await testSheet.testMessage(sampleRow);
+
+    const hireReason = res.find((r) => r.field === 'hireReason');
+    expect(hireReason?.message).toEqual('Could not find hire reason in API.');
+  });
 });

@@ -3,8 +3,6 @@ import { FlatfileRecords } from '@flatfile/hooks';
 const axios = require('axios');
 
 export const mapHireReasons = async (payload: FlatfileRecords<any>) => {
-  // TODO: Where do we assume errors will happen and be handled?
-  // hireReason is required, should we handle errors here or let them happen?
   const hireReasons: string[] = payload.records.map(
     (r) => r.get('hireReason') as string
   );
@@ -43,6 +41,10 @@ export const mapHireReasons = async (payload: FlatfileRecords<any>) => {
       (d) => d.originalString === record.get('hireReason')
     )?.id;
 
-    record.set('hireReason', hireReasonId || null);
+    if (hireReasonId) {
+      record.set('hireReason', hireReasonId);
+    } else {
+      record.addError('hireReason', 'Could not find hire reason in API.');
+    }
   });
 };
