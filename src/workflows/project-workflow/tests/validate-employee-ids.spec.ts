@@ -8,11 +8,7 @@ jest.mock('../../../computes/batch/map-hire-reasons', () => {
   };
 });
 
-jest.mock('axios', () => {
-  return {
-    get: jest.fn(),
-  };
-});
+jest.mock('axios');
 
 describe('Workbook tests -> Validate employee IDs ->', () => {
   const testSheet = new SheetTester(sampleWorkbook, 'Employees');

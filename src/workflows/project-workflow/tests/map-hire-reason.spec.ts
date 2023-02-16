@@ -4,6 +4,18 @@ import { sampleRow, sampleWorkbook } from '../../../utils/testing/samples';
 import axios from 'axios';
 jest.mock('axios');
 
+jest.mock('axios', () => {
+  return {
+    // Mock /employees Call
+    get: jest.fn().mockResolvedValue({
+      status: 200,
+      data: [],
+    }),
+    // Leave stubbed for implementing hire reason call in test
+    post: jest.fn(),
+  };
+});
+
 describe('Workbook tests -> Map hire reason to ID ->', () => {
   const testSheet = new SheetTester(sampleWorkbook, 'Employees');
 
@@ -14,10 +26,6 @@ describe('Workbook tests -> Map hire reason to ID ->', () => {
 
     // @ts-ignore
     axios.post.mockResolvedValue(mock);
-
-    // Mock /employees call
-    // @ts-ignore
-    axios.get.mockResolvedValue({ status: 200, data: [] });
 
     sampleRow['hireReason'] = 'Some > Hire > Reason';
 
@@ -46,10 +54,6 @@ describe('Workbook tests -> Map hire reason to ID ->', () => {
       ],
     };
 
-    // Mock /employees call
-    // @ts-ignore
-    axios.get.mockResolvedValue({ status: 200, data: [] });
-
     // @ts-ignore
     axios.post.mockResolvedValue(mock);
 
@@ -73,10 +77,6 @@ describe('Workbook tests -> Map hire reason to ID ->', () => {
         },
       ],
     };
-
-    // Mock /employees call
-    // @ts-ignore
-    axios.get.mockResolvedValue({ status: 200, data: [] });
 
     // @ts-ignore
     axios.post.mockResolvedValue(mock);
