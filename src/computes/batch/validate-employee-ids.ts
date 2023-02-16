@@ -16,7 +16,17 @@ export const validateEmployeeIds = async (payload: FlatfileRecords<any>) => {
   // console.log('employeesResponse', employeesResponse);
 
   if (!(employeesResponse.status >= 200 && employeesResponse.status < 300)) {
-    throw new Error('Error fetching employees');
+    payload.records.forEach((record) => {
+      record.addError(
+        'employeeId',
+        'Error - could not fetch employees from API to verify ID.'
+      );
+      record.addError(
+        'managerId',
+        'Error - could not fetch employees from API to verify ID.'
+      );
+    });
+    return;
   }
 
   const existingEmployeeIds = employeesResponse.data as string[];

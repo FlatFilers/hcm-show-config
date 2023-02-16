@@ -1,6 +1,4 @@
-import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks';
-import { isNil } from 'lodash';
-import { isNotNil, isFalsy } from '../../validations-plugins/common/helpers';
+import { FlatfileRecords } from '@flatfile/hooks';
 
 const axios = require('axios');
 
@@ -19,6 +17,8 @@ export const mapHireReasons = async (payload: FlatfileRecords<any>) => {
       // TODO: authentication
     },
   });
+
+  // console.log('hireReasonsResponse', hireReasonsResponse);
 
   if (
     !(hireReasonsResponse.status >= 200 && hireReasonsResponse.status < 300)

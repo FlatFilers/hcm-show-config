@@ -5,25 +5,28 @@ import Jobs from '../../data-templates/hcm-templates/jobs';
 import Employees from '../../data-templates/hcm-templates/employees';
 
 import { sampleRow } from '../../utils/testing/sample-row';
-import { mockApi } from '../../utils/testing/mock-api';
 
-// jest.mock('axios', () => {
-//   return {
-//     post: jest.fn().mockResolvedValue({
-//       status: 200,
-//       data: [
-//         {
-//           originalString: 'New Hire',
-//           id: 'abc123',
-//         },
-//         {
-//           originalString: 'New Hire',
-//           id: 'def456',
-//         },
-//       ],
-//     }),
-//   };
-// });
+jest.mock('axios', () => {
+  return {
+    get: jest.fn().mockResolvedValue({
+      status: 200,
+      data: ['abc123', 'def456'],
+    }),
+    post: jest.fn().mockResolvedValue({
+      status: 200,
+      data: [
+        {
+          originalString: 'New Hire',
+          id: 'abc123',
+        },
+        {
+          originalString: 'New Hire',
+          id: 'def456',
+        },
+      ],
+    }),
+  };
+});
 
 const workbook = new Workbook({
   name: 'HCM Workbook',
@@ -37,10 +40,6 @@ const workbook = new Workbook({
 
 describe('Workbook tests -> Validate contact information ->', () => {
   const testSheet = new SheetTester(workbook, 'Employees');
-
-  beforeAll(() => {
-    mockApi();
-  });
 
   test('address, phone, or email is required', async () => {
     sampleRow['addressCountry'] = '    ';
