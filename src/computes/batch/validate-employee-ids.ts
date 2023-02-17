@@ -1,7 +1,7 @@
 import { FlatfileRecords } from '@flatfile/hooks';
 import { isNotNil } from '../../validations-plugins/common/helpers';
 
-import axios from 'axios';
+const axios = require('axios');
 
 export const validateEmployeeIds = async (payload: FlatfileRecords<any>) => {
   const url = `https://hcm.show/api/v1/employees`;

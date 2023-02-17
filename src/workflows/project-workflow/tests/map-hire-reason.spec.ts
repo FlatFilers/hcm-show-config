@@ -1,7 +1,7 @@
 import { SheetTester } from '@flatfile/configure';
 import { sampleRow, sampleWorkbook } from '../../../utils/testing/samples';
 
-import axios from 'axios';
+const axios = require('axios');
 jest.mock('axios');
 
 jest.mock('axios', () => {

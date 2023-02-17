@@ -7,7 +7,7 @@ import { validateContactInformation } from '../../computes/record/validate-conta
 import { validateEmployeeIds } from '../../computes/batch/validate-employee-ids';
 import { mapHireReasons } from '../../computes/batch/map-hire-reasons';
 
-import axios from 'axios';
+const axios = require('axios');
 
 const phoneFields = [
   'phoneCountry',
@@ -255,7 +255,7 @@ const Employees = new FF.Sheet(
       foreignKey: 'jobName',
       relationship: 'has-many',
       primary: false,
-      required: true,
+      required: false,
       unique: false,
     }),
 

@@ -1,6 +1,6 @@
 import { SheetTester } from '@flatfile/configure';
 import { sampleRow, sampleWorkbook } from '../../../utils/testing/samples';
-import axios from 'axios';
+const axios = require('axios');
 
 jest.mock('../../../computes/batch/map-hire-reasons', () => {
   return {
