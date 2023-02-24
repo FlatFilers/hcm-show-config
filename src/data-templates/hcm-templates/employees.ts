@@ -2,103 +2,50 @@ import * as FF from '@flatfile/configure';
 import { SmartDateField } from '../fields/SmartDateField';
 import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks';
 import { emailReg } from '../../validations-plugins/regex/regex';
-import { validateRegex } from '../../validations-plugins/common/common';
+import {
+  validateRegex,
+  vlookup,
+} from '../../validations-plugins/common/common';
 import { validateContactInformation } from '../../computes/record/validate-contact-information';
 import { validateEmployeeIds } from '../../computes/batch/validate-employee-ids';
 import { mapHireReasons } from '../../computes/batch/map-hire-reasons';
 
-const axios = require('axios');
-
-const phoneFields = [
-  'phoneCountry',
-  'internationalPhoneCode',
-  'phoneNumber',
-  'phoneExtension',
-  'deviceType',
-  'phonePublic',
-  'phonePrimary',
-  'phoneType',
-  'phoneUseFor',
-  'phoneId',
-];
-
-const emailFields = [
-  'emailAddress',
-  'emailComment',
-  'emailPublic',
-  'emailPrimary',
-  'emailType',
-  'emailUseFor',
-  'emailId',
-];
-
-const addressFields = [
-  'addressId',
-  'addressEffectiveDate',
-  'addressCountry',
-  'addressLine1',
-  'addressLine2',
-  'addressLine3',
-  'addressLine4',
-  'addressLine5',
-  'addressLine6',
-  'addressLine7',
-  'addressLine8',
-  'addressLine9',
-  'addressLine1Local',
-  'addressLine2Local',
-  'addressLine3Local',
-  'addressLine4Local',
-  'addressLine5Local',
-  'addressLine6Local',
-  'addressLine7Local',
-  'addressLine8Local',
-  'addressLine9Local',
-  'municipality',
-  'citySubdivision1',
-  'citySubdivision2',
-  'citySubdivision1Local',
-  'citySubdivision2Local',
-  'countryRegion',
-  'RegionSubdivision1',
-  'regionSubdivision2',
-  'regionSubdivision1Local',
-  'regionSubdivision2Local',
-  'postalCode',
-  'addressPublic',
-  'addressPrimary',
-  'addressType',
-  'addressUseFor',
-  'municipalityLocal',
-];
-
-async function executeValidation(event: any) {
-  const workbookId = event.context.workbookId;
-  const sheetId = event.context.sheetId;
-
-  try {
-    await axios.post(
-      `v1/workbooks/${workbookId}/sheets/${sheetId}/validate`,
-      {}
-    );
-  } catch (error) {
-    console.log(`validation error: ${JSON.stringify(error, null, 2)}`);
-  }
-}
-
-const executeValidationAction = new FF.Action(
+import makeHttpPostRequest from '../../validations-plugins/common/makeHttpPostRequests';
+const testParams = {
+  url: '/v1/auth/access-token',
+  clientId: process.env.clientId,
+  secret: process.env.secret,
+};
+const RetriggerValidations = new FF.Action(
   {
-    slug: 'executeValidation',
-    label: 'Execute Validation',
-    description: 'Executes Validations on the Data in this Sheet',
+    slug: 'RetriggerValidations',
+    label: 'Re-run Validations',
+    description: 'Re-run validations on this sheet',
   },
   async (e) => {
+    const { workbookId, sheetId } = e.context;
     try {
-      await executeValidation(e);
+      const body = {
+        clientId: testParams.clientId,
+        secret: testParams.secret,
+      };
+
+      const validateUrl = `/v1/workbooks/${workbookId}/sheets/${sheetId}/validate`;
+      const apiToken = await e.api.getAccessToken({
+        getAccessTokenRequest: {
+          clientId: testParams.clientId,
+          secret: testParams.secret,
+        },
+      });
+
+      const response = await makeHttpPostRequest({
+        url: validateUrl,
+        body,
+        token: apiToken.data?.accessToken,
+      });
+      console.log(`response: ${JSON.stringify(response, null, 2)}`);
     } catch (error) {
-      console.log(
-        `executeValidationAction[error]: ${JSON.stringify(error, null, 2)}`
-      );
+      console.log(`NodeHttpsAction[error]: ${JSON.stringify(error, null, 2)}`);
     }
   }
 );
@@ -248,15 +195,28 @@ const Employees = new FF.Sheet(
 
     // Validate that hire date is on or after effective date of Job Code, Customer file will likely have job name or legacy code - how will we plan to map values using reference field if keys are not aligned?
 
-    jobCode: FF.ReferenceField({
-      label: 'Job Code',
-      description: 'The Job Profile for the Employee.',
+    jobName: FF.ReferenceField({
+      label: 'Job Name',
+      description: 'The Job Name for the Employee.',
       sheetKey: 'Jobs',
       foreignKey: 'jobName',
       relationship: 'has-many',
       primary: false,
-      required: false,
+      required: true,
       unique: false,
+    }),
+
+    //Read-only field that will be populated based on the value in the the Job Name field
+
+    jobCode: FF.TextField({
+      label: 'Job Code',
+      description: 'The Job Profile for the Employee.',
+      primary: false,
+      required: true,
+      unique: false,
+      stageVisibility: {
+        mapping: false,
+      },
     }),
 
     // If left blank, will default to job code title
@@ -891,6 +851,7 @@ const Employees = new FF.Sheet(
     //Function that receives a row with all required fields fully present and optional fields typed optional?:string. Best used to compute derived values, can also be used to update existing fields.
     recordCompute: (record: FlatfileRecord<any>, _session, logger?: any) => {
       validateContactInformation(record);
+      vlookup(record, 'jobName', 'jobCode', 'jobCode');
     },
 
     //Add Validation that endEmploymentDate must be after hireDate.
@@ -905,7 +866,7 @@ const Employees = new FF.Sheet(
     },
     //Use for API based validations (ex: employeeId)
     actions: {
-      executeValidationAction,
+      RetriggerValidations,
     },
   }
 );
