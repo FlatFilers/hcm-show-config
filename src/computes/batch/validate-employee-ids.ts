@@ -5,10 +5,13 @@ import { get } from '../../utils/fetch';
 // const axios = require('axios');
 
 export const validateEmployeeIds = async (payload: FlatfileRecords<any>) => {
-  const url = `https://hcm.show/api/v1/employees`;
-
-  const employeesResponse = await get({ url, token: 'TODO' });
-
+  console.log('Calling out to /api/v1/employees');
+  const employeesResponse = await get({
+    host: 'hcm.show',
+    path: '/api/v1/employees',
+    token: 'TODO',
+  });
+  console.log('/api/v1/employees status:', employeesResponse.status);
   // console.log('employeesResponse', employeesResponse);
 
   if (!(employeesResponse.status >= 200 && employeesResponse.status < 300)) {

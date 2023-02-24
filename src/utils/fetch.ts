@@ -1,12 +1,18 @@
 const https = require('https');
 
-export const get = (params: any): Promise<{ status: number; data: any }> => {
-  const { url, body, token } = params;
+type GetParams = { host: string; path: string; token: string };
+
+export const get = ({
+  host,
+  path,
+  token,
+}: GetParams): Promise<{ status: number; data: any }> => {
+  // const { host, path, body, token } = params;
   const options = {
     protocol: 'https:',
-    hostname: 'api.x.flatfile.com',
+    hostname: host,
     method: 'GET',
-    path: url,
+    path: path,
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
@@ -37,13 +43,19 @@ export const get = (params: any): Promise<{ status: number; data: any }> => {
   });
 };
 
-export const post = (params: any): Promise<{ status: number; data: any }> => {
-  const { url, body, token } = params;
+type PostParams = { host: string; path: string; body: any; token: string };
+
+export const post = ({
+  host,
+  path,
+  body,
+  token,
+}: PostParams): Promise<{ status: number; data: any }> => {
   const options = {
     protocol: 'https:',
-    hostname: 'api.x.flatfile.com',
+    hostname: host,
     method: 'POST',
-    path: url,
+    path: path,
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,

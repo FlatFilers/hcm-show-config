@@ -6,11 +6,11 @@ import Employees from '../../data-templates/hcm-templates/employees';
 //Workbook  - Update to reference your Workbook with Sheet(s)
 export default new SpaceConfig({
   name: 'HCM.Show Project Workflow',
-  slug: 'HCMShowProjectWorkflows',
+  slug: 'HCMShowProjectWorkflows1',
   workbookConfigs: {
     basic: new Workbook({
       name: 'HCM Workbook',
-      slug: 'HCMWorkbook-2',
+      slug: 'HCMWorkbook-21',
       namespace: 'HCM Workbook',
       sheets: {
         Jobs,

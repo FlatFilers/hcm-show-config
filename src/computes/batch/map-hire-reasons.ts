@@ -8,14 +8,14 @@ export const mapHireReasons = async (payload: FlatfileRecords<any>) => {
     (r) => r.get('hireReason') as string
   );
 
-  const url = `https://hcm.show/api/v1/hire-reasons`;
-
+  console.log('Calling out to /api/v1/hire-reasons');
   const hireReasonsResponse = await post({
-    url,
+    host: 'hcm.show',
+    path: '/api/v1/hire-reasons',
     body: hireReasons,
     token: 'TODO',
   });
-
+  console.log('/api/v1/hire-reasons status:', hireReasonsResponse.status);
   // console.log('hireReasonsResponse', hireReasonsResponse);
 
   if (
