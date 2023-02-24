@@ -1,17 +1,13 @@
 import { FlatfileRecords } from '@flatfile/hooks';
 import { isNotNil } from '../../validations-plugins/common/helpers';
+import { get } from '../../utils/fetch';
 
-const axios = require('axios');
+// const axios = require('axios');
 
 export const validateEmployeeIds = async (payload: FlatfileRecords<any>) => {
   const url = `https://hcm.show/api/v1/employees`;
 
-  const employeesResponse = await axios.get(url, {
-    headers: {
-      'Content-Type': 'application/json',
-      // TODO: authentication
-    },
-  });
+  const employeesResponse = await get({ url, token: 'TODO' });
 
   // console.log('employeesResponse', employeesResponse);
 

@@ -1,6 +1,7 @@
 import { FlatfileRecords } from '@flatfile/hooks';
+import { post } from '../../utils/fetch';
 
-const axios = require('axios');
+// const axios = require('axios');
 
 export const mapHireReasons = async (payload: FlatfileRecords<any>) => {
   const hireReasons: string[] = payload.records.map(
@@ -9,11 +10,10 @@ export const mapHireReasons = async (payload: FlatfileRecords<any>) => {
 
   const url = `https://hcm.show/api/v1/hire-reasons`;
 
-  const hireReasonsResponse = await axios.post(url, hireReasons, {
-    headers: {
-      'Content-Type': 'application/json',
-      // TODO: authentication
-    },
+  const hireReasonsResponse = await post({
+    url,
+    body: hireReasons,
+    token: 'TODO',
   });
 
   // console.log('hireReasonsResponse', hireReasonsResponse);
