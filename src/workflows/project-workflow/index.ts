@@ -1,16 +1,19 @@
 import { Workbook, SpaceConfig } from '@flatfile/configure';
+import { EventTopic } from '@flatfile/api';
+import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor';
 
 import Jobs from '../../data-templates/hcm-templates/jobs';
 import Employees from '../../data-templates/hcm-templates/employees';
 
 //Workbook  - Update to reference your Workbook with Sheet(s)
-export default new SpaceConfig({
+
+const HCMShowProjectWorkflow = new SpaceConfig({
   name: 'HCM.Show Project Workflow',
-  slug: 'HCMShowProjectWorkflows',
+  slug: 'HCMShowProjectWorkflow',
   workbookConfigs: {
     basic: new Workbook({
       name: 'HCM Workbook',
-      slug: 'HCMWorkbook-2',
+      slug: 'HCMWorkbook',
       namespace: 'HCM Workbook',
       sheets: {
         Jobs,
@@ -19,3 +22,10 @@ export default new SpaceConfig({
     }),
   },
 });
+
+//Excel Plug-in
+HCMShowProjectWorkflow.on([EventTopic.Uploadcompleted], (event) => {
+  return new ExcelExtractor(event, { rawNumbers: true }).runExtraction();
+});
+
+export default HCMShowProjectWorkflow;

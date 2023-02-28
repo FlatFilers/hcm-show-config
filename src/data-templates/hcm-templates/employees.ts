@@ -6,102 +6,7 @@ import { validateRegex } from '../../validations-plugins/common/common';
 import { validateContactInformation } from '../../computes/record/validate-contact-information';
 import { validateEmployeeIds } from '../../computes/batch/validate-employee-ids';
 import { mapHireReasons } from '../../computes/batch/map-hire-reasons';
-
-const axios = require('axios');
-
-const phoneFields = [
-  'phoneCountry',
-  'internationalPhoneCode',
-  'phoneNumber',
-  'phoneExtension',
-  'deviceType',
-  'phonePublic',
-  'phonePrimary',
-  'phoneType',
-  'phoneUseFor',
-  'phoneId',
-];
-
-const emailFields = [
-  'emailAddress',
-  'emailComment',
-  'emailPublic',
-  'emailPrimary',
-  'emailType',
-  'emailUseFor',
-  'emailId',
-];
-
-const addressFields = [
-  'addressId',
-  'addressEffectiveDate',
-  'addressCountry',
-  'addressLine1',
-  'addressLine2',
-  'addressLine3',
-  'addressLine4',
-  'addressLine5',
-  'addressLine6',
-  'addressLine7',
-  'addressLine8',
-  'addressLine9',
-  'addressLine1Local',
-  'addressLine2Local',
-  'addressLine3Local',
-  'addressLine4Local',
-  'addressLine5Local',
-  'addressLine6Local',
-  'addressLine7Local',
-  'addressLine8Local',
-  'addressLine9Local',
-  'municipality',
-  'citySubdivision1',
-  'citySubdivision2',
-  'citySubdivision1Local',
-  'citySubdivision2Local',
-  'countryRegion',
-  'RegionSubdivision1',
-  'regionSubdivision2',
-  'regionSubdivision1Local',
-  'regionSubdivision2Local',
-  'postalCode',
-  'addressPublic',
-  'addressPrimary',
-  'addressType',
-  'addressUseFor',
-  'municipalityLocal',
-];
-
-async function executeValidation(event: any) {
-  const workbookId = event.context.workbookId;
-  const sheetId = event.context.sheetId;
-
-  try {
-    await axios.post(
-      `v1/workbooks/${workbookId}/sheets/${sheetId}/validate`,
-      {}
-    );
-  } catch (error) {
-    console.log(`validation error: ${JSON.stringify(error, null, 2)}`);
-  }
-}
-
-const executeValidationAction = new FF.Action(
-  {
-    slug: 'executeValidation',
-    label: 'Execute Validation',
-    description: 'Executes Validations on the Data in this Sheet',
-  },
-  async (e) => {
-    try {
-      await executeValidation(e);
-    } catch (error) {
-      console.log(
-        `executeValidationAction[error]: ${JSON.stringify(error, null, 2)}`
-      );
-    }
-  }
-);
+import RetriggerValidations from '../../validations-plugins/reTriggerValidations';
 
 const Employees = new FF.Sheet(
   'Employees',
@@ -905,7 +810,7 @@ const Employees = new FF.Sheet(
     },
     //Use for API based validations (ex: employeeId)
     actions: {
-      executeValidationAction,
+      RetriggerValidations,
     },
   }
 );
