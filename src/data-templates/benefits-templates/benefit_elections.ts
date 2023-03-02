@@ -18,8 +18,6 @@ const benefitElections = new FF.Sheet(
 
     benefitPlan: FF.TextField({
       label: 'Benefit Plan',
-      description:
-        'On update of a job, this is the date the change to the Job will take effect. Will default to today if not submitted. During implementation, we recommend using a date of 01-01-1900 for the initial entry.',
       required: true,
     }),
   },

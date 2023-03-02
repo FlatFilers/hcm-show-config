@@ -1,45 +1,29 @@
-/**
- * This is a scaffold for defining a Workbook with Sheets and Portals.
- * Test this scaffold using the sample file in examples/sample-uploads/my-sheet-sample.csv.
- *
- * See examples/workbooks/FullExample.ts for a full, working example of a Workbook.
- */
+import { Workbook, SpaceConfig } from '@flatfile/configure';
+import { EventTopic } from '@flatfile/api';
+import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor';
 
-import {
-  NumberField,
-  Portal,
-  Sheet,
-  TextField,
-  Workbook,
-} from '@flatfile/configure'
+import benefitElections from '../../data-templates/benefits-templates/benefit_elections';
 
-/**
- * Sheets
- * Define your Sheet configuration and Fields here, or import them:
- * import { YourSheet } from './path-to-your-sheet/your-sheet.ts'
- */
-const MySheet = new Sheet('MySheet', {
-  firstName: TextField(),
-  lastName: TextField(),
-  age: NumberField(),
-})
+//Workbook  - Update to reference your Workbook with Sheet(s)
 
-/**
- * Portals
- * Define your Portals here, or import them:
- * import { YourPortal } from './path-to-your-portal/your-portal.ts'
- */
-const MyPortal = new Portal({
-  name: 'MyPortal',
-  sheet: 'MySheet',
-})
-
-// Workbook  - Update to reference your Workbook with Sheet(s) and Portal(s)
-export default new Workbook({
-  name: 'MyWorkbook',
-  namespace: 'my-workbook',
-  portals: [MyPortal],
-  sheets: {
-    MySheet,
+const HCMShowEmbeddedWorkflow = new SpaceConfig({
+  name: 'HCM.Show Embedded Workflow',
+  slug: 'HCMShowEmbeddedorkflow',
+  workbookConfigs: {
+    basic: new Workbook({
+      name: 'Benefits Workbook',
+      slug: 'Benefitsorkbook',
+      namespace: 'Benefits Workbook',
+      sheets: {
+        benefitElections,
+      },
+    }),
   },
-})
+});
+
+//Excel Plug-in
+HCMShowEmbeddedWorkflow.on([EventTopic.Uploadcompleted], (event) => {
+  return new ExcelExtractor(event, { rawNumbers: true }).runExtraction();
+});
+
+export default HCMShowEmbeddedWorkflow;
