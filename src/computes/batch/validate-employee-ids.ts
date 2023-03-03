@@ -1,35 +1,38 @@
 import { FlatfileRecords } from '@flatfile/hooks';
 import { isNotNil } from '../../validations-plugins/common/helpers';
+import { staticEmployeeIds } from './static-employee-id-data';
 
 const axios = require('axios');
 
 export const validateEmployeeIds = async (payload: FlatfileRecords<any>) => {
-  const url = `https://hcm.show/api/v1/employees`;
+  // Hardcoding until API calls are available
+  // const url = `https://hcm.show/api/v1/employees`;
 
-  const employeesResponse = await axios.get(url, {
-    headers: {
-      'Content-Type': 'application/json',
-      // TODO: authentication
-    },
-  });
+  // const employeesResponse = await axios.get(url, {
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //     // TODO: authentication
+  //   },
+  // });
 
-  // console.log('employeesResponse', employeesResponse);
+  // // console.log('employeesResponse', employeesResponse);
 
-  if (!(employeesResponse.status >= 200 && employeesResponse.status < 300)) {
-    payload.records.forEach((record) => {
-      record.addError(
-        'employeeId',
-        'Error - could not fetch employees from API to verify ID.'
-      );
-      record.addError(
-        'managerId',
-        'Error - could not fetch employees from API to verify ID.'
-      );
-    });
-    return;
-  }
+  // if (!(employeesResponse.status >= 200 && employeesResponse.status < 300)) {
+  //   payload.records.forEach((record) => {
+  //     record.addError(
+  //       'employeeId',
+  //       'Error - could not fetch employees from API to verify ID.'
+  //     );
+  //     record.addError(
+  //       'managerId',
+  //       'Error - could not fetch employees from API to verify ID.'
+  //     );
+  //   });
+  //   return;
+  // }
 
-  const existingEmployeeIds = employeesResponse.data as string[];
+  // const existingEmployeeIds = employeesResponse.data as string[];
+  const existingEmployeeIds = staticEmployeeIds;
   const employeIdsFromRecords = payload.records
     .filter((r) => isNotNil(r.get('employeeId')))
     .map((r) => r.get('employeeId') as string);
