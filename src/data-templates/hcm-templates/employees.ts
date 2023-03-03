@@ -7,6 +7,7 @@ import { validateContactInformation } from '../../computes/record/validate-conta
 import { validateEmployeeIds } from '../../computes/batch/validate-employee-ids';
 import { mapHireReasons } from '../../computes/batch/map-hire-reasons';
 import RetriggerValidations from '../../validations-plugins/reTriggerValidations';
+import { pushToHcmShow } from '../../validations-plugins/actions/push-to-hcm-show';
 
 const Employees = new FF.Sheet(
   'Employees',
@@ -811,6 +812,7 @@ const Employees = new FF.Sheet(
     //Use for API based validations (ex: employeeId)
     actions: {
       RetriggerValidations,
+      pushToHcmShow,
     },
   }
 );
