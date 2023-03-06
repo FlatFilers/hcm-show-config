@@ -9,7 +9,7 @@ const benefitElections = new FF.Sheet(
 
     employeeId: FF.TextField({
       label: 'Employee ID',
-      description: 'Unique Identifier for a Job. Also known as Job ID.',
+      description: 'Employee ID for existing Employee in HCM.Show.',
       primary: true,
       required: true,
     }),
@@ -18,6 +18,8 @@ const benefitElections = new FF.Sheet(
 
     benefitPlan: FF.TextField({
       label: 'Benefit Plan',
+      description: 'Benefit Plan for existing Benefit Plan in HCM.Show.',
+      primary: false,
       required: true,
     }),
   },

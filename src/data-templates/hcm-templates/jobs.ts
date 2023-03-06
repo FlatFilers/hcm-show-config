@@ -52,7 +52,11 @@ const Jobs = new FF.Sheet(
       primary: false,
       required: false,
       unique: false,
-      default: false
+      default: false,
+      annotations: {
+        default: true,
+        defaultMessage: ' Inactive was not provided. Field has been set to ',
+      },
     }),
   },
   {
