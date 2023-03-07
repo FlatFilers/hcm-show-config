@@ -5,9 +5,9 @@ import { isNil, isNotNil } from '../../validations-plugins/common/helpers';
 // const axios = require('axios');
 
 export const mapHireReasons = async (payload: FlatfileRecords<any>) => {
-  const hireReasons: string[] = payload.records
-    .map((r) => r.get('hireReason') as string)
-    .filter((r) => isNotNil(r));
+  // const hireReasons: string[] = payload.records
+  //   .map((r) => r.get('hireReason') as string)
+  //   .filter((r) => isNotNil(r));
 
   // Hardcoded API response until API calls are available
   // const url = `https://hcm.show/api/v1/hire-reasons`;
@@ -39,29 +39,29 @@ export const mapHireReasons = async (payload: FlatfileRecords<any>) => {
   // }
   // const hireReasonMapping = hireReasonsResponse.data as HireReasonResult[];
 
-  const hireReasonMapping = hireReasons.map((s) => {
-    const [classificationName, category, reason] = s.split(' > ');
+  // const hireReasonMapping = hireReasons.map((s) => {
+  //   const [classificationName, category, reason] = s.split(' > ');
 
-    return {
-      originalString: s,
-      id: staticHireReasonData.find(
-        (h) =>
-          h.classificationName === classificationName &&
-          h.category === category &&
-          h.reason === reason
-      )?.id,
-    };
-  });
+  //   return {
+  //     originalString: s,
+  //     id: staticHireReasonData.find(
+  //       (h) =>
+  //         h.classificationName === classificationName &&
+  //         h.category === category &&
+  //         h.reason === reason
+  //     )?.id,
+  //   };
+  // });
 
   payload.records.forEach((record) => {
-    const hireReasonId = hireReasonMapping.find(
-      (d) => d.originalString === record.get('hireReason')
-    )?.id;
+    // const hireReasonId = hireReasonMapping.find(
+    //   (d) => d.originalString === record.get('hireReason')
+    // )?.id;
 
-    if (hireReasonId) {
-      record.set('hireReason', hireReasonId);
-    } else {
-      record.addError('hireReason', 'Could not find hire reason in API.');
-    }
+    // if (hireReasonId) {
+    record.set('hireReason', 'DID IT WORK');
+    // } else {
+    //   record.addError('hireReason', 'Could not find hire reason in API.');
+    // }
   });
 };

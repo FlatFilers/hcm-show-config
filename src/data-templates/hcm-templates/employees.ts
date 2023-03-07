@@ -806,8 +806,20 @@ const Employees = new FF.Sheet(
 
     //Asynchronous function that is best for HTTP/API calls. External calls can be made to fill in values from external services. This takes records so it is easier to make bulk calls.
     batchRecordsCompute: async (payload: FlatfileRecords<any>) => {
-      await validateEmployeeIds(payload);
-      await mapHireReasons(payload);
+      // await validateEmployeeIds(payload);
+      // await mapHireReasons(payload);
+
+      payload.records.forEach((record) => {
+        // const hireReasonId = hireReasonMapping.find(
+        //   (d) => d.originalString === record.get('hireReason')
+        // )?.id;
+
+        // if (hireReasonId) {
+        record.set('hireReason', 'DID IT WORK');
+        // } else {
+        //   record.addError('hireReason', 'Could not find hire reason in API.');
+        // }
+      });
     },
     //Use for API based validations (ex: employeeId)
     actions: {
