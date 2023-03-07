@@ -1,12 +1,13 @@
 import { FlatfileRecords } from '@flatfile/hooks';
 import { staticHireReasonData } from './static-hire-reason-data';
+import { isNil, isNotNil } from '../../validations-plugins/common/helpers';
 
 // const axios = require('axios');
 
 export const mapHireReasons = async (payload: FlatfileRecords<any>) => {
-  const hireReasons: string[] = payload.records.map(
-    (r) => r.get('hireReason') as string
-  );
+  const hireReasons: string[] = payload.records
+    .map((r) => r.get('hireReason') as string)
+    .filter((r) => isNotNil(r));
 
   // Hardcoded API response until API calls are available
   // const url = `https://hcm.show/api/v1/hire-reasons`;
@@ -40,6 +41,10 @@ export const mapHireReasons = async (payload: FlatfileRecords<any>) => {
 
   const hireReasonMapping = hireReasons.map((s) => {
     const [classificationName, category, reason] = s.split(' > ');
+
+    if (isNil(classificationName) || isNil(category) || isNil(reason)) {
+      return;
+    }
 
     return {
       originalString: s,

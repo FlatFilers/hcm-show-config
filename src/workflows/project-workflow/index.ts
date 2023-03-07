@@ -9,11 +9,11 @@ import Employees from '../../data-templates/hcm-templates/employees';
 
 const HCMShowProjectWorkflow = new SpaceConfig({
   name: 'HCM.Show Project Workflow',
-  slug: 'HCMShowProjectWorkflow',
+  slug: 'HCMShowProjectWorkflow-apitest',
   workbookConfigs: {
     basic: new Workbook({
       name: 'HCM Workbook',
-      slug: 'HCMWorkbook',
+      slug: 'HCMWorkbook-apitest',
       namespace: 'HCM Workbook',
       sheets: {
         Jobs,
