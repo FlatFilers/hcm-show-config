@@ -42,10 +42,6 @@ export const mapHireReasons = async (payload: FlatfileRecords<any>) => {
   const hireReasonMapping = hireReasons.map((s) => {
     const [classificationName, category, reason] = s.split(' > ');
 
-    if (isNil(classificationName) || isNil(category) || isNil(reason)) {
-      return;
-    }
-
     return {
       originalString: s,
       id: staticHireReasonData.find(
