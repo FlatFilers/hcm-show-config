@@ -9,6 +9,7 @@ import { employeeHours } from '../../computes/record/employee-hours';
 import RetriggerValidations from '../../validations-plugins/reTriggerValidations';
 import { pushToWebhook } from '../../validations-plugins/actions/push-to-webhook';
 // import { pushToHcmShow } from '../../validations-plugins/actions/push-to-hcm-show';
+import { basicAction } from '../../validations-plugins/actions/basic-action';
 
 const Employees = new FF.Sheet(
   'Employees',
@@ -133,20 +134,20 @@ const Employees = new FF.Sheet(
       primary: false,
       required: false,
       unique: false,
-      validate: (v: string) => {
-        return validateRegex(
-          v,
-          emailReg,
-          "Email addresses must be in the format of 'xxx@yy.com'. Valid examples: john.doe@aol.com, jane@aol.com."
-        );
-      },
+      // validate: (v: string) => {
+      //   return validateRegex(
+      //     v,
+      //     emailReg,
+      //     "Email addresses must be in the format of 'xxx@yy.com'. Valid examples: john.doe@aol.com, jane@aol.com."
+      //   );
+      // },
     }),
 
     phoneNumber: FF.TextField({
       label: 'Phone Number',
       description: '',
       primary: false,
-      required: true,
+      required: false,
       unique: false,
     }),
   },
@@ -161,12 +162,24 @@ const Employees = new FF.Sheet(
       validateContactInformation(record);
       verifyDates(record);
       employeeHours(record);
+
+      const email = record.get('emailAddress');
+      // for some reason we think this email isn't a string, I need to set it to a string
+      // toString returns an error
+      // Error: Cannot read properties of null (reading 'toString')	
+      // const emailString = email.stringify();
+      if (typeof email === "string") {
+        return validateRegex(email,emailReg,"Email addresses must be in the format of 'xxx@yy.com'. Valid examples: john.doe@aol.com, jane@aol.com.");
+      }
+
+
     },
 
     actions: {
       RetriggerValidations,
       // pushToHcmShow,
       pushToWebhook,
+      basicAction
     },
   }
 );

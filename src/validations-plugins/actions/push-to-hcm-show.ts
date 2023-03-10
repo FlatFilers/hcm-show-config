@@ -9,7 +9,6 @@ export const pushToHcmShow = new Action(
   },
   async (e) => {
     const { spaceId } = e.context;
-
     try {
       const req = https.request({
         method: 'POST',
