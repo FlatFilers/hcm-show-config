@@ -32,6 +32,8 @@ export const verifyDates = (record: FlatfileRecord<any>) => {
     record.addWarning(['jobName'], message);
   }
 
+  // Need to update this to account for updates in Flatfile. ex: if title is updated, need to update the positionTitle to dept
+
   if (isNil(title)) {
     record.set('positionTitle', dept);
     record.addInfo('positionTitle', 'Title defaulted to department name.');
@@ -42,7 +44,7 @@ export const verifyDates = (record: FlatfileRecord<any>) => {
     record.addError('endEmploymentDate', message);
   }
 
-  if (empType == 'tm' && isNotNil(endEmploymentDate)) {
+  if (empType != 'tm' && isNotNil(endEmploymentDate)) {
     const message = 'Employment End Date is only valid for Temp Employees';
     record.addError('endEmploymentDate', message);
   }

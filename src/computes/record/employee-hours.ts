@@ -35,6 +35,8 @@ export const employeeHours = (record: FlatfileRecord<any>) => {
 
   // Set Scheduled Weekly Hours Based on Employee Type
 
+  // Need to update these to account for updates in Flatfile. ex: if employeetype is updated, need to update the scheduledWeeklyHours
+
   if (isNil(schedHours) && empType === 'ft') {
     record.set('scheduledWeeklyHours', 40);
     record.addInfo('scheduledWeeklyHours', message);
