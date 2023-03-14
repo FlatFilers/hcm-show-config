@@ -6,6 +6,7 @@ const Jobs = new FF.Sheet(
   'Jobs',
   {
     //Validate against exisitng Job Codes in DB - call out the ID already exists & this would be an update and not a create
+    //If blank, Can we create this by replace all spaces with underscores and include an info message that this was set programatically?
 
     jobCode: FF.TextField({
       label: 'Job Code',
@@ -22,6 +23,8 @@ const Jobs = new FF.Sheet(
       required: true,
       unique: false,
     }),
+
+    //Will eventually be replaced with Job Family Group validation / referenceField
 
     jobDept: FF.TextField({
       label: 'Job Department',
@@ -41,6 +44,17 @@ const Jobs = new FF.Sheet(
       primary: false,
       required: false,
       unique: false,
+      validate: (effectiveDate) => {
+        if (!effectiveDate) {
+          return [
+            new FF.Message(
+              `If Effective Date is left blank, it will default to today's date in HCM.Show`,
+              'warn',
+              'validate'
+            ),
+          ];
+        }
+      },
     }),
 
     // May want to default this to True or allow this to be specified dynamically
@@ -55,7 +69,7 @@ const Jobs = new FF.Sheet(
       default: false,
       annotations: {
         default: true,
-        defaultMessage: ' Inactive was not provided. Field has been set to ',
+        defaultMessage: 'Inactive was not provided. Field has been set to ',
       },
     }),
   },
