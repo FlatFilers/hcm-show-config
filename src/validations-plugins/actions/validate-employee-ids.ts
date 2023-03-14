@@ -1,4 +1,5 @@
 import {
+  RecordsUpdates,
   ValidationMessageSourceEnum,
   ValidationMessageTypeEnum,
 } from '@flatfile/api';
@@ -26,6 +27,8 @@ export const validateEmployeeIds = new Action(
 
     const employeeIds = await fetchEmployeeIds(spaceId);
 
+    const recordUpdates: RecordsUpdates = [];
+
     recordsResponse.data.records.forEach((record) => {
       console.log(record);
 
@@ -37,12 +40,39 @@ export const validateEmployeeIds = new Action(
           source: ValidationMessageSourceEnum.CustomLogic,
         };
 
-        record.values['employeeId'] = {
-          value: 'Pending',
-          messages: [message],
-        };
+        record.values.employeeId.messages.push({
+          type: ValidationMessageTypeEnum.Warn,
+          message:
+            'Employee ID already exists in HCM.show. This record will be updated.',
+          source: ValidationMessageSourceEnum.CustomLogic,
+        });
+
+        recordUpdates.push(record);
       }
     });
+
+    if (recordUpdates) {
+      console.log(
+        JSON.stringify({
+          workbookId,
+          sheetId,
+          recordsUpdates: recordUpdates as RecordsUpdates,
+        })
+      );
+      try {
+        await e.api.updateRecords({
+          workbookId,
+          sheetId,
+          recordsUpdates: recordUpdates as RecordsUpdates,
+        });
+      } catch (e) {
+        console.log(
+          `validateEmployeeIds - API updateRecords error: ${JSON.stringify(e)}`
+        );
+      }
+    } else {
+      console.log('validateEmployeeIds - No records to update');
+    }
   }
 );
 
