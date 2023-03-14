@@ -30,16 +30,7 @@ export const validateEmployeeIds = new Action(
     const recordUpdates: RecordsUpdates = [];
 
     recordsResponse.data.records.forEach((record) => {
-      console.log(record);
-
       if (employeeIds.includes(record.values.employeeId.value as string)) {
-        const message = {
-          message:
-            'Employee ID already exists in HCM.show. This record will be updated.',
-          type: ValidationMessageTypeEnum.Warn,
-          source: ValidationMessageSourceEnum.CustomLogic,
-        };
-
         record.values.employeeId.messages.push({
           type: ValidationMessageTypeEnum.Warn,
           message:
