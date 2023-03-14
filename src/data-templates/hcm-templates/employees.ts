@@ -121,6 +121,7 @@ const Employees = new FF.Sheet(
       stageVisibility: {
         mapping: false,
       },
+      readonly: true,
     }),
 
     // If left blank, will default to department title
