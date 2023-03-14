@@ -11,6 +11,7 @@ import { verifyDates } from '../../computes/record/verify-dates';
 import { employeeHours } from '../../computes/record/employee-hours';
 import RetriggerValidations from '../../validations-plugins/reTriggerValidations';
 import { pushToHcmShow } from '../../validations-plugins/actions/push-to-hcm-show';
+import { validateEmployeeIds } from '../../validations-plugins/actions/validate-employee-ids';
 
 const Employees = new FF.Sheet(
   'Employees',
@@ -212,6 +213,7 @@ const Employees = new FF.Sheet(
     actions: {
       RetriggerValidations,
       pushToHcmShow,
+      validateEmployeeIds,
     },
   }
 );
