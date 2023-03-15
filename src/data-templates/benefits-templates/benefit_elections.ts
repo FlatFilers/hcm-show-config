@@ -22,6 +22,43 @@ const benefitElections = new FF.Sheet(
       primary: false,
       required: true,
     }),
+
+    //Required checkbox → “required: true” validation
+
+    currentlyEnrolled: FF.BooleanField({
+      label: 'Currently Enrolled',
+      description: 'Is the employee currently enrolled in this benefit plan?',
+      primary: false,
+      required: true,
+    }),
+
+    //Date fields have a date format selection → updated target date format for SmartDateField
+
+    coverageStartDate: SmartDateField({
+      label: 'Coverage Start Date',
+      description: 'Date coverage begins for this benefit plan.',
+      formatString: 'yyyy-MM-dd',
+      primary: false,
+      required: true,
+    }),
+
+    //Number decimal places → validation / compute on Number fields for decimal places (trim and validate)
+
+    employerContribution: FF.NumberField({
+      label: 'Employer Contribution',
+      description:
+        'Employer contribution for this benefit plan per plan frequency .',
+      primary: false,
+      required: true,
+      annotations: {
+        compute: true,
+        computeMessage:
+          'This value was automatically reformatted to two decimal places. Original value was: ',
+      },
+      compute: (v: number) => {
+        return Number(v.toFixed(2));
+      },
+    }),
   },
 
   //Sheet Configuration Options
