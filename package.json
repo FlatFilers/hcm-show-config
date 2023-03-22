@@ -24,7 +24,8 @@
     "create:env": "flatfile create:env -n",
     "lint": "TIMING=1 eslint \"src/**/*.{ts,tsx,js,jsx}\" --fix",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "test": "jest --runInBand --detectOpenHandles --forceExit --passWithNoTests"
+    "test": "jest --runInBand --detectOpenHandles --forceExit --passWithNoTests",
+    "deploy:uploadlistener": "flatfile publish ./src/workflows/project-workflow/index.ts && flatfile pubsub src/listeners/upload-listener.ts"
   },
   "devDependencies": {
     "@flatfile/configure": "^0.5.13",
@@ -42,8 +43,9 @@
     "ts-jest": "^28.0.5"
   },
   "dependencies": {
-    "@flatfile/plugin-xlsx-extractor": "^0.0.2",
     "@flatfile/api": "^0.0.9",
+    "@flatfile/listener": "^0.0.2",
+    "@flatfile/plugin-xlsx-extractor": "^0.0.2",
     "chrono-node": "^2.4.1",
     "date-fns": "^2.29.3",
     "date-fns-tz": "^1.3.7",
