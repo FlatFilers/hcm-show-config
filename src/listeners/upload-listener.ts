@@ -5,16 +5,23 @@ import {
 } from '@flatfile/listener';
 import { post } from '../utils/request';
 
+const SHEET_NAME = 'sheet(Employees)';
+
 const UploadListener = Client.create((client) => {
   /**
    * This is a basic hook on events with no sugar on top
    */
-  client.on('records:*', (event: FlatfileEvent) => {
+  client.on('records:*', { target: SHEET_NAME }, (event: FlatfileEvent) => {
     console.log('record event: ' + JSON.stringify(event));
-    //do something here
 
     const { spaceId } = event.context;
-    post({ path: `/api/v1/sync-space`, body: { spaceId } });
+    const topic = event.topic;
+
+    post({
+      hostname: 'f9202822117b.ngrok.app',
+      path: '/api/v1/sync-file-feed',
+      body: { spaceId, topic },
+    });
   });
 
   client.on(

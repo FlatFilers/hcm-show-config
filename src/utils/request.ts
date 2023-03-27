@@ -1,11 +1,19 @@
 import https from 'https';
 
-export const post = async ({ path, body }: { path: string; body: any }) => {
+export const post = async ({
+  hostname = 'hcm.show',
+  path,
+  body,
+}: {
+  hostname?: string;
+  path: string;
+  body: any;
+}) => {
   try {
     const req = https.request({
       method: 'POST',
       protocol: 'https:',
-      hostname: 'hcm.show',
+      hostname,
       path,
       headers: {
         'Content-Type': 'application/json',
