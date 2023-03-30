@@ -11,18 +11,49 @@ const UploadListener = Client.create((client) => {
   /**
    * This is a basic hook on events with no sugar on top
    */
-  client.on('records:*', { target: SHEET_NAME }, (event: FlatfileEvent) => {
-    console.log('record event: ' + JSON.stringify(event));
+  client.on(
+    'records:*',
+    { target: SHEET_NAME },
+    async (event: FlatfileEvent) => {
+      console.log('record event: ' + JSON.stringify(event));
 
-    const { spaceId } = event.context;
-    const topic = event.topic;
+      const { spaceId, sheetId, workbookId } = event.context;
+      const topic = event.topic;
 
-    post({
-      hostname: 'f9202822117b.ngrok.app',
-      path: '/api/v1/sync-file-feed',
-      body: { spaceId, topic },
-    });
-  });
+      console.log('sheetId: ' + sheetId);
+      console.log('workbookId: ' + workbookId);
+
+      // post({
+      //   hostname: '43f9f12de190.ngrok.app',
+      //   path: '/api/v1/sync-file-feed',
+      //   body: { spaceId, topic },
+      // });
+
+      const records = await client.api.getRecords({ workbookId, sheetId });
+
+      console.log('Records are: ', JSON.stringify(records));
+
+      // if (topic === 'records:created' || topic === 'records:updated') {
+      //   console.log('create or update event');
+      //   const recordIds = [];
+
+      //   event.payload.records.forEach((record) => {
+      //     if (record.valid) {
+      //       recordIds.push(record.id);
+      //     }
+      //   });
+
+      //   console.log('Deleting valid records: ', recordIds.length);
+
+      //   // event.api.deleteRecords({
+      //   //   workbookId,
+      //   //   sheetId,
+      //   //   ids: recordIds,
+      //   // });
+      //   // //do something here
+      // }
+    }
+  );
 
   client.on(
     'upload:*', //listens for upload:completed
