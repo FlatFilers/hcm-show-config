@@ -4,6 +4,7 @@ import {
   FlatfileEvent,
 } from '@flatfile/listener';
 import { post } from '../utils/request';
+import { getAccessToken } from '../utils/flatfile-api';
 
 const SHEET_NAME = 'sheet(Employees)';
 
@@ -15,23 +16,32 @@ const UploadListener = Client.create((client) => {
     'records:*',
     { target: SHEET_NAME },
     async (event: FlatfileEvent) => {
-      console.log('record event: ' + JSON.stringify(event));
+      // console.log('record event: ' + JSON.stringify(event));
 
-      const { spaceId, sheetId, workbookId } = event.context;
+      const { spaceId, sheetId } = event.context;
       const topic = event.topic;
 
-      console.log('sheetId: ' + sheetId);
-      console.log('workbookId: ' + workbookId);
+      console.log('LISTENER');
+      // const apiToken = await event.api.getAccessToken({
+      //   apiCredentials: {
+      //     clientId: testParams.clientId,
+      //     secret: testParams.secret,
+      //   },
+      // });
+      // console.log('api token: ' + apiToken);
+      console.log('access token: ' + JSON.stringify(await getAccessToken()));
+      // console.log('sheetId: ' + sheetId);
+      // console.log('workbookId: ' + workbookId);
 
       // post({
-      //   hostname: '43f9f12de190.ngrok.app',
+      //   hostname: '9a6d215ded38.ngrok.app',
       //   path: '/api/v1/sync-file-feed',
       //   body: { spaceId, topic },
       // });
 
-      const records = await client.api.getRecords({ workbookId, sheetId });
+      // const records = await event.api.getRecords({ sheetId });
 
-      console.log('Records are: ', JSON.stringify(records));
+      // console.log('Records are: ', JSON.stringify(records));
 
       // if (topic === 'records:created' || topic === 'records:updated') {
       //   console.log('create or update event');
