@@ -16,12 +16,12 @@ const UploadListener = Client.create((client) => {
     'records:*',
     { target: SHEET_NAME },
     async (event: FlatfileEvent) => {
-      // console.log('record event: ' + JSON.stringify(event));
+      console.log('LISTENER | ');
+      console.log('record event: ' + JSON.stringify(event));
 
       const { spaceId, sheetId } = event.context;
       const topic = event.topic;
 
-      console.log('LISTENER');
       // const apiToken = await event.api.getAccessToken({
       //   apiCredentials: {
       //     clientId: testParams.clientId,
@@ -29,19 +29,20 @@ const UploadListener = Client.create((client) => {
       //   },
       // });
       // console.log('api token: ' + apiToken);
-      console.log('access token: ' + JSON.stringify(await getAccessToken()));
+      // console.log('access token: ' + JSON.stringify(await getAccessToken()));
       // console.log('sheetId: ' + sheetId);
       // console.log('workbookId: ' + workbookId);
 
       // post({
+      //   // hostname: 'hcm.show',
       //   hostname: '9a6d215ded38.ngrok.app',
       //   path: '/api/v1/sync-file-feed',
       //   body: { spaceId, topic },
       // });
 
-      // const records = await event.api.getRecords({ sheetId });
+      const records = await event.api.getRecords({ sheetId });
 
-      // console.log('Records are: ', JSON.stringify(records));
+      console.log('Records are: ', JSON.stringify(records));
 
       // if (topic === 'records:created' || topic === 'records:updated') {
       //   console.log('create or update event');

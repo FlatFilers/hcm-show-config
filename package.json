@@ -28,8 +28,8 @@
     "deploy:uploadlistener": "flatfile publish ./src/workflows/project-workflow/index.ts && flatfile pubsub src/listeners/upload-listener.ts"
   },
   "devDependencies": {
-    "@flatfile/configure": "^0.5.19",
-    "@flatfile/hooks": "^1.2.3",
+    "@flatfile/configure": "^0.5.20",
+    "@flatfile/hooks": "^1.2.4",
     "@types/jest": "^28.1.4",
     "@types/lodash": "^4.14.186",
     "@typescript-eslint/parser": "^5.31.0",
@@ -43,8 +43,8 @@
     "ts-jest": "^28.0.5"
   },
   "dependencies": {
-    "@flatfile/api": "^0.0.9",
-    "@flatfile/listener": "^0.0.3",
+    "@flatfile/api": "^0.0.18",
+    "@flatfile/listener": "^0.0.4",
     "@flatfile/plugin-xlsx-extractor": "^0.0.2",
     "chrono-node": "^2.4.1",
     "date-fns": "^2.29.3",
