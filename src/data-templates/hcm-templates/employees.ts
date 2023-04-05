@@ -200,6 +200,8 @@ const Employees = new FF.Sheet(
   //Sheet Configuration Options
 
   {
+    access: ['add', 'import', 'edit', 'delete'],
+
     //Allows the end user to create additional fields from their upload when the incoming column does not match with any existing field for the Sheet.
     allowCustomFields: false,
 

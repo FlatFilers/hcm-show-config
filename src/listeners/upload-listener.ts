@@ -19,7 +19,7 @@ const UploadListener = Client.create((client) => {
       console.log('LISTENER | ');
       console.log('record event: ' + JSON.stringify(event));
 
-      const { spaceId, sheetId } = event.context;
+      const { spaceId } = event.context;
       const topic = event.topic;
 
       // const apiToken = await event.api.getAccessToken({
@@ -33,16 +33,18 @@ const UploadListener = Client.create((client) => {
       // console.log('sheetId: ' + sheetId);
       // console.log('workbookId: ' + workbookId);
 
-      // post({
-      //   // hostname: 'hcm.show',
-      //   hostname: '9a6d215ded38.ngrok.app',
-      //   path: '/api/v1/sync-file-feed',
-      //   body: { spaceId, topic },
-      // });
+      post({
+        hostname: 'hcm.show',
+        // hostname: '9a6d215ded38.ngrok.app',
+        path: '/api/v1/sync-file-feed',
+        body: { spaceId, topic },
+      });
 
-      const records = await event.api.getRecords({ sheetId });
+      console.log('Posted to HCM.show');
 
-      console.log('Records are: ', JSON.stringify(records));
+      // const records = await event.api.getRecords({ sheetId });
+
+      // console.log('Records are: ', JSON.stringify(records));
 
       // if (topic === 'records:created' || topic === 'records:updated') {
       //   console.log('create or update event');
