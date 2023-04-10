@@ -24,11 +24,12 @@
     "create:env": "flatfile create:env -n",
     "lint": "TIMING=1 eslint \"src/**/*.{ts,tsx,js,jsx}\" --fix",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
-    "test": "jest --runInBand --detectOpenHandles --forceExit --passWithNoTests"
+    "test": "jest --runInBand --detectOpenHandles --forceExit --passWithNoTests",
+    "deploy:filefeed-listener": "flatfile publish ./src/workflows/filefeed-workflow/index.ts && flatfile pubsub src/listeners/filefeed-listener.ts"
   },
   "devDependencies": {
-    "@flatfile/configure": "^0.5.13",
-    "@flatfile/hooks": "^1.2.3",
+    "@flatfile/configure": "^0.5.20",
+    "@flatfile/hooks": "^1.2.4",
     "@types/jest": "^28.1.4",
     "@types/lodash": "^4.14.186",
     "@typescript-eslint/parser": "^5.31.0",
@@ -42,8 +43,9 @@
     "ts-jest": "^28.0.5"
   },
   "dependencies": {
+    "@flatfile/api": "^0.0.18",
+    "@flatfile/listener": "^0.0.4",
     "@flatfile/plugin-xlsx-extractor": "^0.0.2",
-    "@flatfile/api": "^0.0.9",
     "chrono-node": "^2.4.1",
     "date-fns": "^2.29.3",
     "date-fns-tz": "^1.3.7",

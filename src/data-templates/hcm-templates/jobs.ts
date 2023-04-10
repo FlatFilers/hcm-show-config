@@ -74,6 +74,7 @@ const Jobs = new FF.Sheet(
     }),
   },
   {
+    access: ['add', 'import', 'edit', 'delete'],
     recordCompute: (record: FlatfileRecord<any>, _session, logger?: any) => {},
   }
 );
