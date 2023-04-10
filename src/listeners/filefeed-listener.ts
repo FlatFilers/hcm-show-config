@@ -6,9 +6,9 @@ import {
 import { post } from '../utils/request';
 import { getAccessToken } from '../utils/flatfile-api';
 
-const SHEET_NAME = 'sheet(Employees)';
+const SHEET_NAME = 'sheet(Benefit Elections)';
 
-const UploadListener = Client.create((client) => {
+const FilefeedListener = Client.create((client) => {
   /**
    * This is a basic hook on events with no sugar on top
    */
@@ -91,6 +91,6 @@ const UploadListener = Client.create((client) => {
 
 const FlatfileVM = new FlatfileVirtualMachine();
 
-UploadListener.mount(FlatfileVM);
+FilefeedListener.mount(FlatfileVM);
 
-export default UploadListener;
+export default FilefeedListener;
