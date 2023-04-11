@@ -1,17 +1,24 @@
+import { Blueprint } from '@flatfile/api';
 import {
   Client,
   FlatfileVirtualMachine,
   FlatfileEvent,
 } from '@flatfile/listener';
-import { post } from '../utils/request';
-import { getAccessToken } from '../utils/flatfile-api';
+import { blueprintRaw as blueprint } from '../filefeed-workflow/benefitsBlueprint';
+import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor';
+import { post } from '../../utils/request';
+import { getAccessToken } from '../../utils/flatfile-api';
 
 const SHEET_NAME = 'sheet(Benefit Elections)';
 
-const FilefeedListener = Client.create((client) => {
-  /**
-   * This is a basic hook on events with no sugar on top
-   */
+const demo = Client.create((client) => {
+  client.on('client:init', async (event) => {
+    // creates a shell spaceConfig - this will change to 'namespace'
+    const spaceConfig = await client.api.addSpaceConfig({
+      spacePatternConfig: blueprint,
+    });
+  });
+
   client.on(
     'records:*',
     { target: SHEET_NAME },
@@ -76,21 +83,14 @@ const FilefeedListener = Client.create((client) => {
     }
   );
 
-  /**
-   * This deploys the agent to the Environment.
-   * Note it will override agents/custom actions in your environment.
-   * Suggest using isolated Environment when using listener
-   */
-  client.on('client:init', async (event) => {
-    //deploys the agent
-    console.log(
-      'Deployed Agent to environment: ' + JSON.stringify(event.context)
-    );
+  // workflow assumes file is loaded via API: POST v1/files
+  client.on('upload:*', async (event) => {
+    return new ExcelExtractor(event as any, {
+      rawNumbers: true,
+    }).runExtraction();
   });
 });
 
 const FlatfileVM = new FlatfileVirtualMachine();
-
-FilefeedListener.mount(FlatfileVM);
-
-export default FilefeedListener;
+demo.mount(FlatfileVM);
+export default demo;
