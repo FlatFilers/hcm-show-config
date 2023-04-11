@@ -1,4 +1,5 @@
 import { Blueprint } from '@flatfile/api';
+import { RecordHook } from '@flatfile/configure';
 import {
   Client,
   FlatfileVirtualMachine,
@@ -8,6 +9,7 @@ import { blueprintRaw as blueprint } from '../filefeed-workflow/benefitsBlueprin
 import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor';
 import { post } from '../../utils/request';
 import { getAccessToken } from '../../utils/flatfile-api';
+import defaultsAndFormatting from '../filefeed-workflow/formatting';
 
 const SHEET_NAME = 'sheet(Benefit Elections)';
 
@@ -88,6 +90,16 @@ const demo = Client.create((client) => {
     return new ExcelExtractor(event as any, {
       rawNumbers: true,
     }).runExtraction();
+  });
+
+  // Run Hooks on any record event
+
+  client.on('records:*', { target: 'sheet(SHEET_NAME)' }, async (event) => {
+    RecordHook(event, (record) => {
+      const results = defaultsAndFormatting(record as any);
+      console.log('hooks ran ' + JSON.stringify(results));
+      return record;
+    });
   });
 });
 
