@@ -19,13 +19,15 @@
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts",
     "dev": "tsup src/index.ts --format esm,cjs --watch --dts",
-    "deploy": "flatfile publish ./src/workflows/project-workflow/index.ts",
     "deploy:xdk": "flatfile publish ./examples/workbooks/xdk-simple-deploy.ts",
     "create:env": "flatfile create:env -n",
     "lint": "TIMING=1 eslint \"src/**/*.{ts,tsx,js,jsx}\" --fix",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "test": "jest --runInBand --detectOpenHandles --forceExit --passWithNoTests",
-    "deploy:filefeed-listener": "flatfile publish ./src/workflows/filefeed-workflow/index.ts && flatfile pubsub src/listeners/filefeed-listener.ts"
+    "deploy:onboarding": "flatfile publish ./src/workflows/project-workflow/index.ts",
+    "deploy:filefeed-listener": "flatfile publish ./src/workflows/filefeed-workflow/index.ts && flatfile pubsub src/listeners/filefeed-listener.ts",
+    "deploy:embedded": "flatfile publish ./src/workflows/embedded-workflow/index.ts",
+    "deploy:dynamic-templates": "flatfile publish ./src/workflows/dynamic-templates/index.ts"
   },
   "devDependencies": {
     "@flatfile/configure": "^0.5.20",
