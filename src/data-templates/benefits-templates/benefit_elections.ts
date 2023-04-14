@@ -1,6 +1,7 @@
 import * as FF from '@flatfile/configure';
 import { SmartDateField } from '../fields/SmartDateField';
 import { FlatfileRecord, FlatfileRecords } from '@flatfile/hooks';
+import { pushToHcmShow } from '../../validations-plugins/actions/push-to-hcm-show';
 
 const benefitElections = new FF.Sheet(
   'Benefit Elections',
@@ -73,6 +74,10 @@ const benefitElections = new FF.Sheet(
     //Asynchronous function that is best for HTTP/API calls. External calls can be made to fill in values from external services. This takes records so it is easier to make bulk calls.
 
     batchRecordsCompute: async (payload: FlatfileRecords<any>) => {},
+
+    actions: {
+      pushToHcmShow,
+    },
   }
 );
 
