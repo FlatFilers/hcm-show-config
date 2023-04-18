@@ -26,7 +26,11 @@ export const getUserIdFromSpace = async ({
 
   console.log('| space: ' + JSON.stringify(space));
 
-  const userId = (space.data.metadata as { userId: string }).userId;
+  // TODO: Eventually remove. Embed has a different format currently
+  // and nests the data under `spaceInfo`
+  const userId =
+    (space.data.metadata as { userId: string }).userId ||
+    (space.data.metadata as { spaceInfo: { userId: string } }).spaceInfo.userId;
 
   console.log('| userId: ' + userId);
 
