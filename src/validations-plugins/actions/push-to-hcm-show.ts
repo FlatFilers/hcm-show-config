@@ -1,5 +1,6 @@
 import { Action } from '@flatfile/configure';
 import { post } from '../../utils/request';
+import { getUserIdFromSpace } from '../../utils/flatfile-api';
 
 export const pushToHcmShow = new Action(
   {
@@ -8,9 +9,17 @@ export const pushToHcmShow = new Action(
     description: "Push this workbook's records into HCM.show",
     primary: true,
   },
-  async (e) => {
-    const { spaceId } = e.context;
+  async (event) => {
+    console.log('pushToHcmShow | e: ' + JSON.stringify(event));
 
-    post({ path: `/api/v1/sync-space`, body: { spaceId } });
+    const { spaceId } = event.context;
+
+    const userId = await getUserIdFromSpace({ event, spaceId });
+
+    post({
+      hostname: 'hcm.show',
+      path: `/api/v1/sync-space`,
+      body: { userId, spaceId },
+    });
   }
 );
