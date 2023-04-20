@@ -1,7 +1,7 @@
 import { Blueprint } from '@flatfile/api';
 
 export const blueprintRaw = {
-  name: 'Benefits',
+  name: 'HCM.show Benefits',
   slug: 'benefits-blueprint',
   blueprints: [
     {
