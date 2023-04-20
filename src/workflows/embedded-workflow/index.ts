@@ -8,11 +8,11 @@ import benefitElections from '../../data-templates/benefits-templates/benefit_el
 
 const HCMShowEmbeddedWorkflow = new SpaceConfig({
   name: 'HCM.Show Embedded Workflow',
-  slug: 'HCMShowEmbeddedorkflow',
+  slug: 'HCMShowEmbeddedWorkflow',
   workbookConfigs: {
     basic: new Workbook({
       name: 'Benefits Workbook',
-      slug: 'Benefitsorkbook',
+      slug: 'BenefitsWorkbook',
       namespace: 'Benefits Workbook',
       sheets: {
         benefitElections,

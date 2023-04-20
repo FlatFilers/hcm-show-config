@@ -1,26 +1,17 @@
-import { Blueprint } from '@flatfile/api';
-import { RecordHook } from '@flatfile/configure';
 import {
   Client,
   FlatfileVirtualMachine,
   FlatfileEvent,
 } from '@flatfile/listener';
-import { blueprintRaw as blueprint } from '../filefeed-workflow/benefitsBlueprint';
-import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor';
-import { post } from '../../utils/request';
-import { getAccessToken } from '../../utils/flatfile-api';
-import defaultsAndFormatting from '../filefeed-workflow/formatting';
+import { post } from '../utils/request';
+import { getAccessToken } from '../utils/flatfile-api';
 
-const SHEET = 'sheet(benefit-elections-sheet)';
+const SHEET = 'sheet(benefitElections)';
 
-const demo = Client.create((client) => {
-  client.on('client:init', async (event) => {
-    // creates a shell spaceConfig - this will change to 'namespace'
-    const spaceConfig = await client.api.addSpaceConfig({
-      spacePatternConfig: blueprint,
-    });
-  });
-
+const FilefeedListener = Client.create((client) => {
+  /**
+   * This is a basic hook on events with no sugar on top
+   */
   client.on('records:*', { target: SHEET }, async (event: FlatfileEvent) => {
     console.log('LISTENER | ');
     console.log('record event: ' + JSON.stringify(event));
@@ -41,7 +32,7 @@ const demo = Client.create((client) => {
 
     post({
       hostname: 'hcm.show',
-      // hostname: '7dc0-64-145-94-253.ngrok-free.app',
+      // hostname: '9a6d215ded38.ngrok.app',
       path: '/api/v1/sync-file-feed',
       body: { spaceId, topic },
     });
@@ -81,14 +72,21 @@ const demo = Client.create((client) => {
     }
   );
 
-  // workflow assumes file is loaded via API: POST v1/files
-  client.on('upload:*', async (event) => {
-    return new ExcelExtractor(event as any, {
-      rawNumbers: true,
-    }).runExtraction();
+  /**
+   * This deploys the agent to the Environment.
+   * Note it will override agents/custom actions in your environment.
+   * Suggest using isolated Environment when using listener
+   */
+  client.on('client:init', async (event) => {
+    //deploys the agent
+    console.log(
+      'Deployed Agent to environment: ' + JSON.stringify(event.context)
+    );
   });
 });
 
 const FlatfileVM = new FlatfileVirtualMachine();
-demo.mount(FlatfileVM);
-export default demo;
+
+FilefeedListener.mount(FlatfileVM);
+
+export default FilefeedListener;
