@@ -25,7 +25,7 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "test": "jest --runInBand --detectOpenHandles --forceExit --passWithNoTests",
     "deploy:onboarding": "flatfile publish ./src/workflows/project-workflow/index.ts",
-    "deploy:filefeed-listener": "flatfile publish ./src/workflows/filefeed-workflow/index.ts && flatfile pubsub src/listeners/filefeed-listener.ts",
+    "deploy:filefeed-listener": "flatfile pubsub src/workflows/filefeed-workflow/filefeed-listener.ts",
     "deploy:embedded": "flatfile publish ./src/workflows/embedded-workflow/index.ts",
     "deploy:dynamic-templates": "flatfile publish ./src/workflows/dynamic-templates/index.ts"
   },
