@@ -5,11 +5,9 @@ import {
   FlatfileVirtualMachine,
   FlatfileEvent,
 } from '@flatfile/listener';
-import { blueprintRaw as blueprint } from '../filefeed-workflow/benefitsBlueprint';
+import { blueprintRaw as blueprint } from '../../blueprints/benefitsBlueprint';
 import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor';
 import { post } from '../../utils/request';
-import { getAccessToken } from '../../utils/flatfile-api';
-import defaultsAndFormatting from '../filefeed-workflow/formatting';
 
 const SHEET = 'sheet(benefit-elections-sheet)';
 
