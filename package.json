@@ -6,15 +6,14 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node ./.config/dev.js",
-    "deploy": "npx flatfile deploy --token sk_UrerfpfQAhDHaH1qBwj6ah42MrZCcx8l"
+    "deploy": "npx flatfile deploy --token sk_zvy6eIG5IV2nSFVaubbi4mEjDaAZ6nGH"
   },
   "keywords": [],
   "author": "",
   "type": "module",
   "license": "ISC",
   "dependencies": {
-    "@flatfile/adapter": "^2.9.6",
-    "@flatfile/api": "^1.3.0",
+    "@flatfile/api": "^1.1.0",
     "@flatfile/hooks": "^1.3.0",
     "@flatfile/listener": "^0.0.6",
     "@flatfile/plugin-record-hook": "^0.0.2",

@@ -171,6 +171,7 @@ export const blueprintSheets = [
               label: 'Fringe Benefits',
             },
           ],
+          allowCustom: false,
         },
       },
     ],
