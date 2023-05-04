@@ -19,7 +19,7 @@ export default function (listener) {
   listener.on('space:created', async (event) => {
     // this creates the Space with the blank workbook but it doesn't appear in the UI
     const workbook = await flatfile.workbooks.create({
-      name: 'Benefits',
+      name: 'Benefits Workbook',
       spaceId: event.context.spaceId,
       environmentId: event.context.environmentId,
       sheets: blueprintSheets,
@@ -41,24 +41,28 @@ export default function (listener) {
     console.log(jobId);
   });
 
-  // Record Hooks
+  // Record Hooks - Looking at Already Deployed Employees Sheet
 
   listener.use(
     recordHook('employees-sheet', (record) => {
-      // if employeeId contains any non-numbers
-      // then.. set benefitCoverageType to Retirement_Savings_Coverage_Type_Swedish
+      // Basic Record Hook
+
+      const value = record.get('firstName')?.toString();
+      if (value) {
+        record.set('firstName', value.toLowerCase());
+      }
+
+      // Basic compute Record Hook
       record.compute('employeeId', () => 'Colin', 'Computed value');
 
-      // if benefitPlan is not null
-      // then.. set benefitCoverageType to Additional_Benefits_Coverage_Type_Fringe_Benefits
+      // Basic computeIfPresent Record Hook
       record.computeIfPresent(
         'employeeId',
         () => 'Colin',
         'Computed if present value'
       );
 
-      // if coverageStartDate is after today
-      // then.. set coverageStartDate to invalid
+      // Basic validate Record Hook
       record.validate('employeeId', () => false, 'Validated value');
 
       return record;
