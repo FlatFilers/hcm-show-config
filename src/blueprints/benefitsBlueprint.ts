@@ -78,34 +78,10 @@ export const blueprintRaw = {
               config: {
                 options: [
                   {
-                    value: 'Insurance_Coverage_Type_Pension',
-                    label: 'Pension',
+                    value: 'Insurance_Coverage_Type_Insurance',
+                    label: 'Insurance',
                   },
-                  {
-                    value: 'Insurance_Coverage_Type_Basic_Group_Life',
-                    label: 'Basic Group Life',
-                  },
-                  {
-                    value: 'Insurance_Coverage_Type_Long_Term_Disability',
-                    label: 'Long Term Disability',
-                  },
-                  {
-                    value: 'Insurance_Coverage_Type_Short_Term_Disability',
-                    label: 'Short Term Disability',
-                  },
-                  {
-                    value: 'Insurance_Coverage_Type_Voluntary_ADandD',
-                    label: 'Voluntary AD&D',
-                  },
-                  {
-                    value:
-                      'Insurance_Coverage_Type_Voluntary_Supplemental_Life',
-                    label: 'Voluntary Supplemental Life',
-                  },
-                  {
-                    value: 'Insurance_Coverage_Type_Spouse_Life',
-                    label: 'Spouse Life',
-                  },
+
                   {
                     value: 'Health_Care_Coverage_Type_Medical',
                     label: 'Medical',
@@ -115,77 +91,13 @@ export const blueprintRaw = {
                     label: 'Dental',
                   },
                   {
-                    value: 'Health_Care_Coverage_Type_Contingency_Fund',
-                    label: 'Contingency Fund',
+
+                    value: 'Retirement_Savings_Coverage_Type_Retirement',
+                    label: 'Retirement',
                   },
                   {
-                    value: 'Health_Care_Coverage_Type_Health',
-                    label: 'Health',
-                  },
-                  {
-                    value: 'Health_Care_Coverage_Type_Supplementary_Retirement',
-                    label: 'Supplementary Retirement',
-                  },
-                  {
-                    value: 'Spending_Account_Type_Childcare_Vouchers',
-                    label: 'Childcare Vouchers',
-                  },
-                  {
-                    value: 'Retirement_Savings_Coverage_Type_401k',
-                    label: '401(k)',
-                  },
-                  {
-                    value: 'Retirement_Savings_Coverage_Type_RRSP',
-                    label: 'RRSP',
-                  },
-                  {
-                    value: 'Retirement_Savings_Coverage_Type_NQDC',
-                    label: 'NQDC',
-                  },
-                  {
-                    value: 'Retirement_Savings_Coverage_Type_Deferred_Stock',
-                    label: 'Deferred Stock',
-                  },
-                  {
-                    value:
-                      'Retirement_Savings_Coverage_Type_Defined_Contribution',
-                    label: 'Defined Contribution',
-                  },
-                  {
-                    value: 'Retirement_Savings_Coverage_Type_Swedish',
-                    label: 'Swedish',
-                  },
-                  {
-                    value:
-                      'Retirement_Savings_Coverage_Type_New_Zealand_Pension',
-                    label: 'New Zealand Pension',
-                  },
-                  {
-                    value:
-                      'Health_Savings_Account_Coverage_Type_Health_Savings_Account',
-                    label: 'Health Savings Account',
-                  },
-                  {
-                    value: 'Additional_Benefits_Coverage_Type_Gym_Membership',
-                    label: 'Gym Membership',
-                  },
-                  {
-                    value:
-                      'Additional_Benefits_Coverage_Type_Commuter_Spending',
-                    label: 'Commuter Spending',
-                  },
-                  {
-                    value:
-                      'Additional_Benefits_Coverage_Type_Charitable_Giving',
-                    label: 'Charitable Giving',
-                  },
-                  {
-                    value: 'Additional_Benefits_Coverage_Type_Meal_Vouchers',
-                    label: 'Meal Vouchers',
-                  },
-                  {
-                    value: 'Additional_Benefits_Coverage_Type_Fringe_Benefits',
-                    label: 'Fringe Benefits',
+                    value: 'Additional_Benefits_Coverage_Type_Other',
+                    label: 'Other',
                   },
                 ],
               },
