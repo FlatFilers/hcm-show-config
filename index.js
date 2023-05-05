@@ -2,6 +2,8 @@ import { recordHook } from '@flatfile/plugin-record-hook';
 import { FlatfileClient } from '@flatfile/api';
 import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor';
 import { blueprintSheets } from './blueprint';
+import { employeeValidations } from './recordHooks/employees/employeeValidations';
+import { jobValidations } from './recordHooks/jobs/jobValidations';
 
 process.env.FLATFILE_API_KEY = 'sk_UrerfpfQAhDHaH1qBwj6ah42MrZCcx8l';
 
@@ -14,12 +16,12 @@ export default function (listener) {
     console.log('> event.topic: ' + event.topic);
   });
 
-  //Space Created Event
+  //Space Created Event - Need to create a workbook for the space!! (WIP - DXP)
 
   listener.on('space:created', async (event) => {
     // this creates the Space with the blank workbook but it doesn't appear in the UI
     const workbook = await flatfile.workbooks.create({
-      name: 'Benefits Workbook',
+      name: 'HCM Workbook',
       spaceId: event.context.spaceId,
       environmentId: event.context.environmentId,
       sheets: blueprintSheets,
@@ -41,41 +43,21 @@ export default function (listener) {
     console.log(jobId);
   });
 
-  // Record Hooks - Looking at Already Deployed Employees Sheet
-
   listener.use(
     recordHook('employees-sheet', (record) => {
-      // Basic Record Hook
-
-      const value = record.get('firstName')?.toString();
-      if (value) {
-        record.set('firstName', value.toLowerCase());
-      }
-
-      // Basic compute Record Hook
-      record.compute('employeeId', () => 'Colin', 'Computed value');
-
-      // Basic computeIfPresent Record Hook
-      record.computeIfPresent(
-        'employeeId',
-        () => 'Colin',
-        'Computed if present value'
-      );
-
-      // Basic validate Record Hook
-      record.validate('employeeId', () => false, 'Validated value');
-
+      const results = employeeValidations(record);
+      console.log(JSON.stringify(results));
       return record;
     })
   );
 
-  // listener.use(
-  //   recordHook('employees-sheet', (FlatfileRecord) => {
-  //     const results = employeeValidations(record);
-  //     console.log(JSON.stringify(results));
-  //     return FlatfileRecord;
-  //   })
-  // );
+  listener.use(
+    recordHook('jobs-sheet', (record) => {
+      const results = jobValidations(record);
+      console.log(JSON.stringify(results));
+      return record;
+    })
+  );
 
   // Run actions
   listener.on('action:triggered', async (event) => {
