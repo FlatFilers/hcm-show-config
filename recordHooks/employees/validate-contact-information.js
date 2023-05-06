@@ -1,3 +1,5 @@
+// Import FlatfileRecord from Flatfile Hooks and isNil helper function from common helpers
+
 import { FlatfileRecord } from '@flatfile/hooks';
 import { isNil } from '../../common/helpers';
 

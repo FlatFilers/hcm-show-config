@@ -5,7 +5,7 @@ import { employeeHours } from './employee-hours';
 import { validateEmail } from './validate-email';
 
 export function employeeValidations(record) {
-  //validateEmail(record);
+  validateEmail(record);
   validateContactInformation(record);
   verifyDates(record);
   employeeHours(record);

@@ -1,11 +1,17 @@
 import { FlatfileRecord } from '@flatfile/hooks';
+import { isNil } from './helpers';
 
+// Define a function to warn if the 'effectiveDate' field is blank
 export const warnEffectiveDate = (record) => {
-  const effectiveDate = record.get('effectiveDate');
-  if (effectiveDate === null || effectiveDate === undefined) {
+  // Get the value of the 'effectiveDate' field from the record
+  const { effectiveDate } = record.fields;
+
+  // Check if the 'effectiveDate' value is null or undefined
+  if (isNil(effectiveDate)) {
+    // If 'effectiveDate' is null or undefined, add a warning message to the record
     record.addWarning(
       'effectiveDate',
-      `Effective Date is blank and will default to today's date in HCM.`
+      `Effective Date is blank and will default...`
     );
   }
 };

@@ -1,62 +1,55 @@
+// Import FlatfileRecord from Flatfile Hooks and isNil helper function from common helpers
 import { FlatfileRecord } from '@flatfile/hooks';
-import { isNil, isNotNil } from '../../common/helpers';
+import { isNil } from '../../common/helpers';
 
-export const employeeHours = (record) => {
+// Define a function that checks if a given value is a number and not NaN
+function isNumber(value) {
+  return typeof value === 'number' && !isNaN(value);
+}
+
+// Define a function that validates and calculates weekly hours for an employee
+function validateWeeklyHours(record) {
+  // Get relevant fields from the Flatfile record
   const empType = record.get('employeeType');
   const defHours = record.get('defaultWeeklyHours');
   const schedHours = record.get('scheduledWeeklyHours');
-  const message = 'Scheduled Weekly Hours caclulated based on Employee Type';
+  const message = 'Scheduled Weekly Hours calculated based on Employee Type';
 
-  //Validations
+  // Validations: check if scheduled weekly hours or default weekly hours exceed 168
+  if (isNumber(schedHours) && schedHours > 168) {
+    record.addError(
+      'scheduledWeeklyHours',
+      'Scheduled Hours cannot exceed 168 hours'
+    );
+  }
 
-  //Schedule Weekly Hours Cannot be greater than 168
+  if (isNumber(defHours) && defHours > 168) {
+    record.addError(
+      'defaultWeeklyHours',
+      'Default Weekly Hours cannot exceed 168 hours'
+    );
+  }
 
-  if (typeof schedHours === 'number' && isNotNil(schedHours)) {
-    if (schedHours > 168) {
-      record.addError(
-        'scheduledWeeklyHours',
-        'Scheduled Hours cannot exceed 168 hours'
-      );
+  // Transformations: set scheduled weekly hours based on employee type if it is null or undefined
+  if (isNil(schedHours)) {
+    switch (empType) {
+      case 'ft':
+        record.set('scheduledWeeklyHours', 40);
+        break;
+      case 'pt':
+        record.set('scheduledWeeklyHours', 20);
+        break;
+      case 'tm':
+        record.set('scheduledWeeklyHours', 40);
+        break;
+      case 'ct':
+        record.set('scheduledWeeklyHours', 0);
+        break;
     }
-  }
-
-  // Default Weekly Hours Cannot be greater than 168
-
-  if (typeof defHours === 'number' && isNotNil(defHours)) {
-    if (defHours > 168) {
-      record.addError(
-        'defaultWeeklyHours',
-        'Default Weekly Hours cannot exceed 168 hours'
-      );
-    }
-  }
-
-  //Transformations
-
-  // Set Scheduled Weekly Hours Based on Employee Type
-
-  // Need to update these to account for updates in Flatfile. ex: if employeetype is updated, need to update the scheduledWeeklyHours
-
-  if (isNil(schedHours) && empType === 'ft') {
-    record.set('scheduledWeeklyHours', 40);
     record.addInfo('scheduledWeeklyHours', message);
   }
 
-  if (isNil(schedHours) && empType === 'pt') {
-    record.set('scheduledWeeklyHours', 20);
-    record.addInfo('scheduledWeeklyHours', message);
-  }
-
-  if (isNil(schedHours) && empType === 'tm') {
-    record.set('scheduledWeeklyHours', 40);
-    record.addInfo('scheduledWeeklyHours', message);
-  }
-
-  if (isNil(schedHours) && empType === 'ct') {
-    record.set('scheduledWeeklyHours', 0);
-    record.addInfo('scheduledWeeklyHours', message);
-  }
-
+  // Check if scheduled weekly hours exceed default weekly hours and add a warning if they do
   if (schedHours > defHours) {
     record.addWarning(
       'scheduledWeeklyHours',
@@ -64,18 +57,9 @@ export const employeeHours = (record) => {
     );
   }
 
-  // Calculations
-
-  // FTE Cannot be greater than 999
-
-  if (
-    typeof defHours === 'number' &&
-    isNotNil(defHours) &&
-    typeof schedHours === 'number' &&
-    isNotNil(schedHours)
-  ) {
+  // Calculations: calculate FTE (full-time equivalent) and add an error if it exceeds 999
+  if (isNumber(defHours) && isNumber(schedHours)) {
     const fte = schedHours / defHours;
-
     if (fte > 999) {
       record.addError(
         'scheduledWeeklyHours',
@@ -83,4 +67,7 @@ export const employeeHours = (record) => {
       );
     }
   }
-};
+}
+
+// Export the validateWeeklyHours function as employeeHours
+export const employeeHours = validateWeeklyHours;
