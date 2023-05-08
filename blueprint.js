@@ -198,7 +198,7 @@ export const blueprintSheets = [
         // Validations
         //End Employment Date must be after Hire Date.
         key: 'endEmploymentDate',
-        type: 'string',
+        type: 'date',
         label: 'End Employment Date',
         description:
           'The End Employment Date for the position of fixed term or temporary employees.',

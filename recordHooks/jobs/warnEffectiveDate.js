@@ -1,5 +1,5 @@
 import { FlatfileRecord } from '@flatfile/hooks';
-import { isNil } from './helpers';
+import { isNil } from '../../common/helpers';
 
 // Define a function to warn if the 'effectiveDate' field is blank
 export const warnEffectiveDate = (record) => {
