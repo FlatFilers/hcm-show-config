@@ -24,6 +24,7 @@ export const verifyDates = (record) => {
   }
 
   // Warning if job is currently inactive and no employment end date is provided
+  // This can be cleaner code
   if (inactive && isNil(endEmploymentDate)) {
     const message = 'Job is currently inactive.';
     record.addWarning(['jobName'], message);
