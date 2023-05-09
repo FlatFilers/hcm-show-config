@@ -1,7 +1,5 @@
-// Import required dependencies
 const FF = require('@flatfile/configure');
-import { FlatfileRecord } from '@flatfile/hooks'; // Import FlatfileRecord from the '@flatfile/hooks' library
-import moment from 'moment'; // Import moment.js library for date formatting
+const { FlatfileRecord } = require('@flatfile/hooks');
 
 /** Checks if value is falsey - returns boolean*/
 const isNil = (val) => val === null || val === undefined || val === '';
@@ -9,127 +7,35 @@ const isNil = (val) => val === null || val === undefined || val === '';
 /** Checks if value is truthy - returns boolean*/
 const isNotNil = (val) => !isNil(val);
 
-/** Validates Field Hook that validates a field matches a given regex value.  */
-const validateRegex = (value, regex, errorMessage) => {
-  if (!regex.test(value)) {
-    return [new FF.Message(errorMessage, 'error', 'validate')];
-  }
-};
+/**
 
-const vlookup = (record, referenceField, lookupField, targetField) => {
-  const links = record.getLinks(referenceField);
-  const lookupValue = links?.[0]?.[lookupField];
-  if (!!lookupValue) {
-    record.set(targetField, lookupValue);
+Performs a vlookup-like operation on a record by retrieving a value from a linked record
+and setting it to a target field on the original record. The linked record is specified
+by a reference field on the original record, and the lookup value is specified by a
+lookup field on the linked record. If a lookup value is found, it is set to the target
+field on the original record and an info message is added to the record indicating
+the source of the value.
+@param {Object} record - The record to perform the vlookup on.
+@param {string} referenceFieldKey - The name of the reference field on the original record
+that links to the linked record.
+@param {string} lookupFieldKey - The name of the field on the linked record that contains
+the value to be looked up.
+@param {string} targetFieldKey - The name of the field on the original record that the
+lookup value should be set to.
+*/
+
+const vlookup = (record, referenceFieldKey, lookupFieldKey, targetFieldKey) => {
+  const links = record.getLinks(referenceFieldKey);
+  const lookupValue = links?.[0]?.[lookupFieldKey];
+
+  if (isNotNil(lookupValue)) {
+    record.set(targetFieldKey, lookupValue);
     record.addInfo(
-      targetField,
-      `${targetField} set based on ${referenceField}.`
+      targetFieldKey,
+      `${targetFieldKey} set based on ${referenceFieldKey}.`
     );
   }
 };
 
-// Define the function and its input parameters
-const dateFormatting = (record, dateFields) => {
-  // Define an array of fields that need to be formatted as dates
-
-  // Define a function to format date strings
-  function formatDate(dateString) {
-    // Define an array of accepted date formats for moment.js
-    const momentFormats = [
-      'YYYY-MM-DD',
-      'MM/DD/YYYY',
-      'M/D/YYYY',
-      'YYYY/M/D',
-      'D/M/YYYY',
-      'YYYY/M/DD',
-      'MM/DD/YY',
-      'M/D/YY',
-      'M/DD/YYYY',
-      'M/DD/YY',
-      'MM/D/YYYY',
-      'MM/D/YY',
-      'DD/MM/YYYY',
-      'D/MM/YYYY',
-      'DD/M/YYYY',
-      'D/M/YYYY',
-      'YYYY-MM-D',
-      'YYYY-M-DD',
-      'YY-MM-DD',
-      'DD-M-YYYY',
-      'D-M-YYYY',
-      'DD-MM-YY',
-      'D-MM-YY',
-      'DD/M/YY',
-      'D/M/YY',
-      'DD/MM/YY',
-      'D/MM/YY',
-      'MM/DD',
-      'M/DD',
-      'MM/D',
-      'M/D',
-      'DD/MM',
-      'D/MM',
-      'MM-DD',
-      'M-DD',
-      'DD-M',
-      'D-M',
-      'MMddyyyy',
-      'ddMMyyyy',
-      'MMddyy',
-      'MMDDYYYY',
-    ];
-
-    // Check if the input date is in MMddyyyy format
-    if (
-      dateString.length === 8 &&
-      moment(dateString, 'MMDDYYYY', true).isValid()
-    ) {
-      return moment(dateString, 'MMDDYYYY').format('YYYY-MM-DD');
-    }
-
-    // Loop through the accepted date formats and try to format the input date string
-    for (const format of momentFormats) {
-      const momentDate = moment(dateString, format, true);
-
-      // If the formatted date is valid, return it in the 'YYYY-MM-DD' format
-      if (momentDate.isValid()) {
-        return momentDate.format('YYYY-MM-DD');
-      }
-    }
-
-    // If none of the accepted date formats work, return 'Invalid Date'
-    return 'Invalid Date';
-  }
-
-  // Loop through each field in dateFields array
-  dateFields.forEach((dateField) => {
-    // Get the input value for the field
-    const inputDate = record.get(dateField);
-
-    // Check if the input value is a non-empty string
-    if (typeof inputDate === 'string' && inputDate.trim().length > 0) {
-      // Format the input date using the formatDate function
-      const formattedDate = formatDate(inputDate.trim());
-
-      // If the formatted date is 'Invalid Date', log an error and add an error message to the record
-      if (formattedDate === 'Invalid Date') {
-        console.log('Invalid Date');
-        record.addError(
-          dateField,
-          'Please check that the date is in yyyy-MM-dd format.'
-        );
-
-        // If the formatted date is valid, set the formatted value in the record and add a comment to it
-      } else {
-        console.log(formattedDate);
-        record.set(dateField, formattedDate);
-        record.addComment(dateField, 'Date has been formatted as yyyy-MM-dd');
-      }
-    } else {
-      console.log('Invalid Date');
-    }
-  });
-};
-
 //Export Values
-module.exports = { validateRegex, vlookup, dateFormatting };
+module.exports = { isNil, isNotNil, vlookup };

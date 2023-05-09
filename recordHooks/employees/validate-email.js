@@ -1,6 +1,7 @@
 // Import FlatfileRecord and EmailValidator libraries
 import { FlatfileRecord } from '@flatfile/hooks';
 import EmailValidator from 'email-validator';
+import { isNotNil } from '../../common/helpers';
 
 // Define a function that validates the email address field of a Flatfile record
 const validateEmail = (record) => {
@@ -12,7 +13,7 @@ const validateEmail = (record) => {
   const isValid = EmailValidator.validate(emailAddress);
 
   // If the email address is not valid, add an error message to the record
-  if (!isValid) {
+  if (isNotNil(emailAddress) && !isValid) {
     record.addError(
       'emailAddress',
       "Email addresses must be in the format of 'xxx@yy.com'. Valid examples: john.doe@aol.com, jane@aol.com."
