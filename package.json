@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node ./.config/dev.js",
-    "deploy": "npx flatfile deploy --token sk_UrerfpfQAhDHaH1qBwj6ah42MrZCcx8l"
+    "deploy": "npx flatfile@latest deploy --token sk_UrerfpfQAhDHaH1qBwj6ah42MrZCcx8l"
   },
   "keywords": [],
   "author": "",
