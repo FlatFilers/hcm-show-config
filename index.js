@@ -4,6 +4,8 @@ import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor';
 import { blueprintSheets } from './blueprint';
 import { employeeValidations } from './recordHooks/employees/employeeValidations';
 import { jobValidations } from './recordHooks/jobs/jobValidations';
+import { RetriggerValidations } from './actions/retriggerValidations';
+import { pushToHcmShow } from './actions/pushToHCMShow';
 
 process.env.FLATFILE_API_KEY = 'sk_UrerfpfQAhDHaH1qBwj6ah42MrZCcx8l';
 
