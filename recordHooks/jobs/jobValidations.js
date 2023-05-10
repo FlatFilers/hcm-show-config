@@ -1,11 +1,8 @@
-import { warnEffectiveDate } from './warnEffectiveDate';
+import { defaultInactiveAndWarnEffectiveDate } from './defaultInactiveAndWarnEffectiveDate';
 import { formatRecordDates } from '../../common/dateFormatting';
-import { defaultInactive } from './defaultInactive';
 
 export function jobValidations(record) {
-  defaultInactive(record);
+  defaultInactiveAndWarnEffectiveDate(record);
   formatRecordDates(record, 'jobs-sheet');
-  warnEffectiveDate(record);
-
   return record;
 }
