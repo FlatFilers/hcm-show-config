@@ -13,7 +13,9 @@ const demo = Client.create((client) => {
   client.on('client:init', async (event) => {
     // creates a shell spaceConfig - this will change to 'namespace'
     const spaceConfig = await client.api.addSpaceConfig({
-      spacePatternConfig: blueprint,
+      spacePatternConfig: blueprint({
+        blueprintSlug: 'dynamic-benefits-blueprint',
+      }),
     });
   });
 
