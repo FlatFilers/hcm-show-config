@@ -20,12 +20,11 @@ export default function (listener) {
     console.log('> event.topic: ' + event.topic);
   });
 
-  // Add an event listener for the 'job:created' event with a payload filter for 'operation: configure'
-  listener.on(
-    'job:created',
-    { payload: { operation: 'configure' } },
-    async (event) => {
-      // Log the event object as a string to the console
+  // Add an event listener for the 'job:created' event
+  listener.on('job:created', async (event) => {
+    // Check if the payload operation is 'configure'
+    if (event.payload.operation === 'configure') {
+      // Log the event object as a JSON string to the console
       console.log(JSON.stringify(event));
 
       // Destructure the 'context' object from the event object to get the necessary IDs
@@ -53,7 +52,7 @@ export default function (listener) {
       // Log the result of the updateJob function to the console as a string
       console.log('Updated Job' + JSON.stringify(updateJob));
     }
-  );
+  });
 
   // Attach a record hook to the `employees-sheet` sheet
   listener.use(
