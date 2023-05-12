@@ -54,26 +54,26 @@ export default function (listener) {
     }
   });
 
-  // Attach a record hook to the `employees-sheet` sheet
+  // Attach a record hook to the 'employees-sheet' of the Flatfile importer
   listener.use(
+    // When a record is processed, invoke the 'employeeValidations' function to validate the record
     recordHook('employees-sheet', (record) => {
-      // Invoke `employeeValidations` function to validate the record
       const results = employeeValidations(record);
-      // Log the results to the console
+      // Log the results of the validations to the console as a JSON string
       console.log(JSON.stringify(results));
       // Return the record
       return record;
     })
   );
 
-  // This code adds a record hook to the 'jobs-sheet' of the Flatfile importer
+  // Attach a record hook to the 'jobs-sheet' of the Flatfile importer
   listener.use(
-    // When a record is processed, it is passed to the jobValidations function to check for any errors
+    // When a record is processed, invoke the 'jobValidations' function to check for any errors
     recordHook('jobs-sheet', (record) => {
       const results = jobValidations(record);
-      // The results of the validations are logged to the console as a JSON string
+      // Log the results of the validations to the console as a JSON string
       console.log(JSON.stringify(results));
-      // The record is then returned, potentially with additional errors added by the jobValidations function
+      // Return the record, potentially with additional errors added by the 'jobValidations' function
       return record;
     })
   );
