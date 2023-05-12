@@ -19,10 +19,6 @@ export function jobValidations(record) {
   }
 
   try {
-    // Validate the sheetSlug parameter
-    if (typeof sheetSlug !== 'string') {
-      throw new Error('Invalid sheetSlug input. Expecting a valid string.');
-    }
     formatRecordDates(record, 'jobs-sheet');
   } catch (error) {
     console.log('Error occurred during date formatting:', error);
