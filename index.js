@@ -98,6 +98,14 @@ export default function (listener) {
       // Log the action as a string to the console
       console.log(JSON.stringify(action));
     }
+
+    // If the action is 'employees-sheet:dedupeEmployees'
+    if (action === 'employees-sheet:dedupeEmployees') {
+      // Call the dedupeEmployees function with the event as an argument
+      await dedupeEmployees(event);
+      // Log the action as a string to the console
+      console.log(JSON.stringify(action));
+    }
   });
 
   // Listen for the 'file:created' event
