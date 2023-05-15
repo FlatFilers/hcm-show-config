@@ -311,6 +311,13 @@ export const blueprintSheets = [
         description: "Push this workbook's records into HCM.show",
         primary: true,
       },
+      {
+        slug: 'dedupeEmployees',
+        label: 'DeDupe employee records based on ID and Hire Date',
+        description:
+          'This custom action code analyzes a set of records and creates a list of IDs representing duplicate records to be removed, prioritizing the ones with earlier hire dates.',
+        primary: true,
+      },
     ],
   },
 ];
