@@ -38,8 +38,20 @@ export default function (listener) {
       const createWorkbook = await api.workbooks.create({
         spaceId: spaceId,
         environmentId: environmentId,
+        labels: ['primary'],
         name: 'HCM Workbook',
         sheets: blueprintSheets,
+        actions: [
+          {
+            operation: 'submitAction',
+            slug: 'HCMWorkbookSubmitAction',
+            mode: 'foreground',
+            label: 'Submit',
+            type: 'string',
+            description: 'Submit Data to Webhook.site',
+            primary: true,
+          },
+        ],
       });
 
       // Log the result of the createWorkbook function to the console as a string
