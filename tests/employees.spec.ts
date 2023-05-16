@@ -1,8 +1,9 @@
-import { dedupe } from '../actions/dedupe.js';
+import { dedupeEmployees } from '../actions/dedupe.js';
 import RecordsWithLinks from '@flatfile/api';
 
 describe('Employees', () => {
-  it('dedupe', () => {
+  it('dedupeEmployees', () => {
+    // Mocked inbound records from the Flatfile API response
     const inbound = [
       {
         id: 'us_rc_HrMVtwH6MxYWG7KsChqcZuIlzeJdAYGT',
@@ -534,9 +535,13 @@ describe('Employees', () => {
       },
     ];
 
-    const actual = dedupe(inbound);
+    // Call the dedupeEmployees function with the inbound records
+    const actual = dedupeEmployees(inbound);
+
+    // Define the expected output
     const expected = ['us_rc_HrMVtwH6MxYWG7KsChqcZuIlzeJdAYGT'];
 
+    // Compare the actual result with the expected result
     expect(actual).toStrictEqual(expected);
   });
 });
