@@ -6,6 +6,8 @@ import { employeeValidations } from './recordHooks/employees/employeeValidations
 import { jobValidations } from './recordHooks/jobs/jobValidations';
 import { RetriggerValidations } from './actions/retriggerValidations';
 import { pushToHcmShow } from './actions/pushToHCMShow';
+import { dedupeEmployees } from './actions/dedupe';
+import submit from './actions/submit';
 
 // Set the Flatfile API key as an environment variable
 process.env.FLATFILE_API_KEY = 'sk_UrerfpfQAhDHaH1qBwj6ah42MrZCcx8l';
@@ -25,24 +27,47 @@ export default function (listener) {
     // Check if the payload operation is 'configure'
     if (event.payload.operation === 'configure') {
       // Log the event object as a JSON string to the console
-      console.log(JSON.stringify(event));
+      //console.log(JSON.stringify(event));
 
       // Destructure the 'context' object from the event object to get the necessary IDs
-      const { spaceId, environmentId, jobId, sheetId } = event.context;
+      const { spaceId, environmentId, jobId } = event.context;
 
       // Log the environment ID to the console
       console.log('env: ' + environmentId);
+      console.log('spaceId ' + spaceId);
+      console.log('jobID: ' + jobId);
 
       // Create a new workbook using the Flatfile API
       const createWorkbook = await api.workbooks.create({
         spaceId: spaceId,
         environmentId: environmentId,
+        labels: ['primary'],
         name: 'HCM Workbook',
         sheets: blueprintSheets,
+        actions: [
+          {
+            operation: 'submitAction',
+            slug: 'HCMWorkbookSubmitAction',
+            mode: 'foreground',
+            label: 'Submit',
+            type: 'string',
+            description: 'Submit Data to Webhook.site',
+            primary: true,
+          },
+        ],
       });
 
+      const workbookId = createWorkbook.data.id;
       // Log the result of the createWorkbook function to the console as a string
-      console.log('Created Workbook' + JSON.stringify(createWorkbook));
+      console.log('Created Workbook with ID: ' + workbookId);
+
+      // Update Space to set priamry workbook for data checklist functionality using the Flatfile API
+      const updateSpace = await api.spaces.update(spaceId, {
+        environmentId: environmentId,
+        primaryWorkbookId: workbookId,
+      });
+      // Log the result of the updateSpace function to the console as a string
+      console.log('Updated Space with ID: ' + updateSpace.data.id);
 
       // Update the job status to 'complete' using the Flatfile API
       const updateJob = await api.jobs.update(jobId, {
@@ -50,7 +75,9 @@ export default function (listener) {
       });
 
       // Log the result of the updateJob function to the console as a string
-      console.log('Updated Job' + JSON.stringify(updateJob));
+      console.log(
+        'Updated Job With ID to Status Complete: ' + updateJob.data.id
+      );
     }
   });
 
@@ -82,6 +109,8 @@ export default function (listener) {
   listener.on('action:triggered', async (event) => {
     // Extract the name of the action from the event context
     const action = event.context.actionName;
+    const { api } = event;
+    const { sheetId } = event.context;
 
     // If the action is 'employees-sheet:RetriggerValidations'
     if (action === 'employees-sheet:RetriggerValidations') {
@@ -96,7 +125,48 @@ export default function (listener) {
       // Call the pushToHcmShow function with the event as an argument
       await pushToHcmShow(event);
       // Log the action as a string to the console
-      console.log(JSON.stringify(action));
+      console.log('Listener: ' + JSON.stringify(action));
+    }
+
+    // If the action is 'employees-sheet:dedupeEmployees'
+    if (action === 'employees-sheet:dedupeEmployees') {
+      try {
+        // Fetch the records from the API using the sheetId
+        const response = await event.api.getRecords({ sheetId });
+
+        // Check if the response is valid and contains records
+        if (response?.data?.records) {
+          // Get the records from the response data
+          const records = response.data.records;
+
+          // Call the dedupeEmployees function with the records
+          const removeThese = dedupeEmployees(records);
+
+          // Check if there are any records to remove
+          if (removeThese.length > 0) {
+            // Delete the records identified for removal from the API
+            await event.api.deleteRecords({ ids: removeThese, sheetId });
+          } else {
+            console.log('No records found for removal.');
+          }
+        } else {
+          console.log('No records found in the response.');
+        }
+
+        // Log the action as a string to the console
+        console.log('Listener: ' + JSON.stringify(action));
+      } catch (error) {
+        console.log('Error occurred:', error);
+        // Handle the error or log it for debugging
+      }
+    }
+
+    // If the action is 'employees-sheet:pushToHcmShow'
+    if (action.includes('HCMWorkbookSubmitAction')) {
+      // Call the pushToHcmShow function with the event as an argument
+      await submit(event);
+      // Log the action as a string to the console
+      console.log('Listener: ' + JSON.stringify(action));
     }
   });
 
