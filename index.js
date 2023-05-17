@@ -7,6 +7,7 @@ import { jobValidations } from './recordHooks/jobs/jobValidations';
 import { RetriggerValidations } from './actions/retriggerValidations';
 import { pushToHcmShow } from './actions/pushToHCMShow';
 import { dedupeEmployees } from './actions/dedupe';
+import submit from './actions/submit';
 
 // Set the Flatfile API key as an environment variable
 process.env.FLATFILE_API_KEY = 'sk_UrerfpfQAhDHaH1qBwj6ah42MrZCcx8l';
@@ -145,6 +146,14 @@ export default function (listener) {
         console.log('Error occurred:', error);
         // Handle the error or log it for debugging
       }
+    }
+
+    // If the action is 'employees-sheet:pushToHcmShow'
+    if (action.includes('HCMWorkbookSubmitAction')) {
+      // Call the pushToHcmShow function with the event as an argument
+      await submit(event);
+      // Log the action as a string to the console
+      console.log('Listener: ' + JSON.stringify(action));
     }
   });
 
