@@ -27,13 +27,15 @@ export default function (listener) {
     // Check if the payload operation is 'configure'
     if (event.payload.operation === 'configure') {
       // Log the event object as a JSON string to the console
-      console.log(JSON.stringify(event));
+      //console.log(JSON.stringify(event));
 
       // Destructure the 'context' object from the event object to get the necessary IDs
-      const { spaceId, environmentId, jobId, sheetId } = event.context;
+      const { spaceId, environmentId, jobId } = event.context;
 
       // Log the environment ID to the console
       console.log('env: ' + environmentId);
+      console.log('spaceId ' + spaceId);
+      console.log('jobID: ' + jobId);
 
       // Create a new workbook using the Flatfile API
       const createWorkbook = await api.workbooks.create({
@@ -55,8 +57,17 @@ export default function (listener) {
         ],
       });
 
+      const workbookId = createWorkbook.data.id;
       // Log the result of the createWorkbook function to the console as a string
-      console.log('Created Workbook' + JSON.stringify(createWorkbook));
+      console.log('Created Workbook with ID: ' + workbookId);
+
+      // Update Space to set priamry workbook for data checklist functionality using the Flatfile API
+      const updateSpace = await api.spaces.update(spaceId, {
+        environmentId: environmentId,
+        primaryWorkbookId: workbookId,
+      });
+      // Log the result of the updateSpace function to the console as a string
+      console.log('Updated Space with ID: ' + updateSpace.data.id);
 
       // Update the job status to 'complete' using the Flatfile API
       const updateJob = await api.jobs.update(jobId, {
@@ -64,7 +75,9 @@ export default function (listener) {
       });
 
       // Log the result of the updateJob function to the console as a string
-      console.log('Updated Job' + JSON.stringify(updateJob));
+      console.log(
+        'Updated Job With ID to Status Complete: ' + updateJob.data.id
+      );
     }
   });
 

@@ -1,5 +1,7 @@
 import { defaultInactiveAndWarnEffectiveDate } from './defaultInactiveAndWarnEffectiveDate';
 import { formatRecordDates } from '../../common/dateFormatting';
+import { generateJobCode } from './generateJobCode';
+import { validateBooleanFields } from '../../common/validateBooleanFields';
 
 export function jobValidations(record) {
   // Validate the input record parameter
@@ -15,6 +17,20 @@ export function jobValidations(record) {
       'Error occurred during defaulting inactive and warning effective date:',
       error
     );
+    // Handle or rethrow the error as needed
+  }
+
+  try {
+    validateBooleanFields(record, 'jobs-sheet');
+  } catch (error) {
+    console.log('Error occurred during boolean field validation:', error);
+    // Handle or rethrow the error as needed
+  }
+
+  try {
+    generateJobCode(record);
+  } catch (error) {
+    console.log('Error occurred while generating job code:', error);
     // Handle or rethrow the error as needed
   }
 
