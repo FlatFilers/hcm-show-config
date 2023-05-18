@@ -161,12 +161,12 @@ export default function (listener) {
       }
     }
 
-    // If the action is 'employees-sheet:pushToHcmShow'
+    // If the action is 'HCMWorkbookSubmitAction'
     if (action.includes('HCMWorkbookSubmitAction')) {
-      // Call the pushToHcmShow function with the event as an argument
+      // Call the submit function with the event as an argument to push the data to HCM Show
       await submit(event);
       // Log the action as a string to the console
-      console.log('Listener: ' + JSON.stringify(action));
+      console.log('Action: ' + JSON.stringify(action));
     }
   });
 
