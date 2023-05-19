@@ -1,4 +1,5 @@
 import { Workbook, SpaceConfig } from '@flatfile/configure';
+import { EventTopic } from '@flatfile/api/api';
 import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor';
 
 import benefitElections from '../../data-templates/benefits-templates/benefit_elections';
@@ -21,7 +22,7 @@ const HCMShowEmbeddedWorkflow = new SpaceConfig({
 });
 
 //Excel Plug-in
-HCMShowEmbeddedWorkflow.on([EventTopic.Uploadcompleted], (event) => {
+HCMShowEmbeddedWorkflow.on([EventTopic.FileCreated], (event) => {
   return new ExcelExtractor(event, { rawNumbers: true }).runExtraction();
 });
 
