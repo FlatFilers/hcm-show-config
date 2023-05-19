@@ -1,5 +1,5 @@
 import { recordHook } from '@flatfile/plugin-record-hook';
-import { FlatfileClient } from '@flatfile/api';
+import api from '@flatfile/api';
 import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor';
 import { blueprintSheets } from './blueprint';
 import { employeeValidations } from './recordHooks/employees/employeeValidations';
@@ -15,7 +15,7 @@ process.env.FLATFILE_API_KEY = 'sk_UrerfpfQAhDHaH1qBwj6ah42MrZCcx8l';
 // Define the main function that sets up the listener
 export default function (listener) {
   // Create a new instance of the FlatfileClient
-  const api = new FlatfileClient();
+  //const api = new FlatfileClient();
 
   // Log the event topic for all events
   listener.on('**', (event) => {
@@ -61,7 +61,9 @@ export default function (listener) {
       // Log the result of the createWorkbook function to the console as a string
       console.log('Created Workbook with ID: ' + workbookId);
 
-      // Update Space to set priamry workbook for data checklist functionality using the Flatfile API
+      // Add new listener on workbook created
+
+      // Update Space to set primary workbook for data checklist functionality using the Flatfile API
       const updateSpace = await api.spaces.update(spaceId, {
         environmentId: environmentId,
         primaryWorkbookId: workbookId,
