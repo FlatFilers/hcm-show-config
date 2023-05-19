@@ -1,4 +1,4 @@
-import makeHttpPostRequest from '../validations-plugins/common/makeHttpPostRequest';
+import makeHttpPostRequest from './common/makeHttpPostRequest';
 import { Action } from '@flatfile/configure';
 const testParams = {
   url: '/v1/auth/access-token',
@@ -12,25 +12,34 @@ const RetriggerValidations = new Action(
     description: 'Re-run validations on this sheet',
   },
   async (e) => {
+    const { clientId, secret, endpoint } = process.env;
     const { workbookId, sheetId } = e.context;
     try {
       const body = {
-        clientId: testParams.clientId,
-        secret: testParams.secret,
+        clientId,
+        secret,
       };
+      if (!clientId || !secret) return;
       const validateUrl = `/v1/workbooks/${workbookId}/sheets/${sheetId}/validate`;
       const apiToken = await e.api.getAccessToken({
-        getAccessTokenRequest: {
-          clientId: testParams.clientId,
-          secret: testParams.secret,
+        apiCredentials: {
+          clientId,
+          secret,
         },
       });
-      const response = await makeHttpPostRequest({
+      const protocol = endpoint?.split('//')[0];
+      const pathname = endpoint?.split('//')[1];
+      const hostname = pathname?.split(':')[0];
+      const port = pathname?.split(':')[1];
+      await makeHttpPostRequest({
         url: validateUrl,
         body,
         token: apiToken.data?.accessToken,
+        hostname,
+        protocol,
+        port,
       });
-      console.log(`response: ${JSON.stringify(response, null, 2)}`);
+      console.log('Successfully made http request to: ' + validateUrl);
     } catch (error) {
       console.log(`NodeHttpsAction[error]: ${JSON.stringify(error, null, 2)}`);
     }
