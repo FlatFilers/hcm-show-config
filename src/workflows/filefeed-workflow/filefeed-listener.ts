@@ -8,6 +8,7 @@ import {
 import { blueprintRaw as blueprint } from '../../blueprints/benefitsBlueprint';
 import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor';
 import { post } from '../../utils/request';
+import recordHooks from './recordHooks';
 
 const SHEET = 'sheet(benefit-elections-sheet)';
 
@@ -47,6 +48,11 @@ const demo = Client.create((client) => {
     });
 
     console.log('Posted to HCM.show');
+
+    RecordHook(event, (record) => {
+      const results = recordHooks(record as any);
+      return record;
+    });
 
     // const records = await event.api.getRecords({ sheetId });
 
