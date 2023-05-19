@@ -1,6 +1,6 @@
 export const blueprintRaw = {
   name: 'HCM.show HCM',
-  slug: 'hcm-blueprint',
+  slug: 'employees-jobs-blueprint',
   blueprints: [
     {
       name: 'HCM Workbook',
