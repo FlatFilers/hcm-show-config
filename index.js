@@ -9,14 +9,8 @@ import { pushToHcmShow } from './actions/pushToHCMShow';
 import { dedupeEmployees } from './actions/dedupe';
 import submit from './actions/submit';
 
-// Set the Flatfile API key as an environment variable
-process.env.FLATFILE_API_KEY = 'sk_UrerfpfQAhDHaH1qBwj6ah42MrZCcx8l';
-
 // Define the main function that sets up the listener
 export default function (listener) {
-  // Create a new instance of the FlatfileClient
-  //const api = new FlatfileClient();
-
   // Log the event topic for all events
   listener.on('**', (event) => {
     console.log('> event.topic: ' + event.topic);
