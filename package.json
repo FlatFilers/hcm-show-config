@@ -26,8 +26,8 @@
     "test": "jest --runInBand --detectOpenHandles --forceExit --passWithNoTests",
     "deploy:onboarding": "flatfile publish ./src/workflows/project-workflow/index.ts",
     "deploy:filefeed-listener": "flatfile pubsub src/workflows/filefeed-workflow/filefeed-listener.ts",
-    "deploy:embedded": "flatfile publish ./src/workflows/embedded-workflow/index.ts",
-    "deploy:dynamic-listener": "flatfile pubsub src/workflows/dynamic-workflow/dynamic-listener.ts"
+    "deploy:dynamic-listener": "flatfile pubsub src/workflows/dynamic-workflow/dynamic-listener.ts",
+    "deploy:embedded-listener": "flatfile pubsub src/workflows/embedded-workflow/embedded-listener.ts"
   },
   "devDependencies": {
     "@flatfile/configure": "^0.5.20",
