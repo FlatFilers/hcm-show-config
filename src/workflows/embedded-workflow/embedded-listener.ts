@@ -1,5 +1,4 @@
-import { Blueprint } from '@flatfile/api';
-import { RecordHook } from '@flatfile/configure';
+import { recordHook } from '@flatfile/plugin-record-hook';
 import {
   Client,
   FlatfileVirtualMachine,
@@ -27,7 +26,7 @@ const demo = Client.create((client) => {
   client.on('records:*', async (event) => {
     const sheet = event.context.sheetSlug;
     if (sheet === 'benefit-elections-sheet') {
-      RecordHook(event, (record) => {
+      recordHook('benefit-elections-sheet', (record) => {
         const results = recordHooks(record as any);
         return record;
       });

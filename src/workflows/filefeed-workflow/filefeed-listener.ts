@@ -1,5 +1,4 @@
-import { Blueprint } from '@flatfile/api';
-import { RecordHook } from '@flatfile/configure';
+import { recordHook } from '@flatfile/plugin-record-hook';
 import {
   Client,
   FlatfileVirtualMachine,
@@ -9,6 +8,7 @@ import { blueprintRaw as blueprint } from '../../blueprints/benefitsBlueprint';
 import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor';
 import { post } from '../../utils/request';
 import recordHooks from './recordHooks';
+import { record } from '@flatfile/api/core/schemas';
 
 const SHEET = 'sheet(benefit-elections-sheet)';
 
@@ -49,7 +49,7 @@ const demo = Client.create((client) => {
 
     console.log('Posted to HCM.show');
 
-    RecordHook(event, (record) => {
+    recordHook('benefit-elections-sheet', (record) => {
       const results = recordHooks(record as any);
       return record;
     });
