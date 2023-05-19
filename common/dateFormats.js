@@ -40,5 +40,5 @@ export const momentFormats = [
   'ddMMyyyy', // Format: 2-digit day - 2-digit month - 4-digit year
   'MMddyy', // Format: 2-digit month - 2-digit day - 2-digit year
   'MMDDYYYY', // Format: 2-digit month - 2-digit day - 4-digit year
-  'YYYY-MM-DDTHH:mm:ss.SSSZ',
+  'YYYY-MM-DDTHH:mm:ss.SSSZ', // Format: 4-digit year - 2-digit month - 2-digit day - T - 2-digit hour - : - 2-digit minute - : - 2-digit second - . - 3-digit millisecond - Z
 ];
