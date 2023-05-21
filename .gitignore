@@ -131,7 +131,6 @@ dist
 # MacOS
 .DS_Store
 
-# Flatfile
-.flatfile
-.flatfilerc
-.flatfilerc.*.example
+*.code-workspace
+
+.flatfile/

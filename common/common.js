@@ -1,6 +1,4 @@
-const FF = require('@flatfile/configure');
-const { FlatfileRecord } = require('@flatfile/hooks');
-const { isNotNil } = require('../common/helpers');
+const { isNotNil } = require('../common/helpers')
 
 /**
 Performs a vlookup-like operation on a record by retrieving a value from a linked record
@@ -18,17 +16,17 @@ the value to be looked up.
 lookup value should be set to.
 */
 const vlookup = (record, referenceFieldKey, lookupFieldKey, targetFieldKey) => {
-  const links = record.getLinks(referenceFieldKey);
-  const lookupValue = links?.[0]?.[lookupFieldKey];
+  const links = record.getLinks(referenceFieldKey)
+  const lookupValue = links?.[0]?.[lookupFieldKey]
 
   if (isNotNil(lookupValue)) {
-    record.set(targetFieldKey, lookupValue);
+    record.set(targetFieldKey, lookupValue)
     record.addInfo(
       targetFieldKey,
       `${targetFieldKey} set based on ${referenceFieldKey}.`
-    );
+    )
   }
-};
+}
 
 // Export Values
-module.exports = { vlookup };
+module.exports = { vlookup }
