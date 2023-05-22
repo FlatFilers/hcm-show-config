@@ -28,7 +28,6 @@ export const dedupeEmployees = (records) => {
             // Handle decoding error if necessary
           },
           (employeeId) => {
-            console.log('Valid employeeId:', employeeId);
             pipe(
               RR.lookup(employeeId)(uniques), // Looks up the key in the dictionary
               O.match(
