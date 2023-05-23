@@ -1,11 +1,11 @@
 import { recordHook } from '@flatfile/plugin-record-hook';
 import api from '@flatfile/api';
 import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor';
-import { blueprintSheets } from './blueprint';
-import { employeeValidations } from './recordHooks/employees/employeeValidations';
-import { jobValidations } from './recordHooks/jobs/jobValidations';
-import { pushToHcmShow } from './actions/pushToHCMShow';
-import { dedupeEmployees } from './actions/dedupe';
+import { employeeValidations } from '../../recordHooks/employees/employeeValidations';
+import { jobValidations } from '../../recordHooks/jobs/jobValidations';
+import { pushToHcmShow } from '../../actions/pushToHCMShow';
+import { dedupeEmployees } from '../../actions/dedupe';
+import { blueprintSheets } from '../../blueprints/hcmBlueprint';
 
 // Define the main function that sets up the listener
 export default function (listener) {

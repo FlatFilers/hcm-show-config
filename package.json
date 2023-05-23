@@ -6,6 +6,10 @@
   "scripts": {
     "dev": "flatfile develop index.ts",
     "deploy": "npx flatfile@latest deploy",
+    "deploy:projectonboarding-listener": "npx flatfile@latest deploy workflows/project/index.js",
+    "deploy:filefeed-listener": "npx flatfile@latest deploy workflows/filfeed/index.js",
+    "deploy:dynamic-listener": "npx flatfile@latest deploy workflows/dynamic/index.js",
+    "deploy:embedded-listener": "npx flatfile@latest deploy workflows/embedded/index.js",
     "test": "jest --transform esm"
   },
   "keywords": [],
