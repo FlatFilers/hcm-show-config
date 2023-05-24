@@ -82,13 +82,32 @@ export default function (listener) {
       // Create a new document using the Flatfile API
       const createDoc = await api.documents.create(spaceId, {
         title: 'Getting Started',
-        body:
-          '# Welcome\n' +
-          '### Say hello to your first customer Space in the new Flatfile!\n' +
-          "Let's begin by first getting acquainted with what you're seeing in your Space initially.\n" +
-          '---\n' +
-          '![Flatfile Logo](https://example.com/flatfile-logo.png)\n' +
-          'Format: ![Alt Text](url)\n',
+        body: `# Welcome
+
+![Flatfile Logo](https://searchvectorlogo.com/wp-content/uploads/2023/03/flatfile-logo-vector-2023.png)
+
+---
+
+## Say hello to your first customer Space in the new Flatfile!
+Let's begin by first getting acquainted with what you're seeing in your Space initially.
+
+---
+
+<div style="text-align: center;">
+  <button style="background-color: #FF5722; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold;">Get Started</button>
+</div>
+
+---
+
+Please review the following checklist to get started:
+
+---
+
+<div style="border: 1px solid #E0E0E0; padding: 10px; margin-bottom: 10px;">
+1. <span style="color: #FF9800;">Familiarize yourself with the data checklist</span>
+2. <span style="color: #4CAF50;">Populate the job sheet first</span>
+3. <span style="color: #2196F3;">Populate the employees sheet second</span>
+</div>`,
       });
 
       console.log('Created Document: ' + createDoc);
