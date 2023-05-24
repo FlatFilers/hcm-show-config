@@ -1,11 +1,10 @@
-import { Blueprint } from '@flatfile/api';
 import { RecordHook } from '@flatfile/configure';
 import {
   Client,
   FlatfileVirtualMachine,
   FlatfileEvent,
 } from '@flatfile/listener';
-import { blueprintRaw as blueprint } from '../../blueprints/benefitsBlueprint';
+import { blueprint } from '../../blueprints/benefitsBlueprint';
 import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor';
 import recordHooks from './recordHooks';
 

@@ -135,3 +135,4 @@ dist
 .flatfile
 .flatfilerc
 .flatfilerc.*.example
+environments.json
