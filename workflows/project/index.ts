@@ -80,34 +80,31 @@ export default function (listener) {
       }
 
       // Create a new document using the Flatfile API
+      // Create a new document using the Flatfile API
       const createDoc = await api.documents.create(spaceId, {
         title: 'Getting Started',
-        body: `# Welcome
-
-![Flatfile Logo](https://searchvectorlogo.com/wp-content/uploads/2023/03/flatfile-logo-vector-2023.png)
-
----
-
-## Say hello to your first customer Space in the new Flatfile!
-Let's begin by first getting acquainted with what you're seeing in your Space initially.
-
----
-
-<div style="text-align: center;">
-  <button style="background-color: #FF5722; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold;">Get Started</button>
-</div>
-
----
-
-Please review the following checklist to get started:
-
----
-
-<div style="border: 1px solid #E0E0E0; padding: 10px; margin-bottom: 10px;">
-1. <span style="color: #FF9800;">Familiarize yourself with the data checklist</span>
-2. <span style="color: #4CAF50;">Populate the job sheet first</span>
-3. <span style="color: #2196F3;">Populate the employees sheet second</span>
-</div>`,
+        body:
+          '# Welcome\n' +
+          '<div style="text-align: center;">\n' +
+          '  <img src="https://searchvectorlogo.com/wp-content/uploads/2023/03/flatfile-logo-vector-2023.png" alt="Flatfile Logo" width="300">\n' +
+          '</div>\n' +
+          '\n' +
+          '---\n' +
+          '## Say hello to your first customer Space in the new Flatfile!\n' +
+          "Let's begin by first getting acquainted with what you're seeing in your Space initially.\n" +
+          '\n' +
+          '<div style="text-align: center;">\n' +
+          '  <a href="https://hcm.show/" style="text-decoration: none;">\n' +
+          '    <button style="background-color: #FF5722; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold;">Visit HCM Show</button>\n' +
+          '  </a>\n' +
+          '</div>\n' +
+          '\n' +
+          '---\n' +
+          'Please review the following checklist to get started:\n' +
+          '\n' +
+          '1. Familiarize yourself with the data checklist\n' +
+          '2. Populate the job sheet first\n' +
+          '3. Populate the employees sheet second\n',
       });
 
       console.log('Created Document: ' + createDoc);
