@@ -1,10 +1,11 @@
+import { SheetConfig } from '@flatfile/api/api';
 export const blueprintSheets = [
   // Jobs Sheet
 
   {
     name: 'Jobs',
     slug: 'jobs-sheet',
-    readonly: false,
+    //readonly: false,
     fields: [
       // Jobs Fields
 
@@ -79,7 +80,7 @@ export const blueprintSheets = [
   {
     name: 'Employees',
     slug: 'employees-sheet',
-    readonly: false,
+    //readonly: false,
     fields: [
       // Employees Fields
 
