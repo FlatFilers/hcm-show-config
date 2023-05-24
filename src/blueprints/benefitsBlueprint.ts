@@ -1,5 +1,3 @@
-// import { Blueprint } from '@flatfile/api';
-
 export const blueprint = ({ blueprintSlug }: { blueprintSlug: string }) => {
   return {
     name: 'HCM.show Benefits',
@@ -196,7 +194,7 @@ export const blueprint = ({ blueprintSlug }: { blueprintSlug: string }) => {
             ],
           },
         ],
-      }, //as Blueprint,
+      },
     ],
   };
 };
