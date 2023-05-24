@@ -24,10 +24,11 @@
     "lint": "TIMING=1 eslint \"src/**/*.{ts,tsx,js,jsx}\" --fix",
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
     "test": "jest --runInBand --detectOpenHandles --forceExit --passWithNoTests",
-    "deploy:projectonboarding-listener": "flatfile pubsub src/workflows/project-workflow/project-listener.ts",
-    "deploy:filefeed-listener": "flatfile pubsub src/workflows/filefeed-workflow/filefeed-listener.ts",
-    "deploy:dynamic-listener": "flatfile pubsub src/workflows/dynamic-workflow/dynamic-listener.ts",
-    "deploy:embedded-listener": "flatfile pubsub src/workflows/embedded-workflow/embedded-listener.ts"
+    "deploy:projectonboarding-listener": "npm run update-env project-onboarding && flatfile pubsub src/workflows/project-workflow/project-listener.ts",
+    "deploy:filefeed-listener": "npm run update-env filefeed && flatfile pubsub src/workflows/filefeed-workflow/filefeed-listener.ts",
+    "deploy:dynamic-listener": "npm run update-env dynamic-portal && flatfile pubsub src/workflows/dynamic-workflow/dynamic-listener.ts",
+    "deploy:embedded-listener": "npm run update-env embedded-portal && flatfile pubsub src/workflows/embedded-workflow/embedded-listener.ts",
+    "update-env": "node src/deploy-helpers/update-env.js"
   },
   "devDependencies": {
     "@flatfile/configure": "0.5.29",
