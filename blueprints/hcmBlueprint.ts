@@ -5,7 +5,7 @@ export const blueprintSheets = [
   {
     name: 'Jobs',
     slug: 'jobs-sheet',
-    //readonly: false,
+    readonly: false,
     fields: [
       // Jobs Fields
 
@@ -80,7 +80,7 @@ export const blueprintSheets = [
   {
     name: 'Employees',
     slug: 'employees-sheet',
-    //readonly: false,
+    readonly: false,
     fields: [
       // Employees Fields
 
@@ -303,9 +303,9 @@ export const blueprintSheets = [
     actions: [
       {
         slug: 'dedupeEmployees',
-        label: 'DeDupe employee records based on ID and Hire Date',
+        label: 'Remove Duplicate Employee Records',
         description:
-          'This custom action code analyzes a set of records and creates a list of IDs representing duplicate records to be removed, prioritizing the ones with earlier hire dates.',
+          'This custom action code analyzes a set of employee records and identifies duplicate entries based on employee ID and hire date. It removes duplicate records, prioritizing those with earlier hire dates.',
         primary: false,
       },
     ],

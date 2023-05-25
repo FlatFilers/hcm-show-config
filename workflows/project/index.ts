@@ -6,7 +6,6 @@ import { jobValidations } from '../../recordHooks/jobs/jobValidations';
 import { pushToHcmShow } from '../../actions/pushToHCMShow';
 import { dedupeEmployees } from '../../actions/dedupe';
 import { blueprintSheets } from '../../blueprints/hcmBlueprint';
-import { SheetConfig } from '@flatfile/api/api';
 
 // Define the main function that sets up the listener
 export default function (listener) {
@@ -38,11 +37,7 @@ export default function (listener) {
       console.log('jobID: ' + jobId);
 
       try {
-        console.log('Inside try block: ');
-        console.log('environmentId:' + environmentId);
-        console.log('spaceId:' + spaceId);
-        console.log('jobId:' + jobId);
-
+        // Create a new workbook
         const createWorkbook = await api.workbooks.create({
           spaceId: spaceId,
           environmentId: environmentId,
@@ -65,47 +60,98 @@ export default function (listener) {
         const workbookId = createWorkbook.data?.id;
         if (workbookId) {
           console.log('Created Workbook with ID:' + workbookId);
+
+          // Update the space to set the primary workbook and theme using api.spaces.update
+          const updatedSpace = await api.spaces.update(spaceId, {
+            environmentId: environmentId,
+            primaryWorkbookId: workbookId,
+            metadata: {
+              sidebarConfig: {
+                showSidebar: false,
+              },
+              theme: {
+                root: {
+                  primaryColor: '#0062FF',
+                  secondaryColor: '#FFFFFF',
+                  fontFamily: 'Arial, sans-serif',
+                  fontSize: '16px',
+                },
+                sidebar: {
+                  backgroundColor: '#FFFFFF',
+                  textColor: '#333333',
+                  logo: 'https://searchvectorlogo.com/wp-content/uploads/2023/03/flatfile-logo-vector-2023.png',
+                },
+                body: {
+                  backgroundColor: '#F7F9FC',
+                  textColor: '#333333',
+                },
+                button: {
+                  backgroundColor: '#0062FF',
+                  textColor: '#FFFFFF',
+                  hoverColor: '#003CFF',
+                },
+              },
+            },
+          });
+
+          // Log the ID of the updated space to the console
+          console.log('Updated Space with ID: ' + updatedSpace.data.id);
         } else {
           console.log('Unable to retrieve workbook ID from the response.');
         }
-        // Update the space to set the primary workbook using api.spaces.update
-        const updateSpace = await api.spaces.update(spaceId, {
-          environmentId: environmentId,
-          primaryWorkbookId: workbookId,
-        });
-        // Log the ID of the updated space to the console
-        console.log('Updated Space with ID: ' + updateSpace.data.id);
       } catch (error) {
-        console.log('Error creating workbook:' + JSON.stringify(error));
+        console.log('Error creating workbook or updating space:', error);
       }
 
-      // Create a new document using the Flatfile API
       // Create a new document using the Flatfile API
       const createDoc = await api.documents.create(spaceId, {
         title: 'Getting Started',
         body:
-          '# Welcome\n' +
           '<div style="text-align: center;">\n' +
-          '  <img src="https://searchvectorlogo.com/wp-content/uploads/2023/03/flatfile-logo-vector-2023.png" alt="Flatfile Logo" width="300">\n' +
+          '  <img src="https://searchvectorlogo.com/wp-content/uploads/2023/03/flatfile-logo-vector-2023.png" alt="Flatfile Logo" width="200">\n' +
           '</div>\n' +
           '\n' +
           '---\n' +
-          '## Say hello to your first customer Space in the new Flatfile!\n' +
-          "Let's begin by first getting acquainted with what you're seeing in your Space initially.\n" +
+          '## Welcome to Flatfile!\n' +
+          "Welcome to *Flatfile*! This is your first customer Space, and we're excited to have you on board. With Flatfile, you can easily onboard and manage data for your organization.\n" +
           '\n' +
           '<div style="text-align: center;">\n' +
           '  <a href="https://hcm.show/" style="text-decoration: none;">\n' +
-          '    <button style="background-color: #FF5722; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold;">Visit HCM Show</button>\n' +
+          '    <button style="background-color: #0062FF; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">Visit HCM Show</button>\n' +
           '  </a>\n' +
           '</div>\n' +
           '\n' +
           '---\n' +
-          'Please review the following checklist to get started:\n' +
+          'To get started, follow these steps:\n' +
           '\n' +
-          '1. Familiarize yourself with the data checklist\n' +
-          '2. Populate the job sheet first\n' +
-          '3. Populate the employees sheet second\n',
+          '1. **Familiarize yourself with the data checklist** in the sidebar.\n' +
+          '2. **Populate the jobs sheet** with relevant data. You can click on each cell to edit and add information.\n' +
+          '3. **Populate the employees sheet** with relevant data. Use the toolbar at the top to format and customize the sheet.\n' +
+          "Once you've populated the sheets with the necessary data, you're ready to start leveraging Flatfile's powerful features!\n\n" +
+          'Here are some examples of Markdown features:\n\n' +
+          '*Italic Text*: Use asterisks or underscores to emphasize text.\n\n' +
+          '**Bold Text**: Use double asterisks or underscores to make text bold.\n\n' +
+          '> Blockquotes: Use the greater-than symbol to create blockquotes.\n\n' +
+          '```\n' +
+          'Code Blocks: Enclose code snippets within triple backticks.\n' +
+          'function helloWorld() {\n' +
+          '  console.log("Hello, World!");\n' +
+          '}\n' +
+          '```\n\n' +
+          'Tables:\n\n' +
+          '| Name  | Age | Location     |\n' +
+          '|-------|-----|--------------|\n' +
+          '| John  | 25  | New York     |\n' +
+          '| Alice | 30  | San Francisco|\n' +
+          '| Bob   | 28  | London       |\n\n' +
+          'Lists:\n\n' +
+          '- First item\n' +
+          '- Second item\n' +
+          '- Third item\n\n' +
+          'These are just a few examples of Markdown features. Feel free to explore more options and enhance your document!\n',
       });
+
+      console.log('Created Document: ' + createDoc);
 
       console.log('Created Document: ' + createDoc);
 
