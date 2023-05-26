@@ -6,6 +6,7 @@ import { jobValidations } from '../../recordHooks/jobs/jobValidations';
 import { pushToHcmShow } from '../../actions/pushToHCMShow';
 import { dedupeEmployees } from '../../actions/dedupe';
 import { blueprintSheets } from '../../blueprints/hcmBlueprint';
+import { validateReportingStructure } from '../../actions/validateReportingStructure';
 
 // Define the main function that sets up the listener
 export default function (listener) {
@@ -231,6 +232,45 @@ export default function (listener) {
         console.log('Listener: ' + JSON.stringify(action));
       } catch (error) {
         console.log('Error occurred:', error);
+        // Handle the error or log it for debugging
+      }
+    }
+
+    // If the action is 'employees-sheet:validateReportingStructure'
+    if (action === 'employees-sheet:validateReportingStructure') {
+      try {
+        console.log('Sheet ID: ' + sheetId);
+
+        // Call the 'get' method of api.records with the sheetId
+        const response = await api.records.get(sheetId);
+
+        // Check if the response is valid and contains records
+        if (response?.data?.records) {
+          // Get the records from the response data
+          const records = response.data.records;
+
+          // Call the validateReportingStructure function with the records
+          const reportingErrors = validateReportingStructure(records);
+
+          // Log the reporting errors to the console
+          //console.log('Reporting Errors:' + JSON.stringify(reportingErrors));
+
+          // Update the records if there are any reporting errors
+          if (reportingErrors.length > 0) {
+            await api.records.update(sheetId, reportingErrors);
+            console.log('Records updated successfully.');
+            // For example, you can send them as a notification or store them in a database
+          } else {
+            console.log('No records found for updating.');
+          }
+        } else {
+          console.log('No records found in the response.');
+        }
+
+        // Log the action as a string to the console
+        //console.log('Listener: ' + JSON.stringify(action));
+      } catch (error) {
+        console.log('Error occurred:' + error);
         // Handle the error or log it for debugging
       }
     }
