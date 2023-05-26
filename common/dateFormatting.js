@@ -1,8 +1,7 @@
 // Importing necessary modules and objects
-import { FlatfileRecord } from '@flatfile/hooks';
 import moment from 'moment';
 import { momentFormats } from './dateFormats';
-import { blueprintSheets } from '../blueprint';
+import { blueprintSheets } from '../blueprints/hcmBlueprint';
 
 // A helper function to format the given date string
 function formatDate(dateString) {

@@ -1,5 +1,3 @@
-const FF = require('@flatfile/configure');
-const { FlatfileRecord } = require('@flatfile/hooks');
 const { isNotNil } = require('../common/helpers');
 
 /**
@@ -18,8 +16,17 @@ the value to be looked up.
 lookup value should be set to.
 */
 const vlookup = (record, referenceFieldKey, lookupFieldKey, targetFieldKey) => {
+  console.log('Initial Record: ' + JSON.stringify(record));
   const links = record.getLinks(referenceFieldKey);
+  console.log('Linked Record: ' + JSON.stringify(links));
   const lookupValue = links?.[0]?.[lookupFieldKey];
+  console.log(
+    'Reference Fields Key: ' +
+      referenceFieldKey +
+      ' : ' +
+      'LookUpValue: ' +
+      lookupValue
+  );
 
   if (isNotNil(lookupValue)) {
     record.set(targetFieldKey, lookupValue);

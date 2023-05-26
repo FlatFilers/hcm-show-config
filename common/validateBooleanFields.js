@@ -1,5 +1,5 @@
 import { FlatfileRecord } from '@flatfile/hooks';
-import { blueprintSheets } from '../blueprint';
+import { blueprintSheets } from '../blueprints/hcmBlueprint';
 import { isNotNil } from '../common/helpers';
 
 // Function to validate boolean fields in a record

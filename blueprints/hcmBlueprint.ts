@@ -1,3 +1,4 @@
+import { SheetConfig } from '@flatfile/api/api';
 export const blueprintSheets = [
   // Jobs Sheet
 
@@ -301,21 +302,10 @@ export const blueprintSheets = [
     ],
     actions: [
       {
-        slug: 'RetriggerValidations',
-        label: 'Re-run Validations',
-        description: 'Re-run validations on this sheet',
-      },
-      {
-        slug: 'pushToHcmShow',
-        label: 'Push records to HCM.show',
-        description: "Push this workbook's records into HCM.show",
-        primary: false,
-      },
-      {
         slug: 'dedupeEmployees',
-        label: 'DeDupe employee records based on ID and Hire Date',
+        label: 'Remove Duplicate Employee Records',
         description:
-          'This custom action code analyzes a set of records and creates a list of IDs representing duplicate records to be removed, prioritizing the ones with earlier hire dates.',
+          'This custom action code analyzes a set of employee records and identifies duplicate entries based on employee ID and hire date. It removes duplicate records, prioritizing those with earlier hire dates.',
         primary: false,
       },
     ],
