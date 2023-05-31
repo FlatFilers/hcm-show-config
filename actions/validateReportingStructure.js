@@ -7,6 +7,7 @@ export const validateReportingStructure = (records) => {
   // Recursive function to detect circular dependencies in the reporting structure
   const detectCircularDependency = (employeeId, path) => {
     if (visited.has(employeeId)) {
+      // Circular dependency detected for employeeId
       const record = employees[employeeId];
       record.values.employeeId.messages.push({
         message: `Circular dependency detected: ${path.join(
@@ -23,6 +24,7 @@ export const validateReportingStructure = (records) => {
     const managerId = employees[employeeId]?.values.managerId.value;
 
     if (managerId && managerId !== employeeId) {
+      // Recursive call to detect circular dependency for the managerId
       detectCircularDependency(managerId, [...path, employeeId]);
     }
 
@@ -37,9 +39,11 @@ export const validateReportingStructure = (records) => {
     employees[employeeId] = record;
 
     if (managerId && managerId !== '') {
+      // Adding managerId to the set of unique managerIds
       managerIds.add(managerId);
 
       if (employeeId === managerId) {
+        // Multiple records have the scenario where employeeId = managerId
         record.values.employeeId.messages.push({
           message: `Multiple records have the scenario where employeeId = managerId. Please ensure that only one record has the employeeId = managerId scenario.`,
           source: 'custom-logic',
@@ -68,6 +72,7 @@ export const validateReportingStructure = (records) => {
   // Checking for circular dependencies in the reporting structure
   for (const employeeId in employees) {
     if (!visited.has(employeeId)) {
+      // Start detecting circular dependencies from unvisited employeeId
       detectCircularDependency(employeeId, []);
     }
   }
