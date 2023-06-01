@@ -154,8 +154,6 @@ export default function (listener) {
 
       console.log('Created Document: ' + createDoc);
 
-      console.log('Created Document: ' + createDoc);
-
       // Mark the job as complete using api.jobs.complete
       const updateJob3 = await api.jobs.complete(jobId, {
         info: 'This job is now donezo.',
