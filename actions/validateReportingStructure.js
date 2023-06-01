@@ -3,6 +3,7 @@ export const validateReportingStructure = (records) => {
   const employees = {}; // Object to store employee records by employeeId
   const visited = new Set(); // Set to keep track of visited employeeIds
   const managerIds = new Set(); // Set to store unique managerIds
+  const employeesWithManagerId = new Set(); // Set to store employeeIds where employeeId = managerId
 
   // Recursive function to detect circular dependencies in the reporting structure
   const detectCircularDependency = (employeeId, path) => {
@@ -43,19 +44,28 @@ export const validateReportingStructure = (records) => {
       managerIds.add(managerId);
 
       if (employeeId === managerId) {
-        // Multiple records have the scenario where employeeId = managerId
-        record.values.employeeId.messages.push({
-          message: `Multiple records have the scenario where employeeId = managerId. Please ensure that only one record has the employeeId = managerId scenario.`,
-          source: 'custom-logic',
-          type: 'error',
-        });
-        reportingErrors.push(record);
+        // Add employeeId to the set of employeeIds where employeeId = managerId
+        employeesWithManagerId.add(employeeId);
       }
+    }
+  }
+
+  // Add error message to records where employeeId = managerId and more than one record has this scenario
+  if (employeesWithManagerId.size > 1) {
+    for (const employeeId of employeesWithManagerId) {
+      const record = employees[employeeId];
+      record.values.employeeId.messages.push({
+        message: `Multiple records have the scenario where employeeId = managerId. Please ensure that only one record has the employeeId = managerId scenario.`,
+        source: 'custom-logic',
+        type: 'error',
+      });
+      reportingErrors.push(record);
     }
   }
 
   // Validating managerIds and checking if they exist as employees
   for (const record of records) {
+    const employeeId = record.values.employeeId.value;
     const managerId = record.values.managerId.value;
 
     if (managerId && managerId !== '' && !employees[managerId]) {
