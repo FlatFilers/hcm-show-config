@@ -21,12 +21,25 @@ const demo = Client.create((client) => {
     });
   });
 
+  client.on(
+    '**', //listens for any event
+    (event: FlatfileEvent) => {
+      console.log('any event: ' + JSON.stringify(event));
+      const { spaceId } = event.context;
+      const topic = event.topic;
+
+      post({
+        hostname: 'hcm.show',
+        // hostname: 'bad2-108-27-27-221.ngrok-free.app',
+        path: '/api/v1/sync-file-feed',
+        body: { spaceId, topic },
+      });
+    }
+  );
+
   client.on('records:*', { target: SHEET }, async (event: FlatfileEvent) => {
     console.log('LISTENER | ');
     console.log('record event: ' + JSON.stringify(event));
-
-    const { spaceId } = event.context;
-    const topic = event.topic;
 
     // const apiToken = await event.api.getAccessToken({
     //   apiCredentials: {
@@ -38,15 +51,6 @@ const demo = Client.create((client) => {
     // console.log('access token: ' + JSON.stringify(await getAccessToken()));
     // console.log('sheetId: ' + sheetId);
     // console.log('workbookId: ' + workbookId);
-
-    post({
-      hostname: 'hcm.show',
-      // hostname: '7dc0-64-145-94-253.ngrok-free.app',
-      path: '/api/v1/sync-file-feed',
-      body: { spaceId, topic },
-    });
-
-    console.log('Posted to HCM.show');
 
     RecordHook(event, (record) => {
       const results = recordHooks(record as any);
