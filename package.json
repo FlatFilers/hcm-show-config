@@ -7,7 +7,7 @@
     "dev": "flatfile develop workflows/project/index.ts",
     "deploy": "npx flatfile@latest deploy",
     "deploy:projectonboarding-listener": "npx flatfile@latest deploy workflows/project/index.ts",
-    "deploy:filefeed-listener": "npx flatfile@latest deploy workflows/filfeed/index.js",
+    "deploy:filefeed-listener": "npx flatfile@latest deploy workflows/filefeed/index.js",
     "deploy:dynamic-listener": "npx flatfile@latest deploy workflows/dynamic/index.js",
     "deploy:embedded-listener": "npx flatfile@latest deploy workflows/embedded/index.js",
     "test": "jest --transform esm"
