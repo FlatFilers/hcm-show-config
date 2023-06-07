@@ -13,14 +13,21 @@ export default function (listener) {
   });
 
   // Add an event listener for the 'job:created' event
-  listener.on('job:created', async (event) => {
-    // Check if the payload operation is 'configure'
-    if (event.payload.operation === 'configure') {
+  listener.filter({ job: 'space:configure' }, (configure) => {
+    console.log('on space:configure', configure);
+
+    // Add an event listener for the 'job:created' event with a filter on 'space:configure'
+    configure.on('job:ready', async (event) => {
       // Log the event object as a JSON string to the console
       //console.log(JSON.stringify(event));
 
       // Destructure the 'context' object from the event object to get the necessary IDs
       const { spaceId, environmentId, jobId } = event.context;
+
+      const updateJob1 = await api.jobs.ack(jobId, {
+        info: 'Creating Space',
+        progress: 10,
+      });
 
       // Log the environment ID to the console
       console.log('env: ' + environmentId);
@@ -70,7 +77,7 @@ export default function (listener) {
       console.log(
         'Updated Job With ID to Status Complete: ' + updateJob.data.id
       );
-    }
+    });
   });
 
   // Attach a record hook to the 'benefit-elections-sheet' of the Flatfile importer

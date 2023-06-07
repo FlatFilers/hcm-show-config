@@ -10,6 +10,10 @@
     "deploy:filefeed-listener": "npx flatfile@latest deploy workflows/filefeed/index.js",
     "deploy:dynamic-listener": "npx flatfile@latest deploy workflows/dynamic/index.js",
     "deploy:embedded-listener": "npx flatfile@latest deploy workflows/embedded/index.js",
+    "develop:projectonboarding-listener": "npx flatfile@latest develop workflows/project/index.ts",
+    "develop:filefeed-listener": "npx flatfile@latest develop workflows/filefeed/index.js",
+    "develop:dynamic-listener": "npx flatfile@latest develop workflows/dynamic/index.js",
+    "develop:embedded-listener": "npx flatfile@latest develop workflows/embedded/index.js",
     "test": "jest --transform esm"
   },
   "keywords": [],
