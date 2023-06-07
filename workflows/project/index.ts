@@ -221,6 +221,7 @@ export default function (listener) {
             metadata: {
               sidebarConfig: {
                 showSidebar: false,
+                showGuestInvite: true,
               },
               theme: {
                 root: {
