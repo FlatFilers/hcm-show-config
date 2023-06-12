@@ -66,7 +66,7 @@ function formatRecordDates(record, sheetSlug) {
       else if (formattedDate !== inputDate.trim()) {
         console.log(formattedDate);
         record.set(dateField, formattedDate);
-        record.addComment(dateField, 'Date has been formatted as yyyy-MM-dd');
+        record.addInfo(dateField, 'Date has been formatted as yyyy-MM-dd');
       }
     } else if (typeof inputDate === 'string' && !inputDate.trim().length) {
       // Skip validation if the current value is an empty string
