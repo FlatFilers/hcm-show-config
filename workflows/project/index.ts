@@ -74,24 +74,72 @@ export default function (listener) {
               },
               theme: {
                 root: {
-                  primaryColor: '#0062FF',
-                  secondaryColor: '#FFFFFF',
-                  fontFamily: 'Arial, sans-serif',
-                  fontSize: '16px',
+                  primaryColor: '#3B2FC9',
+                  dangerColor: 'salmon',
+                  warningColor: 'yellow',
                 },
                 sidebar: {
-                  backgroundColor: '#FFFFFF',
-                  textColor: '#333333',
-                  logo: 'https://searchvectorlogo.com/wp-content/uploads/2023/03/flatfile-logo-vector-2023.png',
+                  logo: `https://images.ctfassets.net/e8fqfbar73se/4c9ouGKgET1qfA4uxp4qLZ/e3f1a8b31be67a798c1e49880581fd3d/white-logo-w-padding.png`,
+                  textColor: 'white',
+                  titleColor: 'white',
+                  focusBgColor: '#6673FF',
+                  focusTextColor: 'white',
+                  backgroundColor: '#3B2FC9',
+                  footerTextColor: 'white',
+                  textUltralightColor: 'red',
                 },
-                body: {
-                  backgroundColor: '#F7F9FC',
-                  textColor: '#333333',
-                },
-                button: {
-                  backgroundColor: '#0062FF',
-                  textColor: '#FFFFFF',
-                  hoverColor: '#003CFF',
+                table: {
+                  inputs: {
+                    radio: {
+                      color: 'rgb(8 117 225)',
+                    },
+                    checkbox: {
+                      color: 'rgb(8 117 225)',
+                    },
+                  },
+                  filters: {
+                    color: 'gray',
+                    active: {
+                      backgroundColor: 'rgb(8 117 225)',
+                    },
+                    error: {
+                      activeBackgroundColor: 'salmon',
+                    },
+                  },
+                  column: {
+                    header: {
+                      fontSize: '12px',
+                      backgroundColor: 'rgb(240 240 240)',
+                      color: 'slategray',
+                      dragHandle: {
+                        idle: 'rgb(8 117 225)',
+                        dragging: 'blue',
+                      },
+                    },
+                  },
+                  fontFamily: 'Arial',
+                  indexColumn: {
+                    backgroundColor: 'rgb(240 240 240)',
+                    selected: {
+                      color: 'rgb(240 240 240)',
+                      backgroundColor: 'rgb(200 200 200)',
+                    },
+                  },
+                  cell: {
+                    selected: {
+                      backgroundColor: 'rgb(235 245 255)',
+                    },
+                    active: {
+                      borderColor: 'rgb(8 117 225)',
+                      spinnerColor: 'gray',
+                    },
+                  },
+                  boolean: {
+                    toggleChecked: 'rgb(240 240 240)',
+                  },
+                  loading: {
+                    color: 'rgb(240 240 240)',
+                  },
                 },
               },
             },
@@ -108,50 +156,21 @@ export default function (listener) {
 
       // Create a new document using the Flatfile API
       const createDoc = await api.documents.create(spaceId, {
-        title: 'Getting Started',
-        body:
-          '<div style="text-align: center;">\n' +
-          '  <img src="https://searchvectorlogo.com/wp-content/uploads/2023/03/flatfile-logo-vector-2023.png" alt="Flatfile Logo" width="200">\n' +
-          '</div>\n' +
-          '\n' +
-          '---\n' +
-          '## Welcome to Flatfile!\n' +
-          "Welcome to *Flatfile*! This is your first customer Space, and we're excited to have you on board. With Flatfile, you can easily onboard and manage data for your organization.\n" +
-          '\n' +
-          '<div style="text-align: center;">\n' +
-          '  <a href="https://hcm.show/" style="text-decoration: none;">\n' +
-          '    <button style="background-color: #0062FF; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer;">Visit HCM Show</button>\n' +
-          '  </a>\n' +
-          '</div>\n' +
-          '\n' +
-          '---\n' +
-          'To get started, follow these steps:\n' +
-          '\n' +
-          '1. **Familiarize yourself with the data checklist** in the sidebar.\n' +
-          '2. **Populate the jobs sheet** with relevant data. You can click on each cell to edit and add information.\n' +
-          '3. **Populate the employees sheet** with relevant data. Use the toolbar at the top to format and customize the sheet.\n' +
-          "Once you've populated the sheets with the necessary data, you're ready to start leveraging Flatfile's powerful features!\n\n" +
-          'Here are some examples of Markdown features:\n\n' +
-          '*Italic Text*: Use asterisks or underscores to emphasize text.\n\n' +
-          '**Bold Text**: Use double asterisks or underscores to make text bold.\n\n' +
-          '> Blockquotes: Use the greater-than symbol to create blockquotes.\n\n' +
-          '```\n' +
-          'Code Blocks: Enclose code snippets within triple backticks.\n' +
-          'function helloWorld() {\n' +
-          '  console.log("Hello, World!");\n' +
-          '}\n' +
-          '```\n\n' +
-          'Tables:\n\n' +
-          '| Name  | Age | Location     |\n' +
-          '|-------|-----|--------------|\n' +
-          '| John  | 25  | New York     |\n' +
-          '| Alice | 30  | San Francisco|\n' +
-          '| Bob   | 28  | London       |\n\n' +
-          'Lists:\n\n' +
-          '- First item\n' +
-          '- Second item\n' +
-          '- Third item\n\n' +
-          'These are just a few examples of Markdown features. Feel free to explore more options and enhance your document!\n',
+        title: 'Welcome',
+        body: `<div> 
+        <h1 style="margin-bottom: 0px;">Welcome! Let's import your data.</h1>
+        <p style="margin-top: 0px; margin-bottom: 12px;">Follow the steps below in order. Note: you can always return to this page by clicking "Welcome" in the left-hand sidebar.</p>
+        <h2 style="margin-bottom: 0px;">1. Visit Files</h2>
+        <p style="margin-top: 0px; margin-bottom: 8px;">Click "Files" in the left-hand sidebar. This is where you can upload files you want to import into Flatfile.</p>
+        <h2 style="margin-bottom: 0px;">2. Upload the sample data</h2>
+        <p style="margin-top: 0px; margin-bottom: 8px;">On the Files page, click "Add files" or drag-and-drop the sample data you downloaded previously onto the page.</p>
+        <p style="margin-top: 0px; margin-bottom: 8px;">
+        <div style="font-weight: 600">Note:</div> There are multiple tabs in the sample data. Be sure to
+        upload data from each tab.</p>
+        <p style="margin-top: 0px; margin-bottom: 8px;">After the file uploads, click "Import" and follow the steps to completion to import the workbook.</p>
+        <h2 style="margin-bottom: 0px;">3. Return to HCM.show</h2>
+        <p style="margin-top: 0px; margin-bottom: 12px;">After uploading and importing the sample data, click the button below to return to HCM.show and click "Sync Records" to sync the data back into HCM.show.</p>
+      </div>`,
       });
 
       console.log('Created Document: ' + createDoc);
