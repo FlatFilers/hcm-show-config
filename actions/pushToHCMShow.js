@@ -10,7 +10,7 @@ export const pushToHcmShow = async (event) => {
   const { spaceId } = event.context;
 
   // Getting the userId from the space using the getUserIdFromSpace utility function
-  const userId = await getUserIdFromSpace({ event, spaceId });
+  const userId = await getUserIdFromSpace(spaceId);
 
   // Making a POST request to 'hcm.show' API to sync the space
   post({
