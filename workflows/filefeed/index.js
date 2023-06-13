@@ -39,7 +39,7 @@ export default function (listener) {
         actions: [
           {
             operation: 'submitAction',
-            slug: 'BenefitsWorkbookSubmitAction',
+            slug: 'HCMWorkbookSubmitAction',
             mode: 'foreground',
             label: 'Submit',
             type: 'string',
@@ -91,12 +91,14 @@ export default function (listener) {
   listener.on('action:triggered', async (event) => {
     // Extract the name of the action from the event context
     const action = event.context.actionName;
+    console.log('Action: ' + JSON.stringify(action));
+
     // If the action is 'HCMWorkbookSubmitAction'
     if (action.includes('HCMWorkbookSubmitAction')) {
+      console.log('Pushing to HCM.show...');
+
       // Call the submit function with the event as an argument to push the data to HCM Show
       await pushToHcmShow(event);
-      // Log the action as a string to the console
-      console.log('Action: ' + JSON.stringify(action));
     }
   });
 

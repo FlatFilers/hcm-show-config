@@ -1,10 +1,12 @@
 import { FlatfileEvent } from '@flatfile/configure';
 import { post } from './request';
+import api from '@flatfile/api';
 const util = require('util');
 
 /**
  * Retrieves the access token from the Flatfile API.
  */
+// TODO: Not used anymore
 export const getAccessToken = async () => {
   const clientId = '8645f8b0-5573-4926-8f7b-7b114f36d45b';
   const secret = 'feab5697-911b-41b9-9282-f1011e3cba13';
@@ -29,15 +31,22 @@ export const getAccessToken = async () => {
  * @returns {string} The user ID.
  */
 export const getUserIdFromSpace = async ({ event, spaceId }) => {
-  console.log('| fetching space: ' + spaceId);
-  console.log(util.inspect(event));
+  const space = await api.spaces.get(spaceId);
 
-  const actorId = await event.context.actorId;
+  space.data.metadata;
+  console.log('space', space);
 
-  console.log('| actor: ' + JSON.stringify(actorId));
+  // const userId = space.console.log('getUserIdFromSpace()');
+  // // console.log('event: ' + JSON.stringify(event));
+  // console.log('| fetching space: ' + spaceId);
+  // console.log(util.inspect(event));
 
-  // TODO: Eventually remove. Embed has a different format currently
-  // and nests the data under `spaceInfo`
+  // const actorId = await event.context.actorId;
 
-  return actorId;
+  // console.log('| actor: ' + JSON.stringify(actorId));
+
+  // // TODO: Eventually remove. Embed has a different format currently
+  // // and nests the data under `spaceInfo`
+
+  return 'todo';
 };
