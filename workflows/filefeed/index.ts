@@ -4,12 +4,22 @@ import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor';
 import { pushToHcmShow } from '../../actions/pushToHCMShow';
 import { blueprintSheets } from '../../blueprints/benefitsBlueprint';
 import { benefitValidations } from '../../recordHooks/benefits/benefitElectionsValidations';
+import { post } from '../../common/utils/request';
 
 // Define the main function that sets up the listener
 export default function (listener) {
   // Log the event topic for all events
   listener.on('**', (event) => {
     console.log('> event.topic: ' + event.topic);
+
+    const { spaceId } = event.context;
+    const topic = event.topic;
+
+    post({
+      hostname: 'hcm.show',
+      path: '/api/v1/sync-file-feed',
+      body: { spaceId, topic },
+    });
   });
 
   // Add an event listener for the 'job:created' event
@@ -39,7 +49,7 @@ export default function (listener) {
         actions: [
           {
             operation: 'submitAction',
-            slug: 'BenefitsWorkbookSubmitAction',
+            slug: 'HCMWorkbookSubmitAction',
             mode: 'foreground',
             label: 'Submit',
             type: 'string',
@@ -53,12 +63,19 @@ export default function (listener) {
       // Log the result of the createWorkbook function to the console as a string
       console.log('Created Workbook with ID: ' + workbookId);
 
-      // Add new listener on workbook created
+      const space = await api.spaces.get(spaceId);
+
+      console.log('Space: ' + JSON.stringify(space));
+
+      const userId = (space.data.metadata as { userId: string }).userId;
 
       // Update Space to set primary workbook for data checklist functionality using the Flatfile API
       const updateSpace = await api.spaces.update(spaceId, {
         environmentId: environmentId,
         primaryWorkbookId: workbookId,
+        metadata: {
+          userId,
+        },
       });
       // Log the result of the updateSpace function to the console as a string
       console.log('Updated Space with ID: ' + updateSpace.data.id);
