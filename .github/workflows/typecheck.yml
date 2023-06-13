@@ -1,4 +1,4 @@
-name: Typecheck & Lint
+name: Pre-flight
 on:
   push:
     branches:
