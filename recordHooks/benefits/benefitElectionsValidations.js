@@ -1,6 +1,6 @@
 import { roundEmployerContribution } from './roundEmployerContribution';
 
-export function employeeValidations(record) {
+export function benefitElectionsValidations(record) {
   // Validate the input record parameter
   if (!record || typeof record !== 'object') {
     throw new Error('Invalid record input. Expecting a valid record object.');

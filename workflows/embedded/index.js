@@ -3,7 +3,7 @@ import api from '@flatfile/api';
 import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor';
 import { pushToHcmShow } from '../../actions/pushToHCMShow';
 import { blueprintSheets } from '../../blueprints/benefitsBlueprint';
-import { benefitValidations } from '../../recordHooks/benefits/benefitElectionsValidations';
+import { benefitElectionsValidations } from '../../recordHooks/benefits/benefitElectionsValidations';
 
 // Define the main function that sets up the listener
 export default function (listener) {
@@ -84,7 +84,7 @@ export default function (listener) {
   listener.use(
     // When a record is processed, invoke the 'jobValidations' function to check for any errors
     recordHook('benefit-elections-sheet', (record) => {
-      const results = benefitValidations(record);
+      const results = benefitElectionsValidations(record);
       // Log the results of the validations to the console as a JSON string
       console.log('Benefits Hooks: ' + JSON.stringify(results));
       // Return the record, potentially with additional errors added by the 'benefitValidations' function
