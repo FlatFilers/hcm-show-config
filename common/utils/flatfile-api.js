@@ -1,5 +1,7 @@
 import { FlatfileEvent } from '@flatfile/configure';
 import { post } from './request';
+import api from '@flatfile/api';
+
 const util = require('util');
 
 /**
@@ -28,16 +30,19 @@ export const getAccessToken = async () => {
  * @param {string} params.spaceId - The space ID.
  * @returns {string} The user ID.
  */
-export const getUserIdFromSpace = async ({ event, spaceId }) => {
+export const getUserIdFromSpace = async (spaceId) => {
   console.log('| fetching space: ' + spaceId);
-  console.log(util.inspect(event));
 
-  const actorId = await event.context.actorId;
+  const space = await api.spaces.get(spaceId);
 
-  console.log('| actor: ' + JSON.stringify(actorId));
+  console.log('| space: ' + JSON.stringify(space));
+
+  const userId = space.data.metadata.userId;
+
+  console.log('| userId: ' + userId);
 
   // TODO: Eventually remove. Embed has a different format currently
   // and nests the data under `spaceInfo`
 
-  return actorId;
+  return userId;
 };
