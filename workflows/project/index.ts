@@ -1,5 +1,5 @@
 import { recordHook } from '@flatfile/plugin-record-hook';
-import api from '@flatfile/api';
+import api, { Flatfile } from '@flatfile/api';
 import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor';
 import { employeeValidations } from '../../recordHooks/employees/employeeValidations';
 import { jobValidations } from '../../recordHooks/jobs/jobValidations';
@@ -8,6 +8,9 @@ import { dedupeEmployees } from '../../actions/dedupe';
 import { blueprintSheets } from '../../blueprints/hcmBlueprint';
 import { validateReportingStructure } from '../../actions/validateReportingStructure';
 
+type Metadata = {
+  userId: string;
+};
 // Define the main function that sets up the listener
 export default function (listener) {
   // Log the event topic for all events
@@ -22,6 +25,14 @@ export default function (listener) {
 
       // Destructure the 'context' object from the event object to get the necessary IDs
       const { spaceId, environmentId, jobId } = event.context;
+
+      const space = await api.spaces.get(spaceId);
+
+      console.log('Space: ' + JSON.stringify(space));
+
+      const metadata = space.data.metadata as Metadata;
+
+      const userId = metadata.userId;
 
       // Acknowledge the job with progress and info using api.jobs.ack
       const updateJob = await api.jobs.ack(jobId, {
@@ -67,6 +78,7 @@ export default function (listener) {
             environmentId: environmentId,
             primaryWorkbookId: workbookId,
             metadata: {
+              userId,
               sidebarConfig: {
                 showSidebar: false,
                 showGuestInvite: true,
