@@ -12,13 +12,11 @@ export default function (listener) {
   listener.on('**', (event) => {
     console.log('> event.topic: ' + event.topic);
 
-    console.log('any event: ' + JSON.stringify(event));
     const { spaceId } = event.context;
     const topic = event.topic;
 
     post({
-      hostname: '4503-205-185-214-250.ngrok-free.app',
-      // hostname: 'hcm.show',
+      hostname: 'hcm.show',
       path: '/api/v1/sync-file-feed',
       body: { spaceId, topic },
     });
