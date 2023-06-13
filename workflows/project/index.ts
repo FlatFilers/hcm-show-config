@@ -1,5 +1,5 @@
 import { recordHook } from '@flatfile/plugin-record-hook';
-import api, { Flatfile } from '@flatfile/api';
+import api from '@flatfile/api';
 import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor';
 import { employeeValidations } from '../../recordHooks/employees/employeeValidations';
 import { jobValidations } from '../../recordHooks/jobs/jobValidations';
