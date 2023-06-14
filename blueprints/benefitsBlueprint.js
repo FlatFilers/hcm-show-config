@@ -52,7 +52,7 @@ export const blueprintSheets = [
       {
         key: 'employerContribution',
         label: 'Employer Contribution',
-        type: 'number',
+        type: 'string',
         description:
           'Employer contribution for this benefit plan per plan frequency.',
         constraints: [{ type: 'required' }],
