@@ -1,16 +1,14 @@
 import { recordHook } from '@flatfile/plugin-record-hook';
 import api from '@flatfile/api';
 import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor';
-import { employeeValidations } from '../../recordHooks/employees/employeeValidations';
-import { jobValidations } from '../../recordHooks/jobs/jobValidations';
 import { pushToHcmShow } from '../../actions/pushToHCMShow';
-import { dedupeEmployees } from '../../actions/dedupe';
-import { blueprintSheets } from '../../blueprints/hcmBlueprint';
-import { validateReportingStructure } from '../../actions/validateReportingStructure';
+import { blueprintSheets } from '../../blueprints/benefitsBlueprint';
+import { benefitElectionsValidations } from '../../recordHooks/benefits/benefitElectionsValidations';
 
 type Metadata = {
   userId: string;
 };
+
 // Define the main function that sets up the listener
 export default function (listener) {
   // Log the event topic for all events
@@ -18,7 +16,7 @@ export default function (listener) {
     console.log('> event.topic: ' + event.topic);
   });
 
-  // Add an event listener for the 'job:created' event with a filter on 'space:configure'
+  // Add an event listener for the 'job:created' event
   listener.filter({ job: 'space:configure' }, (configure) => {
     configure.on('job:ready', async (event) => {
       console.log('Reached the job:ready event callback');
@@ -34,41 +32,40 @@ export default function (listener) {
 
       const userId = metadata.userId;
 
-      // Acknowledge the job with progress and info using api.jobs.ack
-      const updateJob = await api.jobs.ack(jobId, {
-        info: "Gettin started y'all",
+      const updateJob1 = await api.jobs.ack(jobId, {
+        info: 'Creating Space',
         progress: 10,
       });
 
-      console.log('Updated Job: ' + JSON.stringify(updateJob));
+      console.log('Updated Job: ' + JSON.stringify(updateJob1));
 
-      // Log the environment ID, space ID, and job ID to the console
+      // Log the environment ID to the console
       console.log('env: ' + environmentId);
-      console.log('spaceId: ' + spaceId);
+      console.log('spaceId ' + spaceId);
       console.log('jobID: ' + jobId);
 
       try {
-        // Create a new workbook
+        // Create a new workbook using the Flatfile API
         const createWorkbook = await api.workbooks.create({
           spaceId: spaceId,
           environmentId: environmentId,
           labels: ['primary'],
-          name: 'HCM Workbook',
-          sheets: blueprintSheets as any,
+          name: 'Benefits Workbook',
+          sheets: blueprintSheets,
           actions: [
             {
               operation: 'submitAction',
-              slug: 'HCMWorkbookSubmitAction',
+              slug: 'BenefitsWorkbookSubmitAction',
               mode: 'foreground',
               label: 'Submit',
               type: 'string',
-              description: 'Submit Data to Webhook.site',
+              description: 'Submit Data to HCM Show',
               primary: true,
             },
           ],
         });
 
-        const workbookId = createWorkbook.data?.id;
+        const workbookId = createWorkbook.data.id;
         if (workbookId) {
           console.log('Created Workbook with ID:' + workbookId);
 
@@ -85,7 +82,7 @@ export default function (listener) {
               },
               theme: {
                 root: {
-                  primaryColor: '#3B2FC9',
+                  primaryColor: '#32A673',
                   dangerColor: 'salmon',
                   warningColor: 'gold',
                 },
@@ -93,9 +90,9 @@ export default function (listener) {
                   logo: `https://images.ctfassets.net/e8fqfbar73se/4c9ouGKgET1qfA4uxp4qLZ/e3f1a8b31be67a798c1e49880581fd3d/white-logo-w-padding.png`,
                   textColor: 'white',
                   titleColor: 'white',
-                  focusBgColor: '#6673FF',
+                  focusBgColor: '#4DCA94',
                   focusTextColor: 'white',
-                  backgroundColor: '#3B2FC9',
+                  backgroundColor: '#32A673',
                   footerTextColor: 'white',
                   textUltralightColor: 'red',
                 },
@@ -165,7 +162,6 @@ export default function (listener) {
         console.log('Error creating workbook or updating space:', error);
       }
 
-      // Create a new document using the Flatfile API
       const createDoc = await api.documents.create(spaceId, {
         title: 'Welcome',
         body: `<div> 
@@ -173,28 +169,29 @@ export default function (listener) {
         <h2 style="margin-top: 0px; margin-bottom: 12px;">Follow the steps below to get started:</h2>
         <h2 style="margin-bottom: 0px;">1. Upload your file</h2>
         <p style="margin-top: 0px; margin-bottom: 8px;">Click "Files" in the left-hand sidebar, and upload the sample data you want to import into Flatfile. You can do this by clicking "Add files" or dragging and dropping the file onto the page.</p>
-        <h2 style="margin-bottom: 0px;">2. Import your Jobs Data</h2>
-        <p style="margin-top: 0px; margin-bottom: 8px;">Click "Import" and select the Jobs data. Follow the mapping instructions in Flatfile to complete the import. Once the data has been mapped, it will be loaded into Flatfile's table UI, where validations and transformations have been applied.</p>
-        <h2 style="margin-bottom: 0px;">3. Import your Employee Data</h2>
-        <p style="margin-top: 0px; margin-bottom: 8px;">Click "Import" and select the Employee data. Follow the mapping instructions in Flatfile to complete the import. Once the data has been mapped, it will be loaded into Flatfile's table UI, where validations and transformations have been applied.</p>
-        <h2 style="margin-bottom: 0px;">4. Validate and Transform Data</h2>
-        <p style="margin-top: 0px; margin-bottom: 8px;">Ensure that the data is correctly formatted and transformed By Flatfile. You can easily address any issues and errors within Flatfile's user interface.</p>
-        <h2 style="margin-bottom: 0px;">5. Load Data into HCM.Show</h2>
-        <p style="margin-top: 0px; margin-bottom: 12px;">Once the data has been validated and transformed, use the custom action on each sheet to load the data into HCM.Show application.</p>
-        <h2 style="margin-bottom: 0px;">6. Return to HCM.Show</h2>
-        <p style="margin-top: 0px; margin-bottom: 36px;">Once you have loaded the data from Flatfile to HCM Show, return to HCM.Show and navigate to the Data Templates section within the application to view the Jobs and Employees data that you have just loaded.</p>
+        <h2 style="margin-bottom: 0px;">2. Import the Benefit Elections Data</h2>
+        <p style="margin-top: 0px; margin-bottom: 8px;">Click "Import" and select the benefit elections data. Follow the mapping instructions in Flatfile to complete the import. Once the data has been mapped, it will be loaded into Flatfile's table UI, where validations and transformations have been applied.</p>
+        <h2 style="margin-bottom: 0px;">3. Validate and Transform Data</h2>
+        <p style="margin-top: 0px; margin-bottom: 8px;">Make sure to verify that your data is correctly formatted and transformed by Flatfile. Flatfile will handle formatting dates, rounding amounts, and validating the existence of employees and benefit plans for you! If there are any issues or errors, you can easily address them within Flatfile's user interface.</p>
+        <h2 style="margin-bottom: 0px;">4. Load Data into HCM.Show</h2>
+        <p style="margin-top: 0px; margin-bottom: 12px;">Once the data has been validated and transformed, use the “Push records to HCM.show” button to load data into the HCM.Show application.</p>
+        <h2 style="margin-bottom: 0px;">5. Return to HCM.Show</h2>
+        <p style="margin-top: 0px; margin-bottom: 36px;">Once you have loaded the data from Flatfile to HCM Show, return to HCM.Show and navigate to the Data Templates section within the application to view the benefit elections data that you have just loaded.</p>
         <h3 style="margin-top: 0px; margin-bottom: 12px;">Remember, if you need any assistance, you can always refer back to this page by clicking "Welcome" in the left-hand sidebar!</h3>
       </div>`,
       });
 
       console.log('Created Document: ' + createDoc);
 
-      // Mark the job as complete using api.jobs.complete
-      const updateJob3 = await api.jobs.complete(jobId, {
-        info: 'This job is now donezo.',
+      // Update the job status to 'complete' using the Flatfile API
+      const updateJob = await api.jobs.update(jobId, {
+        status: 'complete',
       });
 
-      console.log('Updated Job' + JSON.stringify(updateJob3));
+      // Log the result of the updateJob function to the console as a string
+      console.log(
+        'Updated Job With ID to Status Complete: ' + updateJob.data.id
+      );
     });
 
     // Handle the 'job:failed' event
@@ -203,26 +200,14 @@ export default function (listener) {
     });
   });
 
-  // Attach a record hook to the 'employees-sheet' of the Flatfile importer
-  listener.use(
-    // When a record is processed, invoke the 'employeeValidations' function to validate the record
-    recordHook('employees-sheet', (record) => {
-      const results = employeeValidations(record);
-      // Log the results of the validations to the console as a JSON string
-      console.log('Employees Hooks: ' + JSON.stringify(results));
-      // Return the record
-      return record;
-    })
-  );
-
-  // Attach a record hook to the 'jobs-sheet' of the Flatfile importer
+  // Attach a record hook to the 'benefit-elections-sheet' of the Flatfile importer
   listener.use(
     // When a record is processed, invoke the 'jobValidations' function to check for any errors
-    recordHook('jobs-sheet', (record) => {
-      const results = jobValidations(record);
+    recordHook('benefit-elections-sheet', (record) => {
+      const results = benefitElectionsValidations(record);
       // Log the results of the validations to the console as a JSON string
-      console.log('Jobs Hooks: ' + JSON.stringify(results));
-      // Return the record, potentially with additional errors added by the 'jobValidations' function
+      console.log('Benefits Hooks: ' + JSON.stringify(results));
+      // Return the record, potentially with additional errors added by the 'benefitValidations' function
       return record;
     })
   );
@@ -231,83 +216,6 @@ export default function (listener) {
   listener.on('action:triggered', async (event) => {
     // Extract the name of the action from the event context
     const action = event.context.actionName;
-    const { sheetId } = event.context;
-
-    // If the action is 'employees-sheet:dedupeEmployees'
-    if (action === 'employees-sheet:dedupeEmployees') {
-      try {
-        console.log('Sheet ID: ' + sheetId);
-
-        // Call the 'get' method of api.records with the sheetId
-        const response = await api.records.get(sheetId);
-
-        // Check if the response is valid and contains records
-        if (response?.data?.records) {
-          // Get the records from the response data
-          const records = response.data.records;
-
-          // Call the dedupeEmployees function with the records
-          const removeThese = dedupeEmployees(records);
-          console.log('Records to Remove: ' + removeThese);
-
-          // Check if there are any records to remove
-          if (removeThese.length > 0) {
-            // Delete the records identified for removal from the API
-            await api.records.delete(sheetId, { ids: removeThese });
-          } else {
-            console.log('No records found for removal.');
-          }
-        } else {
-          console.log('No records found in the response.');
-        }
-
-        // Log the action as a string to the console
-        console.log('Listener: ' + JSON.stringify(action));
-      } catch (error) {
-        console.log('Error occurred:', error);
-        // Handle the error or log it for debugging
-      }
-    }
-
-    // If the action is 'employees-sheet:validateReportingStructure'
-    if (action === 'employees-sheet:validateReportingStructure') {
-      try {
-        console.log('Sheet ID: ' + sheetId);
-
-        // Call the 'get' method of api.records with the sheetId
-        const response = await api.records.get(sheetId);
-
-        // Check if the response is valid and contains records
-        if (response?.data?.records) {
-          // Get the records from the response data
-          const records = response.data.records;
-
-          // Call the validateReportingStructure function with the records
-          const reportingErrors = validateReportingStructure(records);
-
-          // Log the reporting errors to the console
-          //console.log('Reporting Errors:' + JSON.stringify(reportingErrors));
-
-          // Update the records if there are any reporting errors
-          if (reportingErrors.length > 0) {
-            await api.records.update(sheetId, reportingErrors);
-            console.log('Records updated successfully.');
-            // For example, you can send them as a notification or store them in a database
-          } else {
-            console.log('No records found for updating.');
-          }
-        } else {
-          console.log('No records found in the response.');
-        }
-
-        // Log the action as a string to the console
-        //console.log('Listener: ' + JSON.stringify(action));
-      } catch (error) {
-        console.log('Error occurred:' + error);
-        // Handle the error or log it for debugging
-      }
-    }
-
     // If the action is 'HCMWorkbookSubmitAction'
     if (action.includes('HCMWorkbookSubmitAction')) {
       try {
@@ -323,6 +231,7 @@ export default function (listener) {
     }
   });
 
+  // Listen for the 'file:created' event
   listener.on('file:created', async (event) => {
     try {
       // Create an instance of ExcelExtractor to extract data from the created Excel file
