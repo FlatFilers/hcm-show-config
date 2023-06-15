@@ -5,6 +5,10 @@ import { pushToHcmShow } from '../../actions/pushToHCMShow';
 import { blueprintSheets } from '../../blueprints/benefitsBlueprint';
 import { benefitElectionsValidations } from '../../recordHooks/benefits/benefitElectionsValidations';
 
+type Metadata = {
+  userId: string;
+};
+
 // Define the main function that sets up the listener
 export default function (listener) {
   // Log the event topic for all events
@@ -14,9 +18,6 @@ export default function (listener) {
 
   // Add an event listener for the 'job:created' event
   listener.filter({ job: 'space:configure' }, (configure) => {
-    console.log('on space:configure', configure);
-
-    // Add an event listener for the 'job:created' event with a filter on 'space:configure'
     configure.on('job:ready', async (event) => {
       console.log('Reached the job:ready event callback');
 
@@ -27,7 +28,7 @@ export default function (listener) {
 
       console.log('Space: ' + JSON.stringify(space));
 
-      const metadata = space.data.metadata;
+      const metadata = space.data.metadata as Metadata;
 
       const userId = metadata.userId;
 
@@ -83,7 +84,7 @@ export default function (listener) {
                 root: {
                   primaryColor: '#32A673',
                   dangerColor: 'salmon',
-                  warningColor: 'yellow',
+                  warningColor: 'gold',
                 },
                 sidebar: {
                   logo: `https://images.ctfassets.net/e8fqfbar73se/4c9ouGKgET1qfA4uxp4qLZ/e3f1a8b31be67a798c1e49880581fd3d/white-logo-w-padding.png`,

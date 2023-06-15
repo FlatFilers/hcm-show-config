@@ -43,7 +43,6 @@ export default function (listener) {
       console.log('Updated Job: ' + JSON.stringify(updateJob));
 
       // Log the environment ID, space ID, and job ID to the console
-      console.log('Outside try block: ');
       console.log('env: ' + environmentId);
       console.log('spaceId: ' + spaceId);
       console.log('jobID: ' + jobId);
@@ -88,7 +87,7 @@ export default function (listener) {
                 root: {
                   primaryColor: '#3B2FC9',
                   dangerColor: 'salmon',
-                  warningColor: 'yellow',
+                  warningColor: 'gold',
                 },
                 sidebar: {
                   logo: `https://images.ctfassets.net/e8fqfbar73se/4c9ouGKgET1qfA4uxp4qLZ/e3f1a8b31be67a798c1e49880581fd3d/white-logo-w-padding.png`,
