@@ -6,13 +6,13 @@ import { blueprintSheets } from '../../blueprints/benefitsBlueprint';
 import { employeeValidations } from '../../recordHooks/benefits/benefitElectionsValidations';
 import { post } from '../../common/utils/request';
 import { automap } from "./automap";
+import { PipelineJobConfig } from '@flatfile/api/api';
 
 // Define the main function that sets up the listener
 export default function (listener) {
   // Log the event topic for all events
   listener.on('**', (event) => {
     console.log('> event.topic: ' + event.topic);
-
     const { spaceId } = event.context;
     const topic = event.topic;
 
@@ -113,6 +113,22 @@ export default function (listener) {
       return record;
     })
   );
+  
+  listener.on("job:completed", { job: "workbook:map" }, async (event) => {
+    // get key identifiers, including destination sheet Id
+    const { jobId,spaceId,environmentId,workbookId } = event.context;
+    const job = await api.jobs.get(jobId);
+    const config = job.data.config as PipelineJobConfig;
+    let destinationSheetId;
+    destinationSheetId = config?.destinationSheetId;
+    // get the valid records from the sheet
+    const importedData = await api.records.get(destinationSheetId, {
+      filter: 'valid'
+    });
+    // send the valid records to HCM.show
+    // delete the sent records from Flatfile
+
+  })
 
   // Listen for the 'action:triggered' event
   listener.on('action:triggered', async (event) => {
