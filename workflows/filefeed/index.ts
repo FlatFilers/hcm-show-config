@@ -11,15 +11,14 @@ import { PipelineJobConfig } from '@flatfile/api/api';
 // Define the main function that sets up the listener
 export default function (listener) {
   // Log the event topic for all events
-  listener.on('**', (event) => {
+  listener.on('**', async (event) => {
     console.log('> event.topic: ' + event.topic);
 
     const { spaceId } = event.context;
     const topic = event.topic;
 
     post({
-      // hostname: 'hcm.show',
-      hostname: 'd147-205-185-214-250.ngrok-free.app',
+      hostname: 'hcm.show',
       path: '/api/v1/sync-file-feed',
       body: { spaceId, topic },
     });
@@ -32,7 +31,7 @@ export default function (listener) {
     // Add an event listener for the 'job:created' event with a filter on 'space:configure'
     configure.on('job:ready', async (event) => {
       // Log the event object as a JSON string to the console
-      //console.log(JSON.stringify(event));
+      console.log(JSON.stringify(event));
 
       // Destructure the 'context' object from the event object to get the necessary IDs
       const { spaceId, environmentId, jobId } = event.context;

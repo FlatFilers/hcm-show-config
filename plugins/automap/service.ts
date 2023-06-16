@@ -1,10 +1,10 @@
-import { AutomapOptions } from "./automap";
-import { FlatfileEvent, FlatfileListener } from "@flatfile/listener";
-import api, { Flatfile } from "@flatfile/api";
-import { asyncMap } from "./async.map";
-import { LogExecution } from "./log.execution";
-import axios from "axios";
-import { CrossEnvConfig } from "@flatfile/cross-env-config";
+import { AutomapOptions } from './automap';
+import { FlatfileEvent, FlatfileListener } from '@flatfile/listener';
+import api, { Flatfile } from '@flatfile/api';
+import { asyncMap } from './async.map';
+// import { LogExecution } from "./log.execution";
+import axios from 'axios';
+import { CrossEnvConfig } from '@flatfile/cross-env-config';
 
 /**
  * Automap Service Class.
@@ -16,10 +16,14 @@ export class AutomapService {
    * Assign listeners to a FlatfileListener.
    * @param listener - The listener to be assigned.
    */
-  @LogExecution()
+  // @LogExecution()
   public assignListeners(listener: FlatfileListener): void {
-    listener.on("job:completed", { job: "file:extract" }, (e) => this.handleFileExtraction(e));
-    listener.on("job:created", { job: "workbook:map" }, (e) => this.handleMappingPlanCreated(e));
+    listener.on('job:completed', { job: 'file:extract' }, (e) =>
+      this.handleFileExtraction(e)
+    );
+    listener.on('job:created', { job: 'workbook:map' }, (e) =>
+      this.handleMappingPlanCreated(e)
+    );
   }
 
   /**
@@ -28,7 +32,7 @@ export class AutomapService {
    * @param e
    * @private
    */
-  @LogExecution()
+  // @LogExecution()
   public async handleFileExtraction(e: FlatfileEvent): Promise<any> {
     const file = await this.getFile(e.context.fileId);
 
@@ -42,7 +46,9 @@ export class AutomapService {
       return;
     }
 
-    const { data: workbooks } = await api.workbooks.list({ spaceId: e.context.spaceId });
+    const { data: workbooks } = await api.workbooks.list({
+      spaceId: e.context.spaceId,
+    });
 
     const destinationWorkbook = this.getTargetWorkbook(workbooks);
 
@@ -53,18 +59,19 @@ export class AutomapService {
     const mappings = await this.getMappingJobs(file);
     let destinationSheet: Flatfile.Sheet | undefined;
     const jobs = await asyncMap(mappings, async ({ target, source }) => {
-
       if (!target) {
         return;
       }
-      destinationSheet = destinationWorkbook.sheets?.find((s) => s.name === target || s.id === target);
+      destinationSheet = destinationWorkbook.sheets?.find(
+        (s) => s.name === target || s.id === target
+      );
       const destinationSheetId = destinationSheet?.id;
       if (!destinationSheetId) {
         return;
       }
       const { data: job } = await api.jobs.create({
-        type: "workbook",
-        operation: "map",
+        type: 'workbook',
+        operation: 'map',
         source: file.workbookId!,
         managed: true,
         destination: destinationWorkbook.id,
@@ -77,7 +84,10 @@ export class AutomapService {
     });
     const actualJobs = jobs.filter((j) => j) as Flatfile.Job[];
     if (actualJobs.length) {
-      await this.updateFileName(file.id, `⚡️ ${file.name} 🔁 ${destinationSheet?.name}`);
+      await this.updateFileName(
+        file.id,
+        `⚡️ ${file.name} 🔁 ${destinationSheet?.name}`
+      );
     }
   }
 
@@ -98,8 +108,10 @@ export class AutomapService {
    * @param workbooks - The array of workbooks from which to select a target.
    * @returns The selected target workbook or undefined if no suitable workbook could be found.
    */
-  private getTargetWorkbook(workbooks: Array<Flatfile.Workbook>): Flatfile.Workbook | undefined {
-    const targets = workbooks.filter((w) => !w.labels?.includes("file"));
+  private getTargetWorkbook(
+    workbooks: Array<Flatfile.Workbook>
+  ): Flatfile.Workbook | undefined {
+    const targets = workbooks.filter((w) => !w.labels?.includes('file'));
 
     if (targets.length === 0) {
       return undefined;
@@ -107,7 +119,9 @@ export class AutomapService {
 
     if (this.options.targetWorkbook) {
       const target = targets.find(
-        (w) => w.id === this.options.targetWorkbook || w.name === this.options.targetWorkbook
+        (w) =>
+          w.id === this.options.targetWorkbook ||
+          w.name === this.options.targetWorkbook
       );
       if (target) return target;
     }
@@ -116,7 +130,7 @@ export class AutomapService {
       return targets[0];
     }
 
-    return targets.find((w) => w.labels?.includes("primary"));
+    return targets.find((w) => w.labels?.includes('primary'));
   }
 
   /**
@@ -126,12 +140,12 @@ export class AutomapService {
    * @param e
    * @private
    */
-  @LogExecution()
+  // @LogExecution()
   private async handleMappingPlanCreated(e: any): Promise<void> {
     const {
       data: { plan },
     } = (await api.jobs.getExecutionPlan(e.context.jobId)) as any;
-    console.log(JSON.stringify(plan,null,2));
+    console.log(JSON.stringify(plan, null, 2));
 
     if (this.verifyAbsoluteMatchingStrategy(plan, e.context.jobId)) {
       await api.jobs.execute(e.context.jobId);
@@ -144,7 +158,7 @@ export class AutomapService {
    * @param fileId
    * @private
    */
-  @LogExecution()
+  // @LogExecution()
   private async getFile(fileId: string): Promise<Flatfile.File_> {
     const { data: file } = await api.files.get(fileId);
     return file;
@@ -156,7 +170,7 @@ export class AutomapService {
    * @param file
    * @private
    */
-  @LogExecution()
+  // @LogExecution()
   private isFileNameMatch(file: Flatfile.File_): boolean {
     if (!this.options.matchFilename) {
       return true;
@@ -177,8 +191,10 @@ export class AutomapService {
    *          `this.options.selectSheets` or `this.options.defaultTargetSheet`).
    * @private
    */
-  @LogExecution()
-  private async getMappingJobs(file: Flatfile.File_): Promise<Array<{ source: string; target: string | boolean }>> {
+  // @LogExecution()
+  private async getMappingJobs(
+    file: Flatfile.File_
+  ): Promise<Array<{ source: string; target: string | boolean }>> {
     // Get the workbook related to the file.
     const workbookResponse = await api.workbooks.get(file.workbookId!);
     const sheets = workbookResponse.data.sheets || [];
@@ -199,7 +215,9 @@ export class AutomapService {
     }
     // If no selectSheets function is defined, but there's only one sheet in the workbook and a defaultTargetSheet is defined, create a default mapping.
     else if (sheets.length === 1 && this.options.defaultTargetSheet) {
-      return [{ source: sheets[0].id, target: this.options.defaultTargetSheet }];
+      return [
+        { source: sheets[0].id, target: this.options.defaultTargetSheet },
+      ];
     }
 
     // If no mappings could be created, return an empty array.
@@ -219,8 +237,10 @@ export class AutomapService {
    *
    * @private
    */
-  @LogExecution()
-  private async getRecordSampleForSheets(sheets: Flatfile.Sheet[]): Promise<SheetSample[]> {
+  // @LogExecution()
+  private async getRecordSampleForSheets(
+    sheets: Flatfile.Sheet[]
+  ): Promise<SheetSample[]> {
     return asyncMap(sheets, async (sheet) => {
       const response = await api.records.get(sheet.id, { pageSize: 10 });
       const records = response.data.records;
@@ -235,17 +255,20 @@ export class AutomapService {
    * @param jobId
    * @private
    */
-  @LogExecution()
+  // @LogExecution()
   private verifyAbsoluteMatchingStrategy(plan: any, jobId: string): boolean {
-    console.log(JSON.stringify(plan,null,2));
+    console.log(JSON.stringify(plan, null, 2));
     return (
-      plan?.fieldMapping?.every((e: any) => (e.metadata?.certainty === "strong" || e.metadata?.certainty === "absolute")) &&
-      this.options.accuracy === "exact"
+      plan?.fieldMapping?.every(
+        (e: any) =>
+          e.metadata?.certainty === 'strong' ||
+          e.metadata?.certainty === 'absolute'
+      ) && this.options.accuracy === 'exact'
     );
   }
 
   private updateFileName(fileId: string, fileName: string) {
-    return api.files.update(fileId, {name: fileName})
+    return api.files.update(fileId, { name: fileName });
     // return axios.patch(
     //   "http://platform.flatfile.com/api/v1/files/" + fileId,
     //   {
@@ -260,4 +283,7 @@ export class AutomapService {
   }
 }
 
-type SheetSample = { sheet: Flatfile.Sheet; records: Flatfile.RecordsWithLinks };
+type SheetSample = {
+  sheet: Flatfile.Sheet;
+  records: Flatfile.RecordsWithLinks;
+};
