@@ -5,7 +5,7 @@ import { pushToHcmShow } from '../../actions/pushToHCMShow';
 import { blueprintSheets } from '../../blueprints/benefitsBlueprint';
 import { benefitElectionsValidations } from '../../recordHooks/benefits/benefitElectionsValidations';
 import { post } from '../../common/utils/request';
-import { automap } from '../filefeed-automap/automap';
+import { automap } from '../../plugins/automap/automap';
 import { PipelineJobConfig } from '@flatfile/api/api';
 
 // Define the main function that sets up the listener
@@ -131,6 +131,9 @@ export default function (listener) {
 
     // Push them to HCM.show
     console.log('Pushing to HCM.show');
+
+    // TODO: Get a list of successfully synced records IDs back
+    // so we don't delete records that didn't sync.
     await pushToHcmShow(event);
 
     // Delete the valid records from the sheet
