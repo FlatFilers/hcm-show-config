@@ -55,7 +55,7 @@ export default function (listener) {
           actions: [
             {
               operation: 'submitAction',
-              slug: 'BenefitsWorkbookSubmitAction',
+              slug: 'HCMWorkbookSubmitAction',
               mode: 'foreground',
               label: 'Submit',
               type: 'string',
