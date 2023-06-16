@@ -237,8 +237,9 @@ export class AutomapService {
    */
   @LogExecution()
   private verifyAbsoluteMatchingStrategy(plan: any, jobId: string): boolean {
+    console.log(JSON.stringify(plan,null,2));
     return (
-      plan?.fieldMapping?.every((e: any) => e.metadata?.certainty === "strong") &&
+      plan?.fieldMapping?.every((e: any) => (e.metadata?.certainty === "strong" || e.metadata?.certainty === "absolute")) &&
       this.options.accuracy === "exact"
     );
   }
