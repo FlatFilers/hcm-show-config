@@ -5,6 +5,8 @@ import { pushToHcmShow } from '../../actions/pushToHCMShow';
 import { blueprintSheets } from '../../blueprints/benefitsBlueprint';
 import { benefitElectionsValidations } from '../../recordHooks/benefits/benefitElectionsValidations';
 import { post } from '../../common/utils/request';
+import { automap } from '../../plugins/automap/automap';
+import { PipelineJobConfig } from '@flatfile/api/api';
 
 // Define the main function that sets up the listener
 export default function (listener) {
@@ -93,6 +95,14 @@ export default function (listener) {
     });
   });
 
+  listener.use(
+    automap({
+      accuracy: 'exact',
+      matchFilename: /^benefits.*$/i,
+      defaultTargetSheet: 'Benefit Elections',
+    })
+  );
+
   // Attach a record hook to the 'benefit-elections-sheet' of the Flatfile importer
   listener.use(
     // When a record is processed, invoke the 'jobValidations' function to check for any errors
@@ -104,6 +114,46 @@ export default function (listener) {
       return record;
     })
   );
+
+  listener.on('job:completed', { job: 'workbook:map' }, async (event) => {
+    // get key identifiers, including destination sheet Id
+    const { jobId, spaceId, environmentId, workbookId } = event.context;
+
+    const job = await api.jobs.get(jobId);
+    const config = job.data.config as PipelineJobConfig;
+
+    const destinationSheetId = config?.destinationSheetId;
+
+    // get the valid records from the sheet
+    const importedData = await api.records.get(destinationSheetId, {
+      filter: 'valid',
+    });
+
+    // Push them to HCM.show
+    console.log('Pushing to HCM.show');
+
+    // TODO: Get a list of successfully synced records IDs back
+    // so we don't delete records that didn't sync.
+    await pushToHcmShow(event);
+
+    // Delete the valid records from the sheet
+    const recordIds = importedData.data.records.map((r) => r.id);
+    console.log('Deleting ' + recordIds.length + ' valid records.');
+
+    // Split the recordIds array into chunks of 100
+    for (let i = 0; i < recordIds.length; i += 100) {
+      const batch = recordIds.slice(i, i + 100);
+
+      // Delete the batch
+      await api.records.delete(destinationSheetId, {
+        ids: batch,
+      });
+
+      console.log(`Deleted batch from index ${i} to ${i + 100}`);
+    }
+
+    console.log('Done');
+  });
 
   // Listen for the 'action:triggered' event
   listener.on('action:triggered', async (event) => {
