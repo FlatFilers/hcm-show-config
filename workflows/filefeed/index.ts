@@ -8,6 +8,10 @@ import { post } from '../../common/utils/request';
 import { automap } from '../../plugins/automap/automap';
 import { PipelineJobConfig } from '@flatfile/api/api';
 
+type Metadata = {
+  userId: string;
+};
+
 // Define the main function that sets up the listener
 export default function (listener) {
   // Log the event topic for all events
@@ -19,6 +23,7 @@ export default function (listener) {
 
     post({
       hostname: 'hcm.show',
+      // hostname: 'b79e-108-27-27-221.ngrok-free.app',
       path: '/api/v1/sync-file-feed',
       body: { spaceId, topic },
     });
