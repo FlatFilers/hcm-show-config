@@ -302,18 +302,22 @@ export const blueprintSheets = [
     ],
     actions: [
       {
-        slug: 'dedupeEmployees',
+        operation: 'dedupeEmployees',
         label: 'Remove Duplicate Employee Records',
         description:
           'This custom action code analyzes a set of employee records and identifies duplicate entries based on employee ID and hire date. It removes duplicate records, prioritizing those with earlier hire dates.',
         primary: false,
+        mode: 'foreground',
+        type: 'string'
       },
       {
-        slug: 'validateReportingStructure',
+        operation: 'validateReportingStructure',
         label: 'Validate Reporting Structure',
         description:
           'This custom action code analyzes a set of employee records and validates the reporting structure. It checks for circular dependencies, ensures there is a single top-level manager, and verifies that employees are reporting to existing managers.',
         primary: false,
+        mode: 'foreground',
+        type: 'string'
       },
     ],
   },
