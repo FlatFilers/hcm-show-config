@@ -7,6 +7,7 @@ import { benefitElectionsValidations } from '../../recordHooks/benefits/benefitE
 import { post } from '../../common/utils/request';
 import { automap } from '../../plugins/automap/automap';
 import { PipelineJobConfig } from '@flatfile/api/api';
+import { FlatfileEvent } from '@flatfile/listener';
 
 type Metadata = {
   userId: string;
@@ -67,7 +68,6 @@ export default function (listener) {
           actions: [
             {
               operation: 'submitAction',
-              slug: 'HCMWorkbookSubmitAction',
               mode: 'foreground',
               label: 'Submit',
               type: 'string',
@@ -95,8 +95,8 @@ export default function (listener) {
               theme: {
                 root: {
                   primaryColor: '#090B2B',
-                  dangerColor: 'salmon',
-                  warningColor: 'gold',
+                  dangerColor: '#F44336',
+                  warningColor: '#FF9800',
                 },
                 sidebar: {
                   logo: `https://images.ctfassets.net/e8fqfbar73se/4c9ouGKgET1qfA4uxp4qLZ/e3f1a8b31be67a798c1e49880581fd3d/white-logo-w-padding.png`,
@@ -272,17 +272,38 @@ export default function (listener) {
     console.log('Done');
   });
 
-  // Listen for the 'action:triggered' event
-  listener.on('action:triggered', async (event) => {
-    // Extract the name of the action from the event context
-    const action = event.context.actionName;
-    // If the action is 'HCMWorkbookSubmitAction'
-    if (action.includes('HCMWorkbookSubmitAction')) {
-      // Call the submit function with the event as an argument to push the data to HCM Show
-      await pushToHcmShow(event);
-      // Log the action as a string to the console
-      console.log('Action: ' + JSON.stringify(action));
-    }
+  // Listen for the 'submit' action
+  listener.filter({ job: "workbook:submitAction" }, (configure) => {
+    configure.on("job:ready", async (event: FlatfileEvent) => {
+      const { jobId, spaceId } = event.context
+      try {
+        await api.jobs.ack(jobId, {
+          info: "Sending data to HCM.show.",
+          progress: 10,
+        });
+        
+        try {
+          // Call the submit function with the event as an argument to push the data to HCM Show
+          await pushToHcmShow(event);
+          // Log the action as a string to the console
+          console.log('Action: ' + JSON.stringify(event?.payload?.operation));
+        } catch (error) {
+          // Handle the error gracefully, log an error message, and potentially take appropriate action
+          console.log('Error occurred during HCM workbook submission:', error);
+          // Perform error handling, such as displaying an error message to the user or triggering a fallback behavior
+        }
+  
+        await api.jobs.complete(jobId, {
+          info: "Data synced to the HCM.show app.",
+        });
+      } catch (error) {
+        console.error("Error:", error.stack);
+  
+        await api.jobs.fail(jobId, {
+          info: "The submit job did not run correctly.",
+        });
+      }
+    });
   });
 
   // Listen for the 'file:created' event
