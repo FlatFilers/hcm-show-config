@@ -1,4 +1,4 @@
-import { WorkflowEnv } from './update-env';
+import { WorkflowEnv } from './types';
 
 const workflowEnvs: WorkflowEnv = {
   production: {
