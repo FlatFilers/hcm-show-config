@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+import workflowEnvs from './workflow-envs';
 
 export type WorkflowEnvironment = 'production' | 'dev';
 export type WorkflowType = 'onboarding' | 'filefeed' | 'embedded' | 'dynamic';
