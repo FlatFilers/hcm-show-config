@@ -1,4 +1,6 @@
-export default {
+import { WorkflowEnv } from './update-env';
+
+const workflowEnvs: WorkflowEnv = {
   production: {
     onboarding: {
       apiKey: 'sk_...',
@@ -36,3 +38,5 @@ export default {
     },
   },
 };
+
+export default workflowEnvs;
