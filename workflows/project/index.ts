@@ -287,7 +287,6 @@ export default function (listener) {
     });
   });
 
-
   // Listen for the 'validate reporting structure' action
   listener.filter({ job: "sheet:validateReportingStructure" }, (configure) => {
     configure.on("job:ready", async ({ context: { jobId, sheetId } }:FlatfileEvent ) => {

@@ -67,7 +67,7 @@ export default function (listener) {
           sheets: blueprintSheets,
           actions: [
             {
-              slug: 'submitAction',
+              operation: 'submitAction',
               mode: 'foreground',
               label: 'Submit',
               type: 'string',
