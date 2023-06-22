@@ -80,6 +80,9 @@ export default function (listener) {
                 // This property seems to break guest magic link functionality?
                 // showGuestInvite: true,
               },
+              // IMPORTANT NOTE: The theme set below does not effect change in the embedded workflow. This is a copy the theme settings.
+              // To change the theme in the embedded workflow, you must set the theme in the HCM.Show application within the props of useSpace.
+              // If you do change the theme settings in the HCM.Show application, please update the theme settings here to match.
               theme: {
                 root: {
                   primaryColor: '#32A673',
@@ -161,6 +164,9 @@ export default function (listener) {
         console.log('Error creating workbook or updating space:', error);
       }
 
+      // IMPORTANT NOTE: The document created below does not effect change in the embedded workflow. This is a copy of the document layout.
+      // To change the document in the embedded workflow, you must set the document in the HCM.Show application within the props of useSpace.
+      // If you do change the theme settings in the HCM.Show application, please update the theme settings here to match.
       const createDoc = await api.documents.create(spaceId, {
         title: 'Welcome',
         body: `<div> 
