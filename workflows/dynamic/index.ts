@@ -80,7 +80,7 @@ export default function (listener) {
                 // This property seems to break guest magic link functionality?
                 // showGuestInvite: true,
               },
-              // IMPORTANT NOTE: The theme set below does not effect change in the embedded workflow. This is a copy the theme settings.
+              // IMPORTANT NOTE: The theme set below does not effect change in the embedded workflow. This is a copy of the theme settings.
               // To change the theme in the embedded workflow, you must set the theme in the HCM.Show application within the props of useSpace.
               // If you do change the theme settings in the HCM.Show application, please update the theme settings here to match.
               theme: {
