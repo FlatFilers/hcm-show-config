@@ -97,10 +97,7 @@ export default function (listener) {
               theme: {
                 root: {
                   primaryColor: '#090B2B',
-                  dangerColor: '#F44336',
                   warningColor: '#FF9800',
-                  dangerLightColor: '#F44336',
-                  dangerLessLightColor: '#F44336',
                 },
                 sidebar: {
                   logo: `https://images.ctfassets.net/e8fqfbar73se/4c9ouGKgET1qfA4uxp4qLZ/e3f1a8b31be67a798c1e49880581fd3d/white-logo-w-padding.png`,
