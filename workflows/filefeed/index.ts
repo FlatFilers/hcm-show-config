@@ -85,6 +85,7 @@ export default function (listener) {
           const updatedSpace = await api.spaces.update(spaceId, {
             environmentId: environmentId,
             primaryWorkbookId: workbookId,
+            guestAuthentication: ['shared_link'],
             metadata: {
               userId,
               sidebarConfig: {
