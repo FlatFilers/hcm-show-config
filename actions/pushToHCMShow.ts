@@ -13,6 +13,7 @@ export const pushToHcmShow = async (
 
   // Extracting the spaceId from the event context
   const { spaceId } = event.context;
+  const topic = event.payload.job;
 
   // Getting the userId from the space using the getUserIdFromSpace utility function
   const userId = await getUserIdFromSpace(spaceId);
@@ -21,6 +22,6 @@ export const pushToHcmShow = async (
   post({
     hostname: 'hcm.show',
     path: `/api/v1/sync-space`,
-    body: { userId, spaceId, workflowType },
+    body: { userId, spaceId, workflowType, topic },
   });
 };
