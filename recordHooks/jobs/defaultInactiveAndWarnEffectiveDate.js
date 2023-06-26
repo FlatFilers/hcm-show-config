@@ -9,7 +9,7 @@ export const defaultInactiveAndWarnEffectiveDate = (record) => {
     // Set default value for 'inactive' if it is nil
     if (isNil(inactive)) {
       record.set('inactive', false);
-      record.addInfo(
+      record.addComment(
         'inactive',
         'Inactive was not provided. Field has been set to false.'
       );

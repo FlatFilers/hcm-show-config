@@ -16,7 +16,7 @@ export const generateJobCode = (record) => {
       record.set('jobCode', jobCode);
 
       // Add an info message indicating that the job code has been automatically generated
-      record.addInfo(
+      record.addComment(
         'jobCode',
         'Job Code was not provided, this has been automatically generated for use in HCM Show'
       );
