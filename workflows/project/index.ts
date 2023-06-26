@@ -87,18 +87,17 @@ export default function (listener) {
               theme: {
                 root: {
                   primaryColor: '#3B2FC9',
-                  dangerColor: '#F44336',
                   warningColor: '#FF9800',
                 },
                 sidebar: {
                   logo: `https://images.ctfassets.net/e8fqfbar73se/4c9ouGKgET1qfA4uxp4qLZ/e3f1a8b31be67a798c1e49880581fd3d/white-logo-w-padding.png`,
-                  textColor: 'white',
-                  titleColor: 'white',
+                  textColor: '#FFFFFF',
+                  titleColor: '#FFFFFF',
                   focusBgColor: '#6673FF',
-                  focusTextColor: 'white',
+                  focusTextColor: '#FFFFFF',
                   backgroundColor: '#3B2FC9',
-                  footerTextColor: 'white',
-                  textUltralightColor: 'red',
+                  footerTextColor: '#FFFFFF',
+                  textUltralightColor: '#FF0000',
                 },
                 table: {
                   inputs: {
@@ -110,22 +109,22 @@ export default function (listener) {
                     },
                   },
                   filters: {
-                    color: 'gray',
+                    color: '#808080',
                     active: {
                       backgroundColor: 'rgb(8 117 225)',
                     },
                     error: {
-                      activeBackgroundColor: 'salmon',
+                      activeBackgroundColor: '#FA8072',
                     },
                   },
                   column: {
                     header: {
                       fontSize: '12px',
                       backgroundColor: 'rgb(240 240 240)',
-                      color: 'slategray',
+                      color: '#678090',
                       dragHandle: {
                         idle: 'rgb(8 117 225)',
-                        dragging: 'blue',
+                        dragging: '#0000FF',
                       },
                     },
                   },
@@ -143,7 +142,7 @@ export default function (listener) {
                     },
                     active: {
                       borderColor: 'rgb(8 117 225)',
-                      spinnerColor: 'gray',
+                      spinnerColor: '#808080',
                     },
                   },
                   boolean: {

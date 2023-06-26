@@ -80,21 +80,23 @@ export default function (listener) {
                 // This property seems to break guest magic link functionality?
                 // showGuestInvite: true,
               },
+              // IMPORTANT NOTE: The theme set below does not effect change in the embedded workflow. This is a copy of the theme settings.
+              // To change the theme in the embedded workflow, you must set the theme in the HCM.Show application within the props of useSpace.
+              // If you do change the theme settings in the HCM.Show application, please update the theme settings here to match.
               theme: {
                 root: {
                   primaryColor: '#32A673',
-                  dangerColor: '#F44336',
                   warningColor: '#FF9800',
                 },
                 sidebar: {
                   logo: `https://images.ctfassets.net/e8fqfbar73se/4c9ouGKgET1qfA4uxp4qLZ/e3f1a8b31be67a798c1e49880581fd3d/white-logo-w-padding.png`,
-                  textColor: 'white',
-                  titleColor: 'white',
+                  textColor: '#FFFFFF',
+                  titleColor: '#FFFFFF',
                   focusBgColor: '#4DCA94',
-                  focusTextColor: 'white',
+                  focusTextColor: '#FFFFFF',
                   backgroundColor: '#32A673',
-                  footerTextColor: 'white',
-                  textUltralightColor: 'red',
+                  footerTextColor: '#FFFFFF',
+                  textUltralightColor: '#FF0000',
                 },
                 table: {
                   inputs: {
@@ -106,22 +108,22 @@ export default function (listener) {
                     },
                   },
                   filters: {
-                    color: 'gray',
+                    color: '#808080',
                     active: {
                       backgroundColor: 'rgb(8 117 225)',
                     },
                     error: {
-                      activeBackgroundColor: 'salmon',
+                      activeBackgroundColor: '#FA8072',
                     },
                   },
                   column: {
                     header: {
                       fontSize: '12px',
                       backgroundColor: 'rgb(240 240 240)',
-                      color: 'slategray',
+                      color: '#678090',
                       dragHandle: {
                         idle: 'rgb(8 117 225)',
-                        dragging: 'blue',
+                        dragging: '#0000FF',
                       },
                     },
                   },
@@ -139,7 +141,7 @@ export default function (listener) {
                     },
                     active: {
                       borderColor: 'rgb(8 117 225)',
-                      spinnerColor: 'gray',
+                      spinnerColor: '#808080',
                     },
                   },
                   boolean: {
@@ -162,6 +164,9 @@ export default function (listener) {
         console.log('Error creating workbook or updating space:', error);
       }
 
+      // IMPORTANT NOTE: The document created below does not effect change in the embedded workflow. This is a copy of the document layout.
+      // To change the document in the embedded workflow, you must set the document in the HCM.Show application within the props of useSpace.
+      // If you do change the theme settings in the HCM.Show application, please update the theme settings here to match.
       const createDoc = await api.documents.create(spaceId, {
         title: 'Welcome',
         body: `<div> 
