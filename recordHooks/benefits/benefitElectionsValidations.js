@@ -1,3 +1,4 @@
+import { formatRecordDates } from '../../common/dateFormatting';
 import { roundCurrencyValues } from './roundCurrencyValues';
 import { validateBooleanFields } from '../../common/validateBooleanFields';
 
@@ -7,6 +8,13 @@ export function benefitElectionsValidations(record) {
     throw new Error(
       'Invalid input. The function expects a valid record object.'
     );
+  }
+
+  try {
+    formatRecordDates(record, 'benefit-elections-sheet');
+  } catch (error) {
+    console.log('Error occurred during date formatting:', error);
+    // Handle or rethrow the error as needed
   }
 
   try {
