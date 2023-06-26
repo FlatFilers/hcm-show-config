@@ -17,6 +17,7 @@
     "dev:filefeed-listener": "npm run update-env dev filefeed && npx flatfile@latest develop workflows/filefeed/index.ts",
     "dev:dynamic-listener": "npm run update-env dev dynamic && npx flatfile@latest develop workflows/dynamic/index.ts",
     "dev:embedded-listener": "npm run update-env dev embedded && npx flatfile@latest develop workflows/embedded/index.ts",
+    "dev:webinar-project-listener": "npm run update-env dev webinarOnboarding && npx flatfile@latest develop workflows/webinar/index.ts",
     "test": "jest --transform esm"
   },
   "keywords": [],
