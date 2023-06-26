@@ -103,24 +103,24 @@ export const blueprintSheets = [
         ],
         readonly: false,
       },
-      {
-        // This will need to be a valid Employee ID from either the DB or the existing dataset. If not, throw an error
-        key: 'managerId',
-        type: 'reference',
-        label: 'Manager ID',
-        description: "The Employee ID for the Employee's Manager",
-        constraints: [
-          {
-            type: 'required',
-          },
-        ],
-        readonly: false,
-        config: {
-          ref: 'employees-sheet',
-          key: 'employeeId',
-          relationship: 'has-many',
-        },
-      },
+      // {
+      //   // This will need to be a valid Employee ID from either the DB or the existing dataset. If not, throw an error
+      //   key: 'managerId',
+      //   type: 'reference',
+      //   label: 'Manager ID',
+      //   description: "The Employee ID for the Employee's Manager",
+      //   constraints: [
+      //     {
+      //       type: 'required',
+      //     },
+      //   ],
+      //   readonly: false,
+      //   config: {
+      //     ref: 'employees-sheet',
+      //     key: 'employeeId',
+      //     relationship: 'has-many',
+      //   },
+      // },
       {
         key: 'firstName',
         type: 'string',
@@ -308,17 +308,17 @@ export const blueprintSheets = [
           'This custom action code analyzes a set of employee records and identifies duplicate entries based on employee ID and hire date. It removes duplicate records, prioritizing those with earlier hire dates.',
         primary: false,
         mode: 'foreground',
-        type: 'string'
+        type: 'string',
       },
-      {
-        operation: 'validateReportingStructure',
-        label: 'Validate Reporting Structure',
-        description:
-          'This custom action code analyzes a set of employee records and validates the reporting structure. It checks for circular dependencies, ensures there is a single top-level manager, and verifies that employees are reporting to existing managers.',
-        primary: false,
-        mode: 'foreground',
-        type: 'string'
-      },
+      // {
+      //   operation: 'validateReportingStructure',
+      //   label: 'Validate Reporting Structure',
+      //   description:
+      //     'This custom action code analyzes a set of employee records and validates the reporting structure. It checks for circular dependencies, ensures there is a single top-level manager, and verifies that employees are reporting to existing managers.',
+      //   primary: false,
+      //   mode: 'foreground',
+      //   type: 'string'
+      // },
     ],
   },
 ];
