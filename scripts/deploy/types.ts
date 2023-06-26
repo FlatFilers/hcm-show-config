@@ -1,5 +1,10 @@
 export type WorkflowEnvironment = 'production' | 'dev';
-export type WorkflowType = 'onboarding' | 'filefeed' | 'embedded' | 'dynamic';
+export type WorkflowType =
+  | 'onboarding'
+  | 'filefeed'
+  | 'embedded'
+  | 'dynamic'
+  | 'webinarOnboarding';
 
 export type WorkflowEnv = {
   [key in WorkflowEnvironment]: {
