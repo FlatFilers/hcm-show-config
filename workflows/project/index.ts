@@ -80,7 +80,7 @@ export default function (listener) {
             metadata: {
               userId,
               sidebarConfig: {
-                showSidebar: false,
+                showSidebar: true,
                 // This property seems to break guest magic link functionality?
                 // showGuestInvite: true,
               },
@@ -228,136 +228,141 @@ export default function (listener) {
   );
 
   // Listen for the 'dedupe employees' action
-  listener.filter({ job: "sheet:dedupeEmployees" }, (configure) => {
-    configure.on("job:ready", async ({ context: { jobId, sheetId } }:FlatfileEvent ) => {
-
-      console.log(JSON.stringify(sheetId,null,2))
-      try {
-        await api.jobs.ack(jobId, {
-          info: "Checking for duplicates.",
-          progress: 10,
-        });
-
-        // run the dedupe employees function
-        let count = 0
+  listener.filter({ job: 'sheet:dedupeEmployees' }, (configure) => {
+    configure.on(
+      'job:ready',
+      async ({ context: { jobId, sheetId } }: FlatfileEvent) => {
+        console.log(JSON.stringify(sheetId, null, 2));
         try {
-          console.log('Sheet ID: ' + sheetId);
-  
-          // Call the 'get' method of api.records with the sheetId
-          const response = await api.records.get(sheetId);
-  
-          // Check if the response is valid and contains records
-          if (response?.data?.records) {
-            // Get the records from the response data
-            const records = response.data.records;
-  
-            // Call the dedupeEmployees function with the records
-            const removeThese = dedupeEmployees(records);
-            console.log('Records to Remove: ' + removeThese);
-            count = removeThese.length
+          await api.jobs.ack(jobId, {
+            info: 'Checking for duplicates.',
+            progress: 10,
+          });
 
-            // Check if there are any records to remove
-            if (removeThese.length > 0) {
-              // Delete the records identified for removal from the API
-              await api.records.delete(sheetId, { ids: removeThese });
+          // run the dedupe employees function
+          let count = 0;
+          try {
+            console.log('Sheet ID: ' + sheetId);
+
+            // Call the 'get' method of api.records with the sheetId
+            const response = await api.records.get(sheetId);
+
+            // Check if the response is valid and contains records
+            if (response?.data?.records) {
+              // Get the records from the response data
+              const records = response.data.records;
+
+              // Call the dedupeEmployees function with the records
+              const removeThese = dedupeEmployees(records);
+              console.log('Records to Remove: ' + removeThese);
+              count = removeThese.length;
+
+              // Check if there are any records to remove
+              if (removeThese.length > 0) {
+                // Delete the records identified for removal from the API
+                await api.records.delete(sheetId, { ids: removeThese });
+              } else {
+                console.log('No records found for removal.');
+              }
             } else {
-              console.log('No records found for removal.');
+              console.log('No records found in the response.');
             }
-          } else {
-            console.log('No records found in the response.');
-          }
-  
-          // Log the action as a string to the console
-          console.log('Listener: ' + JSON.stringify(configure?.operation));
-        } catch (error) {
-          console.log('Error occurred:', error);
-          // Handle the error or log it for debugging
-        }
 
-        await api.jobs.complete(jobId, {
-          info: `${count} employees deduplicated.`,
-        });
-      } catch (error) {
-        console.error("Error:", error.stack);
-  
-        await api.jobs.fail(jobId, {
-          info: "Unable to deduplicate employees.",
-        });
+            // Log the action as a string to the console
+            console.log('Listener: ' + JSON.stringify(configure?.operation));
+          } catch (error) {
+            console.log('Error occurred:', error);
+            // Handle the error or log it for debugging
+          }
+
+          await api.jobs.complete(jobId, {
+            info: `${count} employees deduplicated.`,
+          });
+        } catch (error) {
+          console.error('Error:', error.stack);
+
+          await api.jobs.fail(jobId, {
+            info: 'Unable to deduplicate employees.',
+          });
+        }
       }
-    });
+    );
   });
 
   // Listen for the 'validate reporting structure' action
-  listener.filter({ job: "sheet:validateReportingStructure" }, (configure) => {
-    configure.on("job:ready", async ({ context: { jobId, sheetId } }:FlatfileEvent ) => {
-      try {
-        await api.jobs.ack(jobId, {
-          info: "Validating reporting structure.",
-          progress: 10,
-        });
-
-        // run the validate reporting structure function
-        let count = 0
+  listener.filter({ job: 'sheet:validateReportingStructure' }, (configure) => {
+    configure.on(
+      'job:ready',
+      async ({ context: { jobId, sheetId } }: FlatfileEvent) => {
         try {
-          console.log('Sheet ID: ' + sheetId);
-  
-          // Call the 'get' method of api.records with the sheetId
-          const response = await api.records.get(sheetId);
-  
-          // Check if the response is valid and contains records
-          if (response?.data?.records) {
-            // Get the records from the response data
-            const records = response.data.records;
-  
-            // Call the validateReportingStructure function with the records
-            const reportingErrors = validateReportingStructure(records);
-  
-            // Log the reporting errors to the console
-            //console.log('Reporting Errors:' + JSON.stringify(reportingErrors));
-            
-            count = reportingErrors.length
-            // Update the records if there are any reporting errors
-            if (reportingErrors.length > 0) {
-              await api.records.update(sheetId, reportingErrors);
-              console.log('Records updated successfully.');
-              // For example, you can send them as a notification or store them in a database
-            } else {
-              console.log('No records found for updating.');
-            }
-          } else {
-            console.log('No records found in the response.');
-          }
-  
-          // Log the action as a string to the console
-          //console.log('Listener: ' + JSON.stringify(action));
-        } catch (error) {
-          console.log('Error occurred:' + error);
-          // Handle the error or log it for debugging
-        }
+          await api.jobs.ack(jobId, {
+            info: 'Validating reporting structure.',
+            progress: 10,
+          });
 
-        await api.jobs.complete(jobId, {
-          info: `${count} records found and flagged.`,
-        });
-      } catch (error) {
-        console.error("Error:", error.stack);
-  
-        await api.jobs.fail(jobId, {
-          info: "Unable to validate reporting structure.",
-        });
+          // run the validate reporting structure function
+          let count = 0;
+          try {
+            console.log('Sheet ID: ' + sheetId);
+
+            // Call the 'get' method of api.records with the sheetId
+            const response = await api.records.get(sheetId);
+
+            // Check if the response is valid and contains records
+            if (response?.data?.records) {
+              // Get the records from the response data
+              const records = response.data.records;
+
+              // Call the validateReportingStructure function with the records
+              const reportingErrors = validateReportingStructure(records);
+
+              // Log the reporting errors to the console
+              //console.log('Reporting Errors:' + JSON.stringify(reportingErrors));
+
+              count = reportingErrors.length;
+              // Update the records if there are any reporting errors
+              if (reportingErrors.length > 0) {
+                await api.records.update(sheetId, reportingErrors);
+                console.log('Records updated successfully.');
+                // For example, you can send them as a notification or store them in a database
+              } else {
+                console.log('No records found for updating.');
+              }
+            } else {
+              console.log('No records found in the response.');
+            }
+
+            // Log the action as a string to the console
+            //console.log('Listener: ' + JSON.stringify(action));
+          } catch (error) {
+            console.log('Error occurred:' + error);
+            // Handle the error or log it for debugging
+          }
+
+          await api.jobs.complete(jobId, {
+            info: `${count} records found and flagged.`,
+          });
+        } catch (error) {
+          console.error('Error:', error.stack);
+
+          await api.jobs.fail(jobId, {
+            info: 'Unable to validate reporting structure.',
+          });
+        }
       }
-    });
+    );
   });
-  
+
   // Listen for the 'submit' action
-  listener.filter({ job: "workbook:submitAction" }, (configure) => {
-    configure.on("job:ready", async (event: FlatfileEvent) => {
-      const { jobId, spaceId } = event.context
+  listener.filter({ job: 'workbook:submitAction' }, (configure) => {
+    configure.on('job:ready', async (event: FlatfileEvent) => {
+      const { jobId, spaceId } = event.context;
       try {
         await api.jobs.ack(jobId, {
-          info: "Sending data to HCM.show.",
+          info: 'Sending data to HCM.show.',
           progress: 10,
         });
-        
+
         try {
           // Call the submit function with the event as an argument to push the data to HCM Show
           await pushToHcmShow(event);
@@ -368,15 +373,15 @@ export default function (listener) {
           console.log('Error occurred during HCM workbook submission:', error);
           // Perform error handling, such as displaying an error message to the user or triggering a fallback behavior
         }
-  
+
         await api.jobs.complete(jobId, {
-          info: "Data synced to the HCM.show app.",
+          info: 'Data synced to the HCM.show app.',
         });
       } catch (error) {
-        console.error("Error:", error.stack);
-  
+        console.error('Error:', error.stack);
+
         await api.jobs.fail(jobId, {
-          info: "The submit job did not run correctly.",
+          info: 'The submit job did not run correctly.',
         });
       }
     });

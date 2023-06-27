@@ -76,7 +76,7 @@ export default function (listener) {
             metadata: {
               userId,
               sidebarConfig: {
-                showSidebar: false,
+                showSidebar: true,
                 // This property seems to break guest magic link functionality?
                 // showGuestInvite: true,
               },
