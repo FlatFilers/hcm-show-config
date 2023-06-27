@@ -265,7 +265,7 @@ export default function (listener) {
                 console.log('No records found for removal.');
               }
             } else {
-              console.log('No records found in the response.');
+              console.log('No records found for removal.');
             }
 
             // Log the action as a string to the console
@@ -329,7 +329,7 @@ export default function (listener) {
                 console.log('No records found for updating.');
               }
             } else {
-              console.log('No records found in the response.');
+              console.log('No records foundfor updating.');
             }
 
             // Log the action as a string to the console
