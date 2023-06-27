@@ -31,7 +31,7 @@ export default function (listener) {
 
       const metadata = space.data.metadata as Metadata;
 
-      const userId = metadata.userId;
+      const userId = metadata?.userId;
 
       const updateJob1 = await api.jobs.ack(jobId, {
         info: 'Creating Space',
