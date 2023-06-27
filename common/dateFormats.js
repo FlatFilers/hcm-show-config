@@ -41,4 +41,10 @@ export const momentFormats = [
   'MMddyy', // Format: 2-digit month - 2-digit day - 2-digit year
   'MMDDYYYY', // Format: 2-digit month - 2-digit day - 4-digit year
   'YYYY-MM-DDTHH:mm:ss.SSSZ', // Format: 4-digit year - 2-digit month - 2-digit day - T - 2-digit hour - : - 2-digit minute - : - 2-digit second - . - 3-digit millisecond - Z
+  'MMMM D YYYY', // Format: Full month name - 1 or 2-digit day - 4-digit year e.g., 'August 26 2023'
+  'MMM D YYYY', // Format: Abbreviated month name - 1 or 2-digit day - 4-digit year e.g., 'Aug 26 2023'
+  'D MMMM YYYY', // Format: 1 or 2-digit day - Full month name - 4-digit year e.g., '26 August 2023'
+  'D MMM YYYY', // Format: 1 or 2-digit day - Abbreviated month name - 4-digit year e.g., '26 Aug 2023'
+  'YYYY MMMM D', // Format: 4-digit year - Full month name - 1 or 2-digit day e.g., '2023 August 26'
+  'YYYY MMM D', // Format: 4-digit year - Abbreviated month name - 1 or 2-digit day e.g., '2023 Aug 26'
 ];
