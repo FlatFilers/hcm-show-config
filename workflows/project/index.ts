@@ -329,7 +329,7 @@ export default function (listener) {
                 console.log('No records found for updating.');
               }
             } else {
-              console.log('No records foundfor updating.');
+              console.log('No records found for updating.');
             }
 
             // Log the action as a string to the console
