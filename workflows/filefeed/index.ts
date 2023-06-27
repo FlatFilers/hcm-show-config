@@ -91,7 +91,7 @@ export default function (listener) {
             metadata: {
               userId,
               sidebarConfig: {
-                showSidebar: true,
+                showSidebar: false,
                 // This property seems to break guest magic link functionality?
                 // showGuestInvite: true,
               },
@@ -273,15 +273,15 @@ export default function (listener) {
   });
 
   // Listen for the 'submit' action
-  listener.filter({ job: 'workbook:submitAction' }, (configure) => {
-    configure.on('job:ready', async (event: FlatfileEvent) => {
-      const { jobId, spaceId } = event.context;
+  listener.filter({ job: "workbook:submitAction" }, (configure) => {
+    configure.on("job:ready", async (event: FlatfileEvent) => {
+      const { jobId, spaceId } = event.context
       try {
         await api.jobs.ack(jobId, {
-          info: 'Sending data to HCM.show.',
+          info: "Sending data to HCM.show.",
           progress: 10,
         });
-
+        
         try {
           // Call the submit function with the event as an argument to push the data to HCM Show
           await pushToHcmShow(event);
@@ -292,15 +292,15 @@ export default function (listener) {
           console.log('Error occurred during HCM workbook submission:', error);
           // Perform error handling, such as displaying an error message to the user or triggering a fallback behavior
         }
-
+  
         await api.jobs.complete(jobId, {
-          info: 'Data synced to the HCM.show app.',
+          info: "Data synced to the HCM.show app.",
         });
       } catch (error) {
-        console.error('Error:', error.stack);
-
+        console.error("Error:", error.stack);
+  
         await api.jobs.fail(jobId, {
-          info: 'The submit job did not run correctly.',
+          info: "The submit job did not run correctly.",
         });
       }
     });
