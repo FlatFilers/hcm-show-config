@@ -1,6 +1,6 @@
 import { recordHook } from '@flatfile/plugin-record-hook';
 import api from '@flatfile/api';
-import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor';
+import { xlsxExtractorPlugin } from '@flatfile/plugin-xlsx-extractor';
 import { pushToHcmShow } from '../../actions/pushToHCMShow';
 import { blueprintSheets } from '../../blueprints/benefitsBlueprint';
 import { benefitElectionsValidations } from '../../recordHooks/benefits/benefitElectionsValidations';
@@ -45,7 +45,7 @@ export default function (listener) {
 
       const metadata = space.data.metadata as Metadata;
 
-      const userId = metadata.userId;
+      const userId = metadata?.userId;
 
       const updateJob1 = await api.jobs.ack(jobId, {
         info: 'Creating Space',
@@ -306,11 +306,10 @@ export default function (listener) {
     });
   });
 
-  // Listen for the 'file:created' event
-  listener.on('file:created', async (event) => {
-    // Extract the raw data from the created Excel file and return it
-    return new ExcelExtractor(event, {
-      rawNumbers: true,
-    }).runExtraction();
-  });
+  // Attempt to parse XLSX files, and log any errors encountered during parsing
+  try {
+    listener.use(xlsxExtractorPlugin({ rawNumbers: true }));
+  } catch (error) {
+    console.error('Failed to parse XLSX files:', error);
+  }
 }
