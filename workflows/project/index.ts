@@ -1,6 +1,6 @@
 import { recordHook } from '@flatfile/plugin-record-hook';
 import api from '@flatfile/api';
-import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor';
+import { xlsxExtractorPlugin } from '@flatfile/plugin-xlsx-extractor';
 import { employeeValidations } from '../../recordHooks/employees/employeeValidations';
 import { jobValidations } from '../../recordHooks/jobs/jobValidations';
 import { pushToHcmShow } from '../../actions/pushToHCMShow';
@@ -33,7 +33,7 @@ export default function (listener) {
 
       const metadata = space.data.metadata as Metadata;
 
-      const userId = metadata.userId;
+      const userId = metadata?.userId;
 
       // Acknowledge the job with progress and info using api.jobs.ack
       const updateJob = await api.jobs.ack(jobId, {
@@ -265,7 +265,7 @@ export default function (listener) {
                 console.log('No records found for removal.');
               }
             } else {
-              console.log('No records found for removal.');
+              console.log('No records found in the response.');
             }
 
             // Log the action as a string to the console
@@ -387,27 +387,10 @@ export default function (listener) {
     });
   });
 
-  listener.on('file:created', async (event) => {
-    try {
-      // Create an instance of ExcelExtractor to extract data from the created Excel file
-      const excelExtractor = new ExcelExtractor(event, {
-        rawNumbers: true,
-      });
-
-      // Run the extraction process and retrieve the extracted data
-      const extractedData = await excelExtractor.runExtraction();
-
-      // Log a success message indicating that the file extraction was successful
-      console.log('File extraction successful');
-
-      // Return the extracted data
-      return extractedData;
-    } catch (error) {
-      // Log an error message if an error occurs during the file extraction process
-      console.log('Error occurred during file extraction:', error);
-
-      // Handle the error or provide fallback behavior
-      return null; // Return null or an appropriate fallback value
-    }
-  });
+  // Attempt to parse XLSX files, and log any errors encountered during parsing
+  try {
+    listener.use(xlsxExtractorPlugin({ rawNumbers: true }));
+  } catch (error) {
+    console.error('Failed to parse XLSX files:', error);
+  }
 }

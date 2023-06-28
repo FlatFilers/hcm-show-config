@@ -1,6 +1,6 @@
 import { recordHook } from '@flatfile/plugin-record-hook';
 import api from '@flatfile/api';
-import { ExcelExtractor } from '@flatfile/plugin-xlsx-extractor';
+import { xlsxExtractorPlugin } from '@flatfile/plugin-xlsx-extractor';
 import { pushToHcmShow } from '../../actions/pushToHCMShow';
 import { blueprintSheets } from '../../blueprints/benefitsBlueprint';
 import { benefitElectionsValidations } from '../../recordHooks/benefits/benefitElectionsValidations';
@@ -31,7 +31,7 @@ export default function (listener) {
 
       const metadata = space.data.metadata as Metadata;
 
-      const userId = metadata.userId;
+      const userId = metadata?.userId;
 
       const updateJob1 = await api.jobs.ack(jobId, {
         info: 'Creating Space',
@@ -250,28 +250,10 @@ export default function (listener) {
     });
   });
 
-  // Listen for the 'file:created' event
-  listener.on('file:created', async (event) => {
-    try {
-      // Create an instance of ExcelExtractor to extract data from the created Excel file
-      const excelExtractor = new ExcelExtractor(event, {
-        rawNumbers: true,
-      });
-
-      // Run the extraction process and retrieve the extracted data
-      const extractedData = await excelExtractor.runExtraction();
-
-      // Log a success message indicating that the file extraction was successful
-      console.log('File extraction successful');
-
-      // Return the extracted data
-      return extractedData;
-    } catch (error) {
-      // Log an error message if an error occurs during the file extraction process
-      console.log('Error occurred during file extraction:', error);
-
-      // Handle the error or provide fallback behavior
-      return null; // Return null or an appropriate fallback value
-    }
-  });
+  // Attempt to parse XLSX files, and log any errors encountered during parsing
+  try {
+    listener.use(xlsxExtractorPlugin({ rawNumbers: true }));
+  } catch (error) {
+    console.error('Failed to parse XLSX files:', error);
+  }
 }
