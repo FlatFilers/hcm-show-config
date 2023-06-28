@@ -55,7 +55,7 @@ export default function (listener) {
           environmentId: environmentId,
           labels: ['primary'],
           name: 'HCM Workbook',
-          sheets: blueprintSheets as any,
+          sheets: blueprintSheets,
           actions: [
             {
               operation: 'submitAction',
@@ -329,7 +329,7 @@ export default function (listener) {
                 console.log('No records found for updating.');
               }
             } else {
-              console.log('No records found for updating.');
+              console.log('No records found in the response.');
             }
 
             // Log the action as a string to the console
