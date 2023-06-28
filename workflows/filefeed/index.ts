@@ -66,7 +66,7 @@ export default function (listener) {
           environmentId: environmentId,
           labels: ['primary'],
           name: 'Benefits Workbook',
-          sheets: blueprintSheets as any,
+          sheets: blueprintSheets,
           actions: [
             {
               operation: 'submitAction',
