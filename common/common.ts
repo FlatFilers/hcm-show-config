@@ -15,7 +15,12 @@ the value to be looked up.
 @param {string} targetFieldKey - The name of the field on the original record that the
 lookup value should be set to.
 */
-const vlookup = (record, referenceFieldKey, lookupFieldKey, targetFieldKey) => {
+export const vlookup = (
+  record,
+  referenceFieldKey,
+  lookupFieldKey,
+  targetFieldKey
+) => {
   console.log('Initial Record: ' + JSON.stringify(record));
   const links = record.getLinks(referenceFieldKey);
   console.log('Linked Record: ' + JSON.stringify(links));
@@ -36,6 +41,3 @@ const vlookup = (record, referenceFieldKey, lookupFieldKey, targetFieldKey) => {
     );
   }
 };
-
-// Export Values
-module.exports = { vlookup };
