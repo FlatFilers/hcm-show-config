@@ -52,7 +52,7 @@ export default function (listener) {
           environmentId: environmentId,
           labels: ['primary'],
           name: 'Benefits Workbook',
-          sheets: blueprintSheets,
+          sheets: blueprintSheets as any,
           actions: [
             {
               operation: 'submitAction',
