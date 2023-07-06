@@ -222,8 +222,6 @@ export default function (listener) {
 
     const workbookName =
       workbook.data && workbook.data.name ? workbook.data.name : '';
-    const spaceId =
-      workbook.data && workbook.data.spaceId ? workbook.data.spaceId : '';
 
     if (workbookName.includes('HCM Workbook')) {
       // console.log('Workbook matches the expected name')
