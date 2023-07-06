@@ -38,7 +38,8 @@
     "got": "^12.6.0",
     "io-ts": "^2.2.20",
     "moment": "^2.29.4",
-    "node-fetch": "^3.3.1"
+    "node-fetch": "^3.3.1",
+    "parse-full-name": "^1.2.6"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.21.5",

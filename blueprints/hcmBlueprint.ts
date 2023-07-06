@@ -118,10 +118,17 @@ const employeesSheet: SheetConfig = {
       },
     },
     {
+      key: 'fullName',
+      type: 'string',
+      label: 'Full Name',
+      description: 'The Full Name for a person.',
+      readonly: true,
+    },
+    {
       key: 'firstName',
       type: 'string',
       label: 'First Name',
-      description: 'The First Name (Given Name) for a person. ',
+      description: 'The First Name (Given Name) for a person.',
       constraints: [
         {
           type: 'required',
@@ -133,7 +140,7 @@ const employeesSheet: SheetConfig = {
       key: 'lastName',
       type: 'string',
       label: 'Last Name',
-      description: 'The Last Name (Family Name) for a person. ',
+      description: 'The Last Name (Family Name) for a person.',
       constraints: [
         {
           type: 'required',
