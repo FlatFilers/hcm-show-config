@@ -8,6 +8,7 @@ import { dedupeEmployees } from '../../actions/dedupe';
 import { blueprintSheets } from '../../blueprints/hcmBlueprint';
 import { validateReportingStructure } from '../../actions/validateReportingStructure';
 import { FlatfileEvent } from '@flatfile/listener';
+import { departments } from '../../referenceData/departments';
 
 type Metadata = {
   userId: string;
@@ -201,6 +202,58 @@ export default function (listener) {
     configure.on('job:failed', async (event) => {
       console.log('Job Failed: ' + JSON.stringify(event));
     });
+  });
+
+  // SEED THE WORKBOOK WITH DATA workbook:created
+  listener.on('workbook:created', async (event) => {
+    if (!event.context || !event.context.workbookId) {
+      console.error('Event context or workbookId missing');
+      return;
+    }
+
+    const workbookId = event.context.workbookId;
+    let workbook;
+    try {
+      workbook = await api.workbooks.get(workbookId);
+    } catch (error) {
+      console.error('Error getting workbook:', error.message);
+      return;
+    }
+
+    const workbookName =
+      workbook.data && workbook.data.name ? workbook.data.name : '';
+    const spaceId =
+      workbook.data && workbook.data.spaceId ? workbook.data.spaceId : '';
+
+    if (workbookName.includes('HCM Workbook')) {
+      // console.log('Workbook matches the expected name')
+
+      const sheets =
+        workbook.data && workbook.data.sheets ? workbook.data.sheets : [];
+
+      // Departments
+      const departmentsSheet = sheets.find((s) =>
+        s.config.slug.includes('departments')
+      );
+      if (departmentsSheet && Array.isArray(departments)) {
+        const departmentId = departmentsSheet.id;
+        const request1 = departments.map(
+          ({ departmentCode, departmentName }) => ({
+            departmentCode: { value: departmentCode },
+            departmentName: { value: departmentName },
+          })
+        );
+
+        try {
+          const insertDepartments = await api.records.insert(
+            departmentId,
+            request1
+          );
+        } catch (error) {
+          console.error('Error inserting departments:', error.message);
+        }
+      }
+    }
   });
 
   // Attach a record hook to the 'employees-sheet' of the Flatfile importer
