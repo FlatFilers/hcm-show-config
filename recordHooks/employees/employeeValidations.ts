@@ -43,6 +43,13 @@ export function employeeValidations(record) {
   }
 
   try {
+    formatRecordDates(record, 'employees-sheet');
+  } catch (error) {
+    console.log('Error occurred during date formatting:', error);
+    // Handle or rethrow the error as needed
+  }
+
+  try {
     employeeHours(record);
   } catch (error) {
     console.log('Error occurred during employee hours validation:', error);
