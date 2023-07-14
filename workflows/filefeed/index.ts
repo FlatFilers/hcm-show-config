@@ -26,8 +26,7 @@ export default function (listener) {
     const topic = event.topic;
 
     post({
-      // hostname: 'hcm.show',
-      hostname: '75b6-108-27-27-221.ngrok-free.app',
+      hostname: 'hcm.show',
       path: '/api/v1/sync-file-feed',
       body: { spaceId, topic },
     });
