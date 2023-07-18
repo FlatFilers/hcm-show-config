@@ -5,9 +5,10 @@ import { pushToHcmShow } from '../../actions/pushToHCMShow';
 import { blueprintSheets } from '../../blueprints/benefitsBlueprint';
 import { benefitElectionsValidations } from '../../recordHooks/benefits/benefitElectionsValidations';
 import { post } from '../../common/utils/request';
-import { automap } from '../../plugins/automap/automap';
 import { PipelineJobConfig } from '@flatfile/api/api';
 import { FlatfileEvent } from '@flatfile/listener';
+import { automap } from '@flatfile/plugin-automap';
+
 const util = require('util');
 
 type Metadata = {
@@ -214,7 +215,7 @@ export default function (listener) {
 
   listener.use(
     automap({
-      accuracy: 'exact',
+      accuracy: 'confident',
       matchFilename: /^benefits.*$/i,
       defaultTargetSheet: 'Benefit Elections',
     })
