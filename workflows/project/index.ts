@@ -376,9 +376,6 @@ export default function (listener) {
           // Perform error handling, such as displaying an error message to the user or triggering a fallback behavior
         }
 
-        console.log('Callback: ' + callback);
-        console.log('type: ' + typeof callback);
-
         if (callback.success) {
           await api.jobs.complete(jobId, {
             info: 'Data synced to the HCM.show app.',
