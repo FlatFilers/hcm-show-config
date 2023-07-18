@@ -18,8 +18,9 @@ export const pushToHcmShow = async (
   const userId = await getUserIdFromSpace(spaceId);
 
   // Making a POST request to 'hcm.show' API to sync the space
-  await post({
-    hostname: 'hcm.show',
+  return await post({
+    // hostname: 'hcm.show',
+    hostname: '75b6-108-27-27-221.ngrok-free.app',
     path: `/api/v1/sync-space`,
     body: { userId, spaceId, workflowType },
   });
