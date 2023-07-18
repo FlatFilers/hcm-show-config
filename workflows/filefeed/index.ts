@@ -25,7 +25,7 @@ export default function (listener) {
     const topic = event.topic;
 
     post({
-      // hostname: 'hcm.show',
+      hostname: 'hcm.show',
       path: '/api/v1/sync-file-feed',
       body: { spaceId, topic },
     });

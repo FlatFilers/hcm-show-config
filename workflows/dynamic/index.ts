@@ -229,7 +229,7 @@ export default function (listener) {
         let callback;
         try {
           // Call the submit function with the event as an argument to push the data to HCM Show
-          callback = await pushToHcmShow(event);
+          callback = await pushToHcmShow(event, 'dynamic');
 
           // Log the action as a string to the console
           console.log('Action: ' + JSON.stringify(event?.payload?.operation));
