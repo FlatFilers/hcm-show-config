@@ -363,9 +363,12 @@ export default function (listener) {
           progress: 10,
         });
 
+        let callback;
         try {
           // Call the submit function with the event as an argument to push the data to HCM Show
-          await pushToHcmShow(event);
+          const sendToShowSyncSpace = await pushToHcmShow(event);
+          callback = JSON.parse(sendToShowSyncSpace);
+
           // Log the action as a string to the console
           console.log('Action: ' + JSON.stringify(event?.payload?.operation));
         } catch (error) {

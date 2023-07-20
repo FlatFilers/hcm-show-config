@@ -227,9 +227,12 @@ export default function (listener) {
           progress: 10,
         });
 
+        let callback;
         try {
           // Call the submit function with the event as an argument to push the data to HCM Show
-          await pushToHcmShow(event, 'embed');
+          const sendToShowSyncSpace = await pushToHcmShow(event, 'embed');
+          callback = JSON.parse(sendToShowSyncSpace);
+
           // Log the action as a string to the console
           console.log('Action: ' + JSON.stringify(event?.payload?.operation));
         } catch (error) {
@@ -238,9 +241,11 @@ export default function (listener) {
           // Perform error handling, such as displaying an error message to the user or triggering a fallback behavior
         }
 
-        await api.jobs.complete(jobId, {
-          info: 'Data synced to the HCM.show app.',
-        });
+        if (callback.success) {
+          await api.jobs.complete(jobId, {
+            info: 'Data synced to the HCM.show app.',
+          });
+        }
       } catch (error) {
         console.error('Error:', error.stack);
 
