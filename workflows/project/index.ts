@@ -8,6 +8,8 @@ import { dedupeEmployees } from '../../actions/dedupe';
 import { blueprintSheets } from '../../blueprints/hcmBlueprint';
 import { validateReportingStructure } from '../../actions/validateReportingStructure';
 import { FlatfileEvent } from '@flatfile/listener';
+import axios from 'axios';
+import { RecordHook } from '@flatfile/plugin-record-hook';
 
 type Metadata = {
   userId: string;
@@ -203,17 +205,76 @@ export default function (listener) {
     });
   });
 
-  // Attach a record hook to the 'employees-sheet' of the Flatfile importer
-  listener.use(
-    // When a record is processed, invoke the 'employeeValidations' function to validate the record
-    recordHook('employees-sheet', (record) => {
-      const results = employeeValidations(record);
-      // Log the results of the validations to the console as a JSON string
-      console.log('Employees Hooks: ' + JSON.stringify(results));
-      // Return the record
-      return record;
-    })
-  );
+  listener.on('commit:created', async (event) => {
+    try {
+      console.log('commit:created event triggered'); // Log when the event is triggered
+
+      // Retrieve the sheetId from the event context
+      const sheetId = event.context.sheetId;
+      console.log(`Retrieved sheetId from event: ${sheetId}`); // Log the retrieved sheetId
+
+      // Fetch the sheet from the API
+      const sheet = await api.sheets.get(sheetId);
+
+      // Only log that the sheet was fetched successfully
+      if (!sheet) {
+        console.log(`Failed to fetch sheet with id: ${sheetId}`);
+        return;
+      }
+      console.log(`Sheet with id: ${sheetId} fetched successfully.`);
+
+      // Verify that the sheetSlug matches 'employees-sheet'
+      if (sheet.data.config?.slug === 'employees-sheet') {
+        console.log(
+          "Confirmed: sheetSlug matches 'employees-sheet'. Proceeding to call RecordHook..."
+        ); // Log before calling RecordHook
+
+        // Fetch data from the new API endpoint once per sheet - replace with HCM Show Endpoint
+        console.log('Calling API endpoint...');
+        const getResponse = await axios.get(
+          'https://hub.dummyapis.com/employee?noofRecords=10&idStarts=1001'
+        );
+        console.log(
+          'Finished calling new API endpoint. Processing the response...'
+        );
+
+        // Check if the response is as expected
+        if (!getResponse || !getResponse.data) {
+          console.log('Failed to fetch employees data from the API');
+          return;
+        }
+
+        // Extract the list of employees from the response data
+        const employees = getResponse.data;
+
+        // Log the number of employees fetched
+        console.log(`Successfully fetched ${employees.length} employees.`);
+
+        // Call the RecordHook function with event and a handler
+        await RecordHook(event, async (record, event) => {
+          console.log("Inside RecordHook's handler function"); // Log inside the handler function
+          try {
+            // Pass the fetched employees to the employeeValidations function along with the record
+            await employeeValidations(record, employees);
+          } catch (error) {
+            // Handle errors that might occur within employeeValidations
+            console.error('Error in employeeValidations:', error);
+          }
+          // Clean up or perform any necessary actions after the try/catch block
+          console.log("Exiting RecordHook's handler function"); // Log when exiting the handler function
+          return record;
+        });
+        console.log('Finished calling RecordHook'); // Log after calling RecordHook
+      } else {
+        console.log(
+          "Failed: sheetSlug does not match 'employees-sheet'. Aborting RecordHook call..."
+        );
+      }
+    } catch (error) {
+      // Handle errors that might occur in the event handler
+      console.error('Error in commit:created event handler:', error);
+    }
+  });
 
   // Attach a record hook to the 'jobs-sheet' of the Flatfile importer
   listener.use(

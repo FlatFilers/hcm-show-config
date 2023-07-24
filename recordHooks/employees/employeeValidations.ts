@@ -4,8 +4,9 @@ import { validateJobDates } from './validate-job-dates';
 import { formatRecordDates } from '../../common/dateFormatting';
 import { employeeHours } from './employee-hours';
 import { concatenateNames, splitFullName } from './employeeNameProcessing';
+import { checkApiForExistingWorkers } from './apiValidation';
 
-export function employeeValidations(record) {
+export async function employeeValidations(record, employees) {
   // Validate the input record parameter
   if (!record || typeof record !== 'object') {
     throw new Error('Invalid record input. Expecting a valid record object.');
@@ -43,13 +44,6 @@ export function employeeValidations(record) {
   }
 
   try {
-    formatRecordDates(record, 'employees-sheet');
-  } catch (error) {
-    console.log('Error occurred during date formatting:', error);
-    // Handle or rethrow the error as needed
-  }
-
-  try {
     employeeHours(record);
   } catch (error) {
     console.log('Error occurred during employee hours validation:', error);
@@ -61,6 +55,15 @@ export function employeeValidations(record) {
   } catch (error) {
     console.log('Error occurred during vlookup:', error);
     // Handle or rethrow the error as needed
+  }
+
+  // Run API check for existing workers
+  try {
+    console.log('Checking API for existing workers...');
+    await checkApiForExistingWorkers(record, employees);
+    console.log('API check completed successfully.');
+  } catch (error) {
+    console.log('Error occurred during API check:', error);
   }
 
   return record;
