@@ -5,6 +5,12 @@ export const validateReportingStructure = (records) => {
   const managerIds = new Set(); // Set to store unique managerIds
   const employeesWithManagerId = new Set(); // Set to store employeeIds where employeeId = managerId
 
+  //Clear all custom messages from EmployeeId field
+
+  for (const record of records) {
+    record.values.employeeId.messages = [];
+  }
+
   // Recursive function to detect circular dependencies in the reporting structure
   const detectCircularDependency = (employeeId, path) => {
     if (visited.has(employeeId)) {
@@ -89,5 +95,5 @@ export const validateReportingStructure = (records) => {
 
   console.log('Reporting Errors: ' + JSON.stringify(reportingErrors));
 
-  return reportingErrors;
+  return records;
 };
