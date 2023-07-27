@@ -10,6 +10,7 @@ import { validateReportingStructure } from '../../actions/validateReportingStruc
 import { FlatfileEvent } from '@flatfile/listener';
 import axios from 'axios';
 import { RecordHook } from '@flatfile/plugin-record-hook';
+import { getEmployeesFromHCMShow } from '../../actions/getEmployeesFromHCMShow';
 
 type Metadata = {
   userId: string;
@@ -229,23 +230,26 @@ export default function (listener) {
           "Confirmed: sheetSlug matches 'employees-sheet'. Proceeding to call RecordHook..."
         ); // Log before calling RecordHook
 
-        // Fetch data from the new API endpoint once per sheet - replace with HCM Show Endpoint
         console.log('Calling API endpoint...');
-        const getResponse = await axios.get(
-          'https://hub.dummyapis.com/employee?noofRecords=10&idStarts=1001'
-        );
+
+        // Call the API endpoint at HcmShow to get a list of employees
+        const getEmpsFromShowListEmps = await getEmployeesFromHCMShow(event);
+
+        // const getEmpsFromShowListEmps = await axios.get(
+        //   'https://hub.dummyapis.com/employee?noofRecords=10&idStarts=1001'
+        // );
         console.log(
           'Finished calling new API endpoint. Processing the response...'
         );
 
         // Check if the response is as expected
-        if (!getResponse || !getResponse.data) {
+        if (!getEmpsFromShowListEmps) {
           console.log('Failed to fetch employees data from the API');
           return;
         }
 
         // Extract the list of employees from the response data
-        const employees = getResponse.data;
+        const employees = JSON.parse(getEmpsFromShowListEmps);
 
         // Log the number of employees fetched
         console.log(`Successfully fetched ${employees.length} employees.`);

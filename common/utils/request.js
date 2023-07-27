@@ -54,3 +54,61 @@ export const post = async ({ hostname = 'hcm.show', path, body }) => {
     console.error(`Fetch error: ${JSON.stringify(err, null, 2)}`);
   }
 };
+export const getEmployees = async ({ hostname = 'hcm.show', path, params }) => {
+  try {
+    // Convert params to query string
+    const query = Object.keys(params)
+      .map((k) => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
+      .join('&');
+
+    // Create the full path with query string
+    const fullPath = `${path}?${query}`;
+
+    return new Promise((resolve, reject) => {
+      // Creating an HTTPS request with the provided options
+      const req = https.request(
+        {
+          method: 'GET',
+          protocol: 'https:',
+          hostname,
+          path: fullPath,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+        (res) => {
+          let result = '';
+
+          // Handling the response data
+          res.on('data', (chunk) => {
+            result += chunk;
+          });
+
+          // Handling the end of the response
+          res.on('end', () => {
+            if (
+              res.statusCode &&
+              res.statusCode >= 200 &&
+              res.statusCode < 300
+            ) {
+              // If the response status code is successful, resolve with the result
+              resolve(result);
+            } else {
+              // If the response status code is not successful, reject with 'Failure'
+              reject('Failure');
+            }
+          });
+
+          // Handling errors in the response
+          res.on('error', (err) => {
+            reject(new Error('HTTP call failed'));
+          });
+        }
+      );
+
+      req.end();
+    });
+  } catch (err) {
+    console.error(`Fetch error: ${JSON.stringify(err, null, 2)}`);
+  }
+};
