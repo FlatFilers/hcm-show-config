@@ -10,7 +10,7 @@ export async function checkApiForExistingWorkers(record, employees) {
       // Ensure both the applicantId and employee.id are of the same type before comparing
       // If applicantId is a string, compare it to a string version of employee.id
       if (typeof employeeId === 'string') {
-        return employee.id.toString() === employeeId;
+        return employee.employeeId === employeeId;
       } else {
         // If applicantId is not a string (assuming it's a number), compare it to a number version of employee.id
         const employeeIdNum = parseInt(employee.id, 10);

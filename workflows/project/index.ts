@@ -226,21 +226,15 @@ export default function (listener) {
 
       // Verify that the sheetSlug matches 'employees-sheet'
       if (sheet.data.config?.slug === 'employees-sheet') {
-        console.log(
-          "Confirmed: sheetSlug matches 'employees-sheet'. Proceeding to call RecordHook..."
-        ); // Log before calling RecordHook
+        console.log("Confirmed: sheetSlug matches 'employees-sheet'.");
+        // Log before calling RecordHook
 
         console.log('Calling API endpoint...');
 
         // Call the API endpoint at HcmShow to get a list of employees
         const getEmpsFromShowListEmps = await getEmployeesFromHCMShow(event);
 
-        // const getEmpsFromShowListEmps = await axios.get(
-        //   'https://hub.dummyapis.com/employee?noofRecords=10&idStarts=1001'
-        // );
-        console.log(
-          'Finished calling new API endpoint. Processing the response...'
-        );
+        console.log('Finished calling API endpoint. Processing response...');
 
         // Check if the response is as expected
         if (!getEmpsFromShowListEmps) {
@@ -251,9 +245,17 @@ export default function (listener) {
         // Extract the list of employees from the response data
         const employees = JSON.parse(getEmpsFromShowListEmps);
 
+        // Check if the list of employees is empty. If so, skip the RecordHook call
+        if (employees.length === 0) {
+          console.log(
+            'List of employees from API is empty. Skipping RecordHook.'
+          );
+          return;
+        }
+
         // Log the number of employees fetched
         console.log(`Successfully fetched ${employees.length} employees.`);
-
+        console.log('Proceeding to call RecordHook...');
         // Call the RecordHook function with event and a handler
         await RecordHook(event, async (record, event) => {
           console.log("Inside RecordHook's handler function"); // Log inside the handler function
