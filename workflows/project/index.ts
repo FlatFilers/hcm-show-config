@@ -8,7 +8,6 @@ import { dedupeEmployees } from '../../actions/dedupe';
 import { blueprintSheets } from '../../blueprints/hcmBlueprint';
 import { validateReportingStructure } from '../../actions/validateReportingStructure';
 import { FlatfileEvent } from '@flatfile/listener';
-import axios from 'axios';
 import { RecordHook } from '@flatfile/plugin-record-hook';
 import { getEmployeesFromHCMShow } from '../../actions/getEmployeesFromHCMShow';
 

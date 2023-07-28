@@ -7,15 +7,7 @@ export async function checkApiForExistingWorkers(record, employees) {
 
     // Check if the Applicant_ID matches an id from the API data
     const matchingEmployee = employees.find((employee) => {
-      // Ensure both the applicantId and employee.id are of the same type before comparing
-      // If applicantId is a string, compare it to a string version of employee.id
-      if (typeof employeeId === 'string') {
-        return employee.employeeId === employeeId;
-      } else {
-        // If applicantId is not a string (assuming it's a number), compare it to a number version of employee.id
-        const employeeIdNum = parseInt(employee.id, 10);
-        return employeeIdNum === employeeId;
-      }
+      return employee.employeeId === employeeId;
     });
 
     console.log('Matching Employee:', matchingEmployee); // Log the matchingEmployee

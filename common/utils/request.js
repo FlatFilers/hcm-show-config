@@ -54,7 +54,7 @@ export const post = async ({ hostname = 'hcm.show', path, body }) => {
     console.error(`Fetch error: ${JSON.stringify(err, null, 2)}`);
   }
 };
-export const getEmployees = async ({ hostname = 'hcm.show', path, params }) => {
+export const get = async ({ hostname = 'hcm.show', path, params }) => {
   try {
     // Convert params to query string
     const query = Object.keys(params)

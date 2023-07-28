@@ -1,4 +1,4 @@
-import { getEmployees } from '../common/utils/request';
+import { get } from '../common/utils/request';
 import { getUserIdFromSpace } from '../common/utils/flatfile-api';
 import { FlatfileEvent } from '@flatfile/listener';
 
@@ -14,7 +14,7 @@ export const getEmployeesFromHCMShow = async (event: FlatfileEvent) => {
   const userId = await getUserIdFromSpace(spaceId);
 
   // Making a GET request to 'hcm.show' API to get a list of employees for the input user
-  return await getEmployees({
+  return await get({
     hostname: 'hcm.show',
     path: `/api/v1/list-employees`,
     params: { userId },
