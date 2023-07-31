@@ -451,7 +451,7 @@ export default function (listener) {
       );
 
       // Fetch departments from HCM.show API
-      const departments = await HcmShowApiService.fetchDepartments();
+      const departments = await HcmShowApiService.fetchDepartments(event);
 
       if (departmentsSheet && Array.isArray(departments)) {
         const departmentId = departmentsSheet.id;
