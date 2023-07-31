@@ -37,13 +37,17 @@ const jobsSheet: SheetConfig = {
       readonly: false,
     },
     {
-      //Will eventually be replaced with Job Family Group validation / referenceField
       key: 'jobDept',
-      type: 'string',
+      type: 'reference',
       label: 'Job Department',
       description: 'The department of the job.',
       constraints: [],
       readonly: false,
+      config: {
+        ref: 'departments-sheet',
+        key: 'departmentName',
+        relationship: 'has-many',
+      },
     },
     {
       // May want to throw a warning if missing to say this will default to today. May also want to default to 01-01-1900
@@ -325,4 +329,44 @@ const employeesSheet: SheetConfig = {
   ],
 };
 
-export const blueprintSheets = [{ ...jobsSheet }, { ...employeesSheet }];
+const departmentsSheet: SheetConfig = {
+  name: 'Departments',
+  slug: 'departments-sheet',
+  readonly: true,
+  fields: [
+    {
+      key: 'departmentCode',
+      type: 'string',
+      label: 'Department Code',
+      description:
+        'Unique Identifier for a Department. Also known as Department ID.',
+      constraints: [
+        {
+          type: 'required',
+        },
+        {
+          type: 'unique',
+        },
+      ],
+      readonly: false,
+    },
+    {
+      key: 'departmentName',
+      type: 'string',
+      label: 'Department Name',
+      description: 'The name of the Department.',
+      constraints: [
+        {
+          type: 'required',
+        },
+      ],
+      readonly: false,
+    },
+  ],
+};
+
+export const blueprintSheets = [
+  { ...jobsSheet },
+  { ...employeesSheet },
+  { ...departmentsSheet },
+];
