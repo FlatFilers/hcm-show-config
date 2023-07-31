@@ -10,6 +10,7 @@ import { validateReportingStructure } from '../../actions/validateReportingStruc
 import { FlatfileEvent } from '@flatfile/listener';
 import { RecordHook } from '@flatfile/plugin-record-hook';
 import { getEmployeesFromHCMShow } from '../../actions/getEmployeesFromHCMShow';
+import { HcmShowApiService } from '../../common/hcm-show-api-service';
 
 type Metadata = {
   userId: string;
@@ -419,7 +420,7 @@ export default function (listener) {
     );
   });
 
-  // SEED THE WORKBOOK WITH DATA workbook:created
+  // Seed the workbook with data
   listener.on('workbook:created', async (event) => {
     if (!event.context || !event.context.workbookId) {
       console.error('Event context or workbookId missing');
@@ -448,9 +449,13 @@ export default function (listener) {
       const departmentsSheet = sheets.find((s) =>
         s.config.slug.includes('departments')
       );
+
+      // Fetch departments from HCM.show API
+      const departments = await HcmShowApiService.fetchDepartments();
+
       if (departmentsSheet && Array.isArray(departments)) {
         const departmentId = departmentsSheet.id;
-        const request1 = departments.map(
+        const mappedDepartments = departments.map(
           ({ departmentCode, departmentName }) => ({
             departmentCode: { value: departmentCode },
             departmentName: { value: departmentName },
@@ -460,7 +465,7 @@ export default function (listener) {
         try {
           const insertDepartments = await api.records.insert(
             departmentId,
-            request1
+            mappedDepartments
           );
         } catch (error) {
           console.error('Error inserting departments:', error.message);
