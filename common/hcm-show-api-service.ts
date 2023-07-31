@@ -7,11 +7,12 @@ type DepartmentResult = {
 };
 
 export class HcmShowApiService {
-  // static BASE_URL = 'https://hcm.show';
-  static BASE_URL = 'https://206d-205-185-214-250.ngrok-free.app';
+  static BASE_URL = 'https://hcm.show';
+  // static BASE_URL = 'https://206d-205-185-214-250.ngrok-free.app';
 
   static fetchDepartments = async (): Promise<DepartmentResult[]> => {
     let response;
+
     try {
       response = await axios.get(`${this.BASE_URL}/api/v1/departments`);
     } catch (error) {
