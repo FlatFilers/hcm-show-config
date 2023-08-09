@@ -252,7 +252,7 @@ export default function (listener) {
 
     const result = await pushToHcmShow(event);
 
-    console.log('Result from HCM: ' + JSON.stringify(result));
+    // console.log('Result from HCM: ' + JSON.stringify(result));
 
     const successfullySyncedFlatfileRecordIds = (
       JSON.parse(result) as { successfullySyncedFlatfileRecordIds: string[] }
