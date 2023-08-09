@@ -250,17 +250,34 @@ export default function (listener) {
     // Push them to HCM.show
     console.log('Pushing to HCM.show');
 
-    // TODO: Get a list of successfully synced records IDs back
-    // so we don't delete records that didn't sync.
-    await pushToHcmShow(event);
+    const result = await pushToHcmShow(event);
+
+    console.log('Result from HCM: ' + JSON.stringify(result));
+
+    const successfullySyncedFlatfileRecordIds = (
+      JSON.parse(result) as { successfullySyncedFlatfileRecordIds: string[] }
+    ).successfullySyncedFlatfileRecordIds;
+
+    // console.log('result from HCM.show: ' + JSON.stringify(result));
+    console.log(
+      successfullySyncedFlatfileRecordIds.length +
+        ' successfully synced records from HCM.show. '
+    );
 
     // Delete the valid records from the sheet
     const recordIds = importedData.data.records.map((r) => r.id);
-    console.log('Deleting ' + recordIds.length + ' valid records.');
+    console.log(
+      'Deleting ' +
+        successfullySyncedFlatfileRecordIds.length +
+        ' valid records.'
+    );
 
     // Split the recordIds array into chunks of 100
     for (let i = 0; i < recordIds.length; i += 100) {
-      const batch = recordIds.slice(i, i + 100);
+      const batch = recordIds
+        .slice(i, i + 100)
+        // Delete the records that were successfully synced
+        .filter((id) => successfullySyncedFlatfileRecordIds.includes(id));
 
       // Delete the batch
       await api.records.delete(destinationSheetId, {
