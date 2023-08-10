@@ -22,5 +22,8 @@ export const pushToHcmShow = async (
     hostname: 'hcm.show',
     path: `/api/v1/sync-space`,
     body: { userId, spaceId, workflowType },
+    headers: {
+      'x-server-auth': await event.secrets('SERVER_AUTH_TOKEN'),
+    },
   });
 };

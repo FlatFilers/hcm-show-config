@@ -29,6 +29,9 @@ export default function (listener) {
       hostname: 'hcm.show',
       path: '/api/v1/sync-file-feed',
       body: { spaceId, topic },
+      headers: {
+        'x-server-auth': await event.secrets('SERVER_AUTH_TOKEN'),
+      },
     });
   });
 
