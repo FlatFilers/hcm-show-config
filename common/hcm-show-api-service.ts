@@ -14,8 +14,7 @@ export class HcmShowApiService {
     // Temporary solution until react package can open the same space that is saved in HCM.
     workflowType?: string
   ) => {
-    // Logging the event for debugging purposes
-    console.log('syncSpace | e: ' + JSON.stringify(event));
+    console.log('syncSpace in HCM.show | e: ' + JSON.stringify(event));
 
     // Extracting the spaceId from the event context
     const { spaceId } = event.context;
@@ -31,9 +30,24 @@ export class HcmShowApiService {
     });
   };
 
+  static syncFilefeed = async (event: FlatfileEvent) => {
+    console.log('Syncing filefeed in HCM.show.');
+
+    const { spaceId } = event.context;
+    const topic = event.topic;
+
+    return await post({
+      path: '/api/v1/sync-file-feed',
+      body: { spaceId, topic },
+      event,
+    });
+  };
+
   static fetchDepartments = async (
     event: FlatfileEvent
   ): Promise<DepartmentResult[]> => {
+    console.log('Fetching departments from HCM.show');
+
     let result;
     try {
       result = await get({

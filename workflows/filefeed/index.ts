@@ -3,33 +3,17 @@ import api from '@flatfile/api';
 import { xlsxExtractorPlugin } from '@flatfile/plugin-xlsx-extractor';
 import { blueprintSheets } from '../../blueprints/benefitsBlueprint';
 import { benefitElectionsValidations } from '../../recordHooks/benefits/benefitElectionsValidations';
-import { post } from '../../common/utils/request';
 import { PipelineJobConfig } from '@flatfile/api/api';
 import { FlatfileEvent } from '@flatfile/listener';
 import { automap } from '@flatfile/plugin-automap';
 import { HcmShowApiService } from '../../common/hcm-show-api-service';
-
-const util = require('util');
-
-type Metadata = {
-  userId: string;
-};
 
 // Define the main function that sets up the listener
 export default function (listener) {
   // Log the event topic for all events
   listener.on('**', async (event) => {
     console.log('> event.topic: ' + event.topic);
-    // console.log('> event: ' + util.inspect(event));
-
-    const { spaceId } = event.context;
-    const topic = event.topic;
-
-    post({
-      path: '/api/v1/sync-file-feed',
-      body: { spaceId, topic },
-      event,
-    });
+    HcmShowApiService.syncFilefeed(event);
   });
 
   // Add an event listener for the 'job:created' event
@@ -44,7 +28,9 @@ export default function (listener) {
 
       console.log('Space: ' + JSON.stringify(space));
 
-      const metadata = space.data.metadata as Metadata;
+      const metadata = space.data.metadata as {
+        userId: string;
+      };
 
       const userId = metadata?.userId;
 
