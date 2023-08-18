@@ -492,7 +492,9 @@ export default function (listener) {
           console.log('Action: ' + JSON.stringify(event?.payload?.operation));
         } catch (error) {
           // Handle the error gracefully, log an error message, and potentially take appropriate action
-          console.log('Error occurred during HCM workbook submission:', error);
+          console.log(
+            'Error occurred during HCM workbook submission: ' + error
+          );
           // Perform error handling, such as displaying an error message to the user or triggering a fallback behavior
         }
 
@@ -500,7 +502,7 @@ export default function (listener) {
           info: 'Data synced to the HCM.show app.',
         });
       } catch (error) {
-        console.error('Error:', error.stack);
+        console.error('Error: ' + error.stack);
 
         await api.jobs.fail(jobId, {
           info: 'The submit job did not run correctly.',

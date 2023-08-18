@@ -24,6 +24,7 @@ export class HcmShowApiService {
 
     // Making a POST request to 'hcm.show' API to sync the space
     return await post({
+      apiBaseUrl: await this.getApiBaseUrl(event),
       path: `/api/v1/sync-space`,
       body: { userId, spaceId, workflowType },
       headers: await this.headers(event),
@@ -37,6 +38,7 @@ export class HcmShowApiService {
     const topic = event.topic;
 
     return await post({
+      apiBaseUrl: await this.getApiBaseUrl(event),
       path: '/api/v1/sync-file-feed',
       body: { spaceId, topic },
       headers: await this.headers(event),
@@ -51,6 +53,7 @@ export class HcmShowApiService {
     let result;
     try {
       result = await get({
+        apiBaseUrl: await this.getApiBaseUrl(event),
         path: '/api/v1/departments',
         params: {},
         headers: await this.headers(event),
@@ -78,6 +81,7 @@ export class HcmShowApiService {
 
     // Making a GET request to 'hcm.show' API to get a list of employees for the input user
     return await get({
+      apiBaseUrl: await this.getApiBaseUrl(event),
       path: `/api/v1/list-employees`,
       params: { userId },
       headers: await this.headers(event),
@@ -105,5 +109,25 @@ export class HcmShowApiService {
     }
 
     return serverAuthToken;
+  };
+
+  // TODO: Until we can 'bake' env vars into the listener deployment, in prod use secrets.
+  private static getApiBaseUrl = async (event: FlatfileEvent) => {
+    let apiBaseUrl;
+
+    try {
+      // Prod, try secrets
+      apiBaseUrl = await event.secrets('API_BASE_URL');
+    } catch (e) {
+      const message = 'No API_BASE_URL secret';
+      console.warn(message);
+    }
+
+    if (apiBaseUrl) {
+      return apiBaseUrl;
+    }
+
+    // Dev
+    return 'http://localhost:3000';
   };
 }

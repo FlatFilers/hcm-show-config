@@ -1,20 +1,17 @@
 import axios from 'axios';
 
 export const post = async ({
+  apiBaseUrl,
   path,
   body,
   headers,
 }: {
+  apiBaseUrl: string;
   path: string;
   body: any;
   headers;
 }) => {
-  const apiBaseUrl = process.env.API_BASE_URL;
-
-  if (!apiBaseUrl) {
-    throw new Error('Missing API_BASE_URL');
-  }
-
+  console.log('apibaseurl ' + apiBaseUrl);
   try {
     const response = await axios.post(`${apiBaseUrl}${path}`, body, {
       headers,
@@ -33,20 +30,17 @@ export const post = async ({
 };
 
 export const get = async ({
+  apiBaseUrl,
   path,
   params,
   headers,
 }: {
+  apiBaseUrl: string;
   path: string;
   params: any;
   headers: any;
 }) => {
-  const apiBaseUrl = process.env.API_BASE_URL;
-
-  if (!apiBaseUrl) {
-    throw new Error('Missing API_BASE_URL');
-  }
-
+  console.log('apibaseurl ' + apiBaseUrl);
   try {
     const response = await axios.get(`${apiBaseUrl}${path}`, {
       params,

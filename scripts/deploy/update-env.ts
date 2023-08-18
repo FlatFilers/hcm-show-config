@@ -20,7 +20,6 @@ if (!workflowEnvs[environment] || !workflowEnvs[environment][workflowName]) {
   process.exit(1);
 }
 
-const apiBaseUrl = workflowEnvs[environment as WorkflowEnvironment].apiBaseUrl;
 const config =
   workflowEnvs[environment as WorkflowEnvironment][
     workflowName as WorkflowType
@@ -40,7 +39,7 @@ if (
 
 console.log('Updating API key and environment ID in .env...');
 
-const envContent = `FLATFILE_API_KEY=${config.apiKey}\nFLATFILE_ENVIRONMENT=${config.environmentId}\nAPI_BASE_URL=${apiBaseUrl}`;
+const envContent = `FLATFILE_API_KEY=${config.apiKey}\nFLATFILE_ENVIRONMENT=${config.environmentId}`;
 
 fs.writeFile(path.join('.env'), envContent, (err) => {
   if (err) {
