@@ -26,7 +26,7 @@ export class HcmShowApiService {
     return await post({
       path: `/api/v1/sync-space`,
       body: { userId, spaceId, workflowType },
-      headers: this.headers(event),
+      headers: await this.headers(event),
     });
   };
 
@@ -68,7 +68,7 @@ export class HcmShowApiService {
 
   static fetchEmployees = async (event: FlatfileEvent) => {
     // Logging the event for debugging purposes
-    console.log('getEmployeesFromHCMShow | e: ' + JSON.stringify(event));
+    console.log('fetchEmployees | e: ' + JSON.stringify(event));
 
     // Extracting the spaceId from the event context
     const { spaceId } = event.context;
