@@ -88,10 +88,8 @@ export class HcmShowApiService {
     const serverAuthToken = await this.getServerAuthToken(event);
 
     return {
-      headers: {
-        'Content-Type': 'application/json',
-        'x-server-auth': serverAuthToken,
-      },
+      'Content-Type': 'application/json',
+      'x-server-auth': serverAuthToken,
     };
   };
 
