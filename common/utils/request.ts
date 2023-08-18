@@ -11,7 +11,6 @@ export const post = async ({
   body: any;
   headers;
 }) => {
-  console.log('apibaseurl ' + apiBaseUrl);
   try {
     const response = await axios.post(`${apiBaseUrl}${path}`, body, {
       headers,
@@ -40,7 +39,6 @@ export const get = async ({
   params: any;
   headers: any;
 }) => {
-  console.log('apibaseurl ' + apiBaseUrl);
   try {
     const response = await axios.get(`${apiBaseUrl}${path}`, {
       params,
