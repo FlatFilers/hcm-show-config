@@ -26,7 +26,7 @@ export class HcmShowApiService {
     return await post({
       path: `/api/v1/sync-space`,
       body: { userId, spaceId, workflowType },
-      event,
+      headers: this.headers(event),
     });
   };
 
@@ -39,7 +39,7 @@ export class HcmShowApiService {
     return await post({
       path: '/api/v1/sync-file-feed',
       body: { spaceId, topic },
-      event,
+      headers: await this.headers(event),
     });
   };
 
@@ -53,7 +53,7 @@ export class HcmShowApiService {
       result = await get({
         path: '/api/v1/departments',
         params: {},
-        event,
+        headers: await this.headers(event),
       });
     } catch (error) {
       result = [];
@@ -64,5 +64,30 @@ export class HcmShowApiService {
     console.log('Departments found: ' + JSON.stringify(departments));
 
     return departments;
+  };
+
+  private static headers = async (event: FlatfileEvent) => {
+    const serverAuthToken = await this.getServerAuthToken(event);
+
+    return {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-server-auth': serverAuthToken,
+      },
+    };
+  };
+
+  private static getServerAuthToken = async (event: FlatfileEvent) => {
+    let serverAuthToken;
+
+    try {
+      serverAuthToken = await event.secrets('SERVER_AUTH_TOKEN');
+    } catch (e) {
+      const message = 'FAILED FETCH SERVER AUTH TOKEN';
+      console.error(message);
+      throw new Error(message);
+    }
+
+    return serverAuthToken;
   };
 }

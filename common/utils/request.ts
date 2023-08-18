@@ -1,14 +1,13 @@
-import { FlatfileEvent } from '@flatfile/listener';
 import axios from 'axios';
 
 export const post = async ({
   path,
   body,
-  event,
+  headers,
 }: {
   path: string;
   body: any;
-  event: FlatfileEvent;
+  headers;
 }) => {
   const apiBaseUrl = process.env.API_BASE_URL;
 
@@ -16,14 +15,9 @@ export const post = async ({
     throw new Error('Missing API_BASE_URL');
   }
 
-  const serverAuthToken = await event.secrets('SERVER_AUTH_TOKEN');
-
   try {
     const response = await axios.post(`${apiBaseUrl}${path}`, body, {
-      headers: {
-        'Content-Type': 'application/json',
-        'x-server-auth': serverAuthToken,
-      },
+      headers,
     });
 
     if (response.status >= 200 && response.status < 300) {
@@ -41,11 +35,11 @@ export const post = async ({
 export const get = async ({
   path,
   params,
-  event,
+  headers,
 }: {
   path: string;
   params: any;
-  event: FlatfileEvent;
+  headers: any;
 }) => {
   const apiBaseUrl = process.env.API_BASE_URL;
 
@@ -53,15 +47,10 @@ export const get = async ({
     throw new Error('Missing API_BASE_URL');
   }
 
-  const serverAuthToken = await event.secrets('SERVER_AUTH_TOKEN');
-
   try {
     const response = await axios.get(`${apiBaseUrl}${path}`, {
       params,
-      headers: {
-        'Content-Type': 'application/json',
-        'x-server-auth': serverAuthToken,
-      },
+      headers,
     });
 
     if (response.status >= 200 && response.status < 300) {
