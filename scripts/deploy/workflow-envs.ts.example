@@ -2,7 +2,6 @@ import { WorkflowEnv } from './types';
 
 const workflowEnvs: WorkflowEnv = {
   production: {
-    apiBaseUrl: 'https://hcm.show',
     onboarding: {
       apiKey: 'sk_...',
       environmentId: 'us_env_...',
@@ -21,7 +20,6 @@ const workflowEnvs: WorkflowEnv = {
     },
   },
   dev: {
-    apiBaseUrl: 'http://localhost:3000',  // or ngrok-123123123.app
     onboarding: {
       apiKey: 'sk_...',
       environmentId: 'us_env_...',
