@@ -8,7 +8,6 @@ import { blueprintSheets } from '../../blueprints/hcmBlueprint';
 import { validateReportingStructure } from '../../actions/validateReportingStructure';
 import { FlatfileEvent } from '@flatfile/listener';
 import { RecordHook } from '@flatfile/plugin-record-hook';
-import { getEmployeesFromHCMShow } from '../../actions/getEmployeesFromHCMShow';
 import { HcmShowApiService } from '../../common/hcm-show-api-service';
 
 type Metadata = {
@@ -231,7 +230,9 @@ export default function (listener) {
         console.log('Calling API endpoint...');
 
         // Call the API endpoint at HcmShow to get a list of employees
-        const getEmpsFromShowListEmps = await getEmployeesFromHCMShow(event);
+        const getEmpsFromShowListEmps = await HcmShowApiService.fetchEmployees(
+          event
+        );
 
         console.log('Finished calling API endpoint. Processing response...');
 
