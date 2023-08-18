@@ -1,10 +1,10 @@
 import { recordHook } from '@flatfile/plugin-record-hook';
 import api from '@flatfile/api';
 import { xlsxExtractorPlugin } from '@flatfile/plugin-xlsx-extractor';
-import { pushToHcmShow } from '../../actions/pushToHCMShow';
 import { blueprintSheets } from '../../blueprints/benefitsBlueprint';
 import { benefitElectionsValidations } from '../../recordHooks/benefits/benefitElectionsValidations';
 import { FlatfileEvent } from '@flatfile/listener';
+import { HcmShowApiService } from '../../common/hcm-show-api-service';
 
 type Metadata = {
   userId: string;
@@ -230,7 +230,7 @@ export default function (listener) {
         let result;
         try {
           // Call the submit function with the event as an argument to push the data to HCM Show
-          result = await pushToHcmShow(event, 'embed');
+          result = await HcmShowApiService.syncSpace(event, 'embed');
 
           // Log the action as a string to the console
           console.log('Action: ' + JSON.stringify(event?.payload?.operation));

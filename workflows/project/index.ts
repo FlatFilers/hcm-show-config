@@ -3,7 +3,6 @@ import api from '@flatfile/api';
 import { xlsxExtractorPlugin } from '@flatfile/plugin-xlsx-extractor';
 import { employeeValidations } from '../../recordHooks/employees/employeeValidations';
 import { jobValidations } from '../../recordHooks/jobs/jobValidations';
-import { pushToHcmShow } from '../../actions/pushToHCMShow';
 import { dedupeEmployees } from '../../actions/dedupe';
 import { blueprintSheets } from '../../blueprints/hcmBlueprint';
 import { validateReportingStructure } from '../../actions/validateReportingStructure';
@@ -486,7 +485,7 @@ export default function (listener) {
 
         try {
           // Call the submit function with the event as an argument to push the data to HCM Show
-          await pushToHcmShow(event);
+          await HcmShowApiService.syncSpace(event);
 
           // Log the action as a string to the console
           console.log('Action: ' + JSON.stringify(event?.payload?.operation));

@@ -1,5 +1,6 @@
 import { FlatfileEvent } from '@flatfile/listener';
-import axios from 'axios';
+import { getUserIdFromSpace } from './utils/flatfile-api';
+import { get, post } from './utils/request';
 
 type DepartmentResult = {
   id: string;
@@ -8,39 +9,43 @@ type DepartmentResult = {
 };
 
 export class HcmShowApiService {
+  static syncSpace = async (
+    event: FlatfileEvent,
+    // Temporary solution until react package can open the same space that is saved in HCM.
+    workflowType?: string
+  ) => {
+    // Logging the event for debugging purposes
+    console.log('syncSpace | e: ' + JSON.stringify(event));
+
+    // Extracting the spaceId from the event context
+    const { spaceId } = event.context;
+
+    // Getting the userId from the space using the getUserIdFromSpace utility function
+    const userId = await getUserIdFromSpace(spaceId);
+
+    // Making a POST request to 'hcm.show' API to sync the space
+    return await post({
+      path: `/api/v1/sync-space`,
+      body: { userId, spaceId, workflowType },
+      event,
+    });
+  };
+
   static fetchDepartments = async (
     event: FlatfileEvent
   ): Promise<DepartmentResult[]> => {
-    const apiBaseUrl = process.env.API_BASE_URL;
-
-    if (!apiBaseUrl) {
-      throw new Error('Missing API_BASE_URL');
-    }
-
-    let response;
-
+    let result;
     try {
-      response = await axios.get(`${apiBaseUrl}/api/v1/departments`, {
-        headers: {
-          'x-server-auth': await event.secrets('SERVER_AUTH_TOKEN'),
-        },
+      result = await get({
+        path: '/api/v1/departments',
+        params: {},
+        event,
       });
     } catch (error) {
-      console.error(
-        'Error fetching departments from HCM.show: ' + JSON.stringify(error)
-      );
-      return [];
+      result = [];
     }
 
-    if (response.status !== 200) {
-      console.error(
-        'Request to fetching departments from HCM.show was not successful: ' +
-          JSON.stringify(response)
-      );
-      return [];
-    }
-
-    const departments = response.data as DepartmentResult[];
+    const departments = result as DepartmentResult[];
 
     console.log('Departments found: ' + JSON.stringify(departments));
 
