@@ -16,17 +16,20 @@ export const post = async ({
     throw new Error('Missing API_BASE_URL');
   }
 
+  const serverAuthToken = await event.secrets('SERVER_AUTH_TOKEN');
+
   try {
-    const response = await axios.post(`${apiBaseUrl}}${path}`, body, {
+    const response = await axios.post(`${apiBaseUrl}${path}`, body, {
       headers: {
         'Content-Type': 'application/json',
-        'x-server-auth': await event.secrets('SERVER_AUTH_TOKEN'),
+        'x-server-auth': serverAuthToken,
       },
     });
 
     if (response.status >= 200 && response.status < 300) {
       return response.data;
     } else {
+      console.error(JSON.stringify(response, null, 2));
       throw new Error('HTTP call was not a success');
     }
   } catch (error) {
@@ -50,12 +53,14 @@ export const get = async ({
     throw new Error('Missing API_BASE_URL');
   }
 
+  const serverAuthToken = await event.secrets('SERVER_AUTH_TOKEN');
+
   try {
     const response = await axios.get(`${apiBaseUrl}${path}`, {
       params,
       headers: {
         'Content-Type': 'application/json',
-        'x-server-auth': await event.secrets('SERVER_AUTH_TOKEN'),
+        'x-server-auth': serverAuthToken,
       },
     });
 
