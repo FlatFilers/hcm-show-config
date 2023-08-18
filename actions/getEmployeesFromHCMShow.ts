@@ -15,8 +15,8 @@ export const getEmployeesFromHCMShow = async (event: FlatfileEvent) => {
 
   // Making a GET request to 'hcm.show' API to get a list of employees for the input user
   return await get({
-    hostname: 'hcm.show',
     path: `/api/v1/list-employees`,
     params: { userId },
+    event,
   });
 };

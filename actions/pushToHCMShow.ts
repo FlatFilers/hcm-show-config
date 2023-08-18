@@ -19,8 +19,8 @@ export const pushToHcmShow = async (
 
   // Making a POST request to 'hcm.show' API to sync the space
   return await post({
-    hostname: 'hcm.show',
     path: `/api/v1/sync-space`,
     body: { userId, spaceId, workflowType },
+    event,
   });
 };

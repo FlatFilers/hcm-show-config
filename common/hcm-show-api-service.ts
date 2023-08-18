@@ -8,16 +8,19 @@ type DepartmentResult = {
 };
 
 export class HcmShowApiService {
-  static BASE_URL = 'https://hcm.show';
-  // static BASE_URL = 'https://206d-205-185-214-250.ngrok-free.app';
-
   static fetchDepartments = async (
     event: FlatfileEvent
   ): Promise<DepartmentResult[]> => {
+    const apiBaseUrl = process.env.API_BASE_URL;
+
+    if (!apiBaseUrl) {
+      throw new Error('Missing API_BASE_URL');
+    }
+
     let response;
 
     try {
-      response = await axios.get(`${this.BASE_URL}/api/v1/departments`, {
+      response = await axios.get(`${apiBaseUrl}/api/v1/departments`, {
         headers: {
           'x-server-auth': await event.secrets('SERVER_AUTH_TOKEN'),
         },

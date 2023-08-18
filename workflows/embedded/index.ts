@@ -230,8 +230,7 @@ export default function (listener) {
         let callback;
         try {
           // Call the submit function with the event as an argument to push the data to HCM Show
-          const sendToShowSyncSpace = await pushToHcmShow(event, 'embed');
-          callback = JSON.parse(sendToShowSyncSpace);
+          callback = await pushToHcmShow(event, 'embed');
 
           // Log the action as a string to the console
           console.log('Action: ' + JSON.stringify(event?.payload?.operation));
