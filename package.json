@@ -11,6 +11,7 @@
     "production:filefeed-listener": "npm run update-env production filefeed && npx flatfile@latest deploy workflows/filefeed/index.ts",
     "production:dynamic-listener": "npm run update-env production dynamic && npx flatfile@latest deploy workflows/dynamic/index.ts",
     "production:embedded-listener": "npm run update-env production embedded && npx flatfile@latest deploy workflows/embedded/index.ts",
+    "production:deploy-all": "npm run production:project-listener && npm run production:filefeed-listener && npm run production:embedded-listener && npm run production:dynamic-listener",
     "create:env": "flatfile create:env -n",
     "dev:project-listener": "npm run update-env dev onboarding && npx flatfile@latest develop workflows/project/index.ts",
     "dev:filefeed-listener": "npm run update-env dev filefeed && npx flatfile@latest develop workflows/filefeed/index.ts",
