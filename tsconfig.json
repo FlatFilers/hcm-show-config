@@ -1,8 +1,8 @@
 {
-    "compilerOptions": {
-      "target": "es2020",
-      "moduleResolution": "node",
-      "allowSyntheticDefaultImports": true,
-      "experimentalDecorators": true
-    }
+  "compilerOptions": {
+    "target": "esnext",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true
   }
+}

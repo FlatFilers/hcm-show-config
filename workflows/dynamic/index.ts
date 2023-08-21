@@ -1,10 +1,10 @@
 import { recordHook } from '@flatfile/plugin-record-hook';
 import api from '@flatfile/api';
 import { xlsxExtractorPlugin } from '@flatfile/plugin-xlsx-extractor';
-import { pushToHcmShow } from '../../actions/pushToHCMShow';
 import { blueprintSheets } from '../../blueprints/benefitsBlueprint';
 import { benefitElectionsValidations } from '../../recordHooks/benefits/benefitElectionsValidations';
 import { FlatfileEvent } from '@flatfile/listener';
+import { HcmShowApiService } from '../../common/hcm-show-api-service';
 
 type Metadata = {
   userId: string;
@@ -226,11 +226,10 @@ export default function (listener) {
           progress: 10,
         });
 
-        let callback;
+        let result;
         try {
           // Call the submit function with the event as an argument to push the data to HCM Show
-          const sendToShowSyncSpace = await pushToHcmShow(event, 'dynamic');
-          callback = JSON.parse(sendToShowSyncSpace);
+          result = await HcmShowApiService.syncSpace(event, 'dynamic');
 
           // Log the action as a string to the console
           console.log('Action: ' + JSON.stringify(event?.payload?.operation));
@@ -240,7 +239,7 @@ export default function (listener) {
           // Perform error handling, such as displaying an error message to the user or triggering a fallback behavior
         }
 
-        if (callback.success) {
+        if (result.success) {
           await api.jobs.complete(jobId, {
             info: 'Data synced to the HCM.show app.',
           });

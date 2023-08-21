@@ -1,5 +1,6 @@
 import { FlatfileEvent } from '@flatfile/listener';
-import axios from 'axios';
+import { getUserIdFromSpace } from './utils/flatfile-api';
+import { get, post } from './utils/request';
 
 type DepartmentResult = {
   id: string;
@@ -8,39 +9,125 @@ type DepartmentResult = {
 };
 
 export class HcmShowApiService {
-  static BASE_URL = 'https://hcm.show';
-  // static BASE_URL = 'https://206d-205-185-214-250.ngrok-free.app';
+  static syncSpace = async (
+    event: FlatfileEvent,
+    // Temporary solution until react package can open the same space that is saved in HCM.
+    workflowType?: string
+  ) => {
+    console.log('syncSpace in HCM.show | e: ' + JSON.stringify(event));
+
+    // Extracting the spaceId from the event context
+    const { spaceId } = event.context;
+
+    // Getting the userId from the space using the getUserIdFromSpace utility function
+    const userId = await getUserIdFromSpace(spaceId);
+
+    // Making a POST request to 'hcm.show' API to sync the space
+    return await post({
+      apiBaseUrl: await this.getApiBaseUrl(event),
+      path: `/api/v1/sync-space`,
+      body: { userId, spaceId, workflowType },
+      headers: await this.headers(event),
+    });
+  };
+
+  static syncFilefeed = async (event: FlatfileEvent) => {
+    console.log('Syncing filefeed in HCM.show.');
+
+    const { spaceId } = event.context;
+    const topic = event.topic;
+
+    return await post({
+      apiBaseUrl: await this.getApiBaseUrl(event),
+      path: '/api/v1/sync-file-feed',
+      body: { spaceId, topic },
+      headers: await this.headers(event),
+    });
+  };
 
   static fetchDepartments = async (
     event: FlatfileEvent
   ): Promise<DepartmentResult[]> => {
-    let response;
+    console.log('Fetching departments from HCM.show');
 
+    let result;
     try {
-      response = await axios.get(`${this.BASE_URL}/api/v1/departments`, {
-        headers: {
-          'x-server-auth': await event.secrets('SERVER_AUTH_TOKEN'),
-        },
+      result = await get({
+        apiBaseUrl: await this.getApiBaseUrl(event),
+        path: '/api/v1/departments',
+        params: {},
+        headers: await this.headers(event),
       });
     } catch (error) {
-      console.error(
-        'Error fetching departments from HCM.show: ' + JSON.stringify(error)
-      );
-      return [];
+      result = [];
     }
 
-    if (response.status !== 200) {
-      console.error(
-        'Request to fetching departments from HCM.show was not successful: ' +
-          JSON.stringify(response)
-      );
-      return [];
-    }
-
-    const departments = response.data as DepartmentResult[];
+    const departments = result as DepartmentResult[];
 
     console.log('Departments found: ' + JSON.stringify(departments));
 
     return departments;
+  };
+
+  static fetchEmployees = async (event: FlatfileEvent) => {
+    // Logging the event for debugging purposes
+    console.log('fetchEmployees | e: ' + JSON.stringify(event));
+
+    // Extracting the spaceId from the event context
+    const { spaceId } = event.context;
+
+    // Getting the userId from the space using the getUserIdFromSpace utility function
+    const userId = await getUserIdFromSpace(spaceId);
+
+    // Making a GET request to 'hcm.show' API to get a list of employees for the input user
+    return await get({
+      apiBaseUrl: await this.getApiBaseUrl(event),
+      path: `/api/v1/list-employees`,
+      params: { userId },
+      headers: await this.headers(event),
+    });
+  };
+
+  private static headers = async (event: FlatfileEvent) => {
+    const serverAuthToken = await this.getServerAuthToken(event);
+
+    return {
+      'Content-Type': 'application/json',
+      'x-server-auth': serverAuthToken,
+    };
+  };
+
+  private static getServerAuthToken = async (event: FlatfileEvent) => {
+    let serverAuthToken;
+
+    try {
+      serverAuthToken = await event.secrets('SERVER_AUTH_TOKEN');
+    } catch (e) {
+      const message = 'FAILED FETCH SERVER AUTH TOKEN';
+      console.error(message);
+      throw new Error(message);
+    }
+
+    return serverAuthToken;
+  };
+
+  // TODO: Until we can 'bake' env vars into the listener deployment, in prod use secrets.
+  private static getApiBaseUrl = async (event: FlatfileEvent) => {
+    let apiBaseUrl;
+
+    try {
+      // Prod, try secrets
+      apiBaseUrl = await event.secrets('API_BASE_URL');
+    } catch (e) {
+      const message = 'No API_BASE_URL secret';
+      console.warn(message);
+    }
+
+    if (apiBaseUrl) {
+      return apiBaseUrl;
+    }
+
+    // Dev
+    return 'http://localhost:3000';
   };
 }

@@ -3,13 +3,11 @@ import api from '@flatfile/api';
 import { xlsxExtractorPlugin } from '@flatfile/plugin-xlsx-extractor';
 import { employeeValidations } from '../../recordHooks/employees/employeeValidations';
 import { jobValidations } from '../../recordHooks/jobs/jobValidations';
-import { pushToHcmShow } from '../../actions/pushToHCMShow';
 import { dedupeEmployees } from '../../actions/dedupe';
 import { blueprintSheets } from '../../blueprints/hcmBlueprint';
 import { validateReportingStructure } from '../../actions/validateReportingStructure';
 import { FlatfileEvent } from '@flatfile/listener';
 import { RecordHook } from '@flatfile/plugin-record-hook';
-import { getEmployeesFromHCMShow } from '../../actions/getEmployeesFromHCMShow';
 import { HcmShowApiService } from '../../common/hcm-show-api-service';
 
 type Metadata = {
@@ -232,7 +230,9 @@ export default function (listener) {
         console.log('Calling API endpoint...');
 
         // Call the API endpoint at HcmShow to get a list of employees
-        const getEmpsFromShowListEmps = await getEmployeesFromHCMShow(event);
+        const getEmpsFromShowListEmps = await HcmShowApiService.fetchEmployees(
+          event
+        );
 
         console.log('Finished calling API endpoint. Processing response...');
 
@@ -484,17 +484,17 @@ export default function (listener) {
           progress: 10,
         });
 
-        let callback;
         try {
           // Call the submit function with the event as an argument to push the data to HCM Show
-          const sendToShowSyncSpace = await pushToHcmShow(event);
-          callback = JSON.parse(sendToShowSyncSpace);
+          await HcmShowApiService.syncSpace(event);
 
           // Log the action as a string to the console
           console.log('Action: ' + JSON.stringify(event?.payload?.operation));
         } catch (error) {
           // Handle the error gracefully, log an error message, and potentially take appropriate action
-          console.log('Error occurred during HCM workbook submission:', error);
+          console.log(
+            'Error occurred during HCM workbook submission: ' + error
+          );
           // Perform error handling, such as displaying an error message to the user or triggering a fallback behavior
         }
 
@@ -502,7 +502,7 @@ export default function (listener) {
           info: 'Data synced to the HCM.show app.',
         });
       } catch (error) {
-        console.error('Error:', error.stack);
+        console.error('Error: ' + error.stack);
 
         await api.jobs.fail(jobId, {
           info: 'The submit job did not run correctly.',

@@ -1,35 +1,19 @@
 import { recordHook } from '@flatfile/plugin-record-hook';
 import api from '@flatfile/api';
 import { xlsxExtractorPlugin } from '@flatfile/plugin-xlsx-extractor';
-import { pushToHcmShow } from '../../actions/pushToHCMShow';
 import { blueprintSheets } from '../../blueprints/benefitsBlueprint';
 import { benefitElectionsValidations } from '../../recordHooks/benefits/benefitElectionsValidations';
-import { post } from '../../common/utils/request';
 import { PipelineJobConfig } from '@flatfile/api/api';
 import { FlatfileEvent } from '@flatfile/listener';
 import { automap } from '@flatfile/plugin-automap';
-
-const util = require('util');
-
-type Metadata = {
-  userId: string;
-};
+import { HcmShowApiService } from '../../common/hcm-show-api-service';
 
 // Define the main function that sets up the listener
 export default function (listener) {
   // Log the event topic for all events
   listener.on('**', async (event) => {
     console.log('> event.topic: ' + event.topic);
-    // console.log('> event: ' + util.inspect(event));
-
-    const { spaceId } = event.context;
-    const topic = event.topic;
-
-    post({
-      hostname: 'hcm.show',
-      path: '/api/v1/sync-file-feed',
-      body: { spaceId, topic },
-    });
+    HcmShowApiService.syncFilefeed(event);
   });
 
   // Add an event listener for the 'job:created' event
@@ -44,7 +28,9 @@ export default function (listener) {
 
       console.log('Space: ' + JSON.stringify(space));
 
-      const metadata = space.data.metadata as Metadata;
+      const metadata = space.data.metadata as {
+        userId: string;
+      };
 
       const userId = metadata?.userId;
 
@@ -247,12 +233,10 @@ export default function (listener) {
       filter: 'valid',
     });
 
-    // Push them to HCM.show
-    console.log('Pushing to HCM.show');
+    // Sync the space in HCM.show
+    console.log('Syncing spacde in HCM.show');
 
-    const result = await pushToHcmShow(event);
-
-    // console.log('Result from HCM: ' + JSON.stringify(result));
+    const result = await HcmShowApiService.syncSpace(event);
 
     const successfullySyncedFlatfileRecordIds = (
       JSON.parse(result) as { successfullySyncedFlatfileRecordIds: string[] }
@@ -300,11 +284,10 @@ export default function (listener) {
           progress: 10,
         });
 
-        let callback;
+        let result;
         try {
           // Call the submit function with the event as an argument to push the data to HCM Show
-          const sendToShowSyncSpace = await pushToHcmShow(event);
-          callback = JSON.parse(sendToShowSyncSpace);
+          result = await HcmShowApiService.syncSpace(event);
 
           // Log the action as a string to the console
           console.log('Action: ' + JSON.stringify(event?.payload?.operation));
@@ -314,7 +297,7 @@ export default function (listener) {
           // Perform error handling, such as displaying an error message to the user or triggering a fallback behavior
         }
 
-        if (callback.success) {
+        if (result.success) {
           await api.jobs.complete(jobId, {
             info: 'Data synced to the HCM.show app.',
           });
