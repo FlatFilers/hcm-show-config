@@ -17,7 +17,7 @@ export async function checkApiForExistingWorkers(record, employees) {
       console.log('Match found, adding error to Applicant_ID field'); // Log when a match is found
       record.addError(
         'employeeId',
-        'Employee ID matches an id from the API data.'
+        'Employee ID matches an existing ID in HCM.Show application.'
       );
     }
   } catch (error) {
