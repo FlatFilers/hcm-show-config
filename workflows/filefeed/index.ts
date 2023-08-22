@@ -1,35 +1,19 @@
 import { recordHook } from '@flatfile/plugin-record-hook';
 import api from '@flatfile/api';
 import { xlsxExtractorPlugin } from '@flatfile/plugin-xlsx-extractor';
-import { pushToHcmShow } from '../../actions/pushToHCMShow';
 import { blueprintSheets } from '../../blueprints/benefitsBlueprint';
 import { benefitElectionsValidations } from '../../recordHooks/benefits/benefitElectionsValidations';
-import { post } from '../../common/utils/request';
 import { PipelineJobConfig } from '@flatfile/api/api';
 import { FlatfileEvent } from '@flatfile/listener';
 import { automap } from '@flatfile/plugin-automap';
-
-const util = require('util');
-
-type Metadata = {
-  userId: string;
-};
+import { HcmShowApiService } from '../../common/hcm-show-api-service';
 
 // Define the main function that sets up the listener
 export default function (listener) {
   // Log the event topic for all events
   listener.on('**', async (event) => {
     console.log('> event.topic: ' + event.topic);
-    // console.log('> event: ' + util.inspect(event));
-
-    const { spaceId } = event.context;
-    const topic = event.topic;
-
-    post({
-      hostname: 'hcm.show',
-      path: '/api/v1/sync-file-feed',
-      body: { spaceId, topic },
-    });
+    HcmShowApiService.syncFilefeed(event);
   });
 
   // Add an event listener for the 'job:created' event
@@ -44,7 +28,9 @@ export default function (listener) {
 
       console.log('Space: ' + JSON.stringify(space));
 
-      const metadata = space.data.metadata as Metadata;
+      const metadata = space.data.metadata as {
+        userId: string;
+      };
 
       const userId = metadata?.userId;
 
@@ -247,20 +233,35 @@ export default function (listener) {
       filter: 'valid',
     });
 
-    // Push them to HCM.show
-    console.log('Pushing to HCM.show');
+    // Sync the space in HCM.show
+    console.log('Syncing spacde in HCM.show');
 
-    // TODO: Get a list of successfully synced records IDs back
-    // so we don't delete records that didn't sync.
-    await pushToHcmShow(event);
+    const result = await HcmShowApiService.syncSpace(event);
+
+    const successfullySyncedFlatfileRecordIds = (
+      JSON.parse(result) as { successfullySyncedFlatfileRecordIds: string[] }
+    ).successfullySyncedFlatfileRecordIds;
+
+    // console.log('result from HCM.show: ' + JSON.stringify(result));
+    console.log(
+      successfullySyncedFlatfileRecordIds.length +
+        ' successfully synced records from HCM.show. '
+    );
 
     // Delete the valid records from the sheet
     const recordIds = importedData.data.records.map((r) => r.id);
-    console.log('Deleting ' + recordIds.length + ' valid records.');
+    console.log(
+      'Deleting ' +
+        successfullySyncedFlatfileRecordIds.length +
+        ' valid records.'
+    );
 
     // Split the recordIds array into chunks of 100
     for (let i = 0; i < recordIds.length; i += 100) {
-      const batch = recordIds.slice(i, i + 100);
+      const batch = recordIds
+        .slice(i, i + 100)
+        // Delete the records that were successfully synced
+        .filter((id) => successfullySyncedFlatfileRecordIds.includes(id));
 
       // Delete the batch
       await api.records.delete(destinationSheetId, {
@@ -283,11 +284,10 @@ export default function (listener) {
           progress: 10,
         });
 
-        let callback;
+        let result;
         try {
           // Call the submit function with the event as an argument to push the data to HCM Show
-          const sendToShowSyncSpace = await pushToHcmShow(event);
-          callback = JSON.parse(sendToShowSyncSpace);
+          result = await HcmShowApiService.syncSpace(event);
 
           // Log the action as a string to the console
           console.log('Action: ' + JSON.stringify(event?.payload?.operation));
@@ -297,7 +297,7 @@ export default function (listener) {
           // Perform error handling, such as displaying an error message to the user or triggering a fallback behavior
         }
 
-        if (callback.success) {
+        if (result.success) {
           await api.jobs.complete(jobId, {
             info: 'Data synced to the HCM.show app.',
           });
