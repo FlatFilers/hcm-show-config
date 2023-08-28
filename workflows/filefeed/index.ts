@@ -243,8 +243,10 @@ export default function (listener) {
 
     const result = await HcmShowApiService.syncSpace(event);
 
+    console.log('Result:', result);
+
     const successfullySyncedFlatfileRecordIds = (
-      JSON.parse(result) as { successfullySyncedFlatfileRecordIds: string[] }
+      result as { successfullySyncedFlatfileRecordIds: string[] }
     ).successfullySyncedFlatfileRecordIds;
 
     // console.log('result from HCM.show: ' + JSON.stringify(result));

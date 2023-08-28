@@ -234,20 +234,15 @@ export default function (listener) {
         console.log('Calling API endpoint...');
 
         // Call the API endpoint at HcmShow to get a list of employees
-        const getEmpsFromShowListEmps = await HcmShowApiService.fetchEmployees(
-          event
-        );
+        const employees = await HcmShowApiService.fetchEmployees(event);
 
         console.log('Finished calling API endpoint. Processing response...');
 
         // Check if the response is as expected
-        if (!getEmpsFromShowListEmps) {
+        if (!employees) {
           console.log('Failed to fetch employees data from the API');
           return;
         }
-
-        // Extract the list of employees from the response data
-        const employees = getEmpsFromShowListEmps;
 
         // Check if the list of employees is empty. If so, skip the RecordHook call
         if (employees.length === 0) {
