@@ -7,6 +7,8 @@ import { PipelineJobConfig } from '@flatfile/api/api';
 import { FlatfileEvent } from '@flatfile/listener';
 import { automap } from '@flatfile/plugin-automap';
 import { HcmShowApiService } from '../../common/hcm-show-api-service';
+import { dedupePlugin } from '@flatfile/plugin-dedupe';
+import * as R from 'remeda';
 
 // Define the main function that sets up the listener
 export default function (listener) {
@@ -311,6 +313,34 @@ export default function (listener) {
       }
     });
   });
+
+  listener.use(
+    dedupePlugin('dedupe-employee-benefit-coverage', {
+      custom: (records) => {
+        let uniques = new Set();
+        return R.pipe(
+          records,
+          R.reduce((acc, record) => {
+            // Extract the necessary fields
+            const employeeId = record.values['employeeId'].value;
+            const benefitCoverageType =
+              record.values['benefitCoverageType'].value;
+            const coverageStartDate = record.values['coverageStartDate'].value;
+
+            // Combine the fields to create a unique identifier
+            const uniqueKey = `${employeeId}-${benefitCoverageType}-${coverageStartDate}`;
+
+            if (uniques.has(uniqueKey)) {
+              return [...acc, record.id];
+            } else {
+              uniques.add(uniqueKey);
+              return acc;
+            }
+          }, [] as Array<string>)
+        );
+      },
+    })
+  );
 
   // Attempt to parse XLSX files, and log any errors encountered during parsing
   try {
