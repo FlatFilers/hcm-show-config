@@ -1,30 +1,32 @@
 export async function checkApiForExistingWorkers(record, employees) {
   try {
-    // Get the current value of the Applicant_ID field
     let employeeId = record.get('employeeId');
+    console.log('Employee_Id Type:', typeof employeeId); // Log the type of employeeId
 
-    console.log('Employee_Id:', employeeId); // Log the current value of Applicant_ID
+    // Log the first few employees' IDs and their types for comparison
+    console.log(
+      'Sample Employee IDs and their types:',
+      employees
+        .slice(0, 5)
+        .map((e) => ({ id: e.employeeId, type: typeof e.employeeId }))
+    );
 
-    // Check if the Applicant_ID matches an id from the API data
+    console.log('Employee_Id:', employeeId);
     const matchingEmployee = employees.find((employee) => {
-      return employee.employeeId === employeeId;
+      return String(employee.employeeId) === String(employeeId); // Convert both to strings for comparison
     });
 
-    console.log('Matching Employee:', matchingEmployee); // Log the matchingEmployee
-
-    // If a match is found, add an error to the Applicant_ID field
+    console.log('Matching Employee:', matchingEmployee);
     if (matchingEmployee) {
-      console.log('Match found, adding error to Applicant_ID field'); // Log when a match is found
+      console.log('Match found, adding error to Applicant_ID field');
       record.addError(
         'employeeId',
         'Employee ID matches an existing ID in HCM.Show application.'
       );
     }
   } catch (error) {
-    console.log('Error occurred during API check:', error); // Log any errors that occurred during the check
-    // If an error occurred during the check, add an error to the Applicant_ID field
+    console.log('Error occurred during API check:', error);
     record.addError('employeeId', "Couldn't process data from the API.");
   }
-
   return record;
 }
