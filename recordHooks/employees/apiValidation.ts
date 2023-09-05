@@ -1,21 +1,16 @@
 export async function checkApiForExistingWorkers(record, employees) {
   try {
+    // Get the current value of the Applicant_ID field
     let employeeId = record.get('employeeId');
-    console.log('Employee_Id Type:', typeof employeeId); // Log the type of employeeId
 
-    // Log the first few employees' IDs and their types for comparison
-    console.log(
-      'Sample Employee IDs and their types:',
-      employees
-        .slice(0, 5)
-        .map((e) => ({ id: e.employeeId, type: typeof e.employeeId }))
-    );
+    console.log('Employee_Id:', employeeId); // Log the current value of Applicant_ID
 
-    console.log('Employee_Id:', employeeId);
+    // Check if the Applicant_ID matches an id from the API data
     const matchingEmployee = employees.find((employee) => {
       return String(employee.employeeId) === String(employeeId); // Convert both to strings for comparison
     });
 
+    // If a match is found, add an error to the Applicant_ID field
     console.log('Matching Employee:', matchingEmployee);
     if (matchingEmployee) {
       console.log('Match found, adding error to Applicant_ID field');
@@ -25,7 +20,8 @@ export async function checkApiForExistingWorkers(record, employees) {
       );
     }
   } catch (error) {
-    console.log('Error occurred during API check:', error);
+    console.log('Error occurred during API check:', error); // Log any errors that occurred during the check
+    // If an error occurred during the check, add an error to the Applicant_ID field
     record.addError('employeeId', "Couldn't process data from the API.");
   }
   return record;
