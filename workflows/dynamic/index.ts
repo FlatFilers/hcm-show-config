@@ -5,6 +5,10 @@ import { blueprintSheets } from '../../blueprints/benefitsBlueprint';
 import { benefitElectionsValidations } from '../../recordHooks/benefits/benefitElectionsValidations';
 import { FlatfileEvent } from '@flatfile/listener';
 import { HcmShowApiService } from '../../common/hcm-show-api-service';
+import { JSONExtractor } from '@flatfile/plugin-json-extractor';
+import { XMLExtractor } from '@flatfile/plugin-xml-extractor';
+import { ZipExtractor } from '@flatfile/plugin-zip-extractor';
+import { DelimiterExtractor } from '@flatfile/plugin-delimiter-extractor';
 
 type Metadata = {
   userId: string;
@@ -259,10 +263,43 @@ export default function (listener) {
     });
   });
 
-  // Attempt to parse XLSX files, and log any errors encountered during parsing
+  // Add the XLSX extractor plugin to the listener
+  // This allows the listener to parse XLSX files
   try {
     listener.use(xlsxExtractorPlugin({ rawNumbers: true }));
   } catch (error) {
     console.error('Failed to parse XLSX files:', error);
+  }
+
+  // Add the JSON extractor to the listener
+  // This allows the listener to parse JSON files
+  try {
+    listener.use(JSONExtractor());
+  } catch (error) {
+    console.error('Failed to parse JSON files:', error);
+  }
+
+  // Add the XML extractor to the listener
+  // This allows the listener to parse XML files
+  try {
+    listener.use(XMLExtractor());
+  } catch (error) {
+    console.error('Failed to parse XML files:', error);
+  }
+
+  // Add the Zip extractor to the listener
+  // This allows the listener to extract files from ZIP archives
+  try {
+    listener.use(ZipExtractor());
+  } catch (error) {
+    console.error('Failed to extract files from ZIP:', error);
+  }
+
+  // Add the delimiter extractor plugin to the listener
+  // This allows the listener to parse pipe-delimited TXT files
+  try {
+    listener.use(DelimiterExtractor('.txt', { delimiter: '|' }));
+  } catch (error) {
+    console.error('Failed to parse pipe-delimited TXT files:', error);
   }
 }
