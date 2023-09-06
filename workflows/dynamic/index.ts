@@ -7,6 +7,10 @@ import { FlatfileEvent } from '@flatfile/listener';
 import { HcmShowApiService } from '../../common/hcm-show-api-service';
 import { dedupePlugin } from '@flatfile/plugin-dedupe';
 import * as R from 'remeda';
+import { JSONExtractor } from '@flatfile/plugin-json-extractor';
+import { XMLExtractor } from '@flatfile/plugin-xml-extractor';
+import { ZipExtractor } from '@flatfile/plugin-zip-extractor';
+import { DelimiterExtractor } from '@flatfile/plugin-delimiter-extractor';
 
 type Metadata = {
   userId: string;
@@ -47,6 +51,32 @@ export default function (listener) {
       console.log('spaceId ' + spaceId);
       console.log('jobID: ' + jobId);
 
+      // IMPORTANT NOTE: The document created below does not effect change in the dynamic workflow. This is a copy of the document layout.
+      // To change the document in the dynamic workflow, you must set the document in the HCM.Show application within the props of useSpace.
+      // If you do change the theme settings in the HCM.Show application, please update the theme settings here to match.
+      const createDoc = await api.documents.create(spaceId, {
+        title: 'Welcome',
+        body: `<div> 
+        <h1 style="margin-bottom: 36px;">Welcome! We're excited to help you import your data to HCM Show.</h1>
+        <h2 style="margin-top: 0px; margin-bottom: 12px;">Follow the steps below to get started:</h2>
+        <h2 style="margin-bottom: 0px;">1. Upload your file</h2>
+        <p style="margin-top: 0px; margin-bottom: 8px;">Click "Files" in the left-hand sidebar, and upload the sample data you want to import into Flatfile. You can do this by clicking "Add files" or dragging and dropping the file onto the page.</p>
+        <h2 style="margin-bottom: 0px;">2. Import the Benefit Elections Data</h2>
+        <p style="margin-top: 0px; margin-bottom: 8px;">Click "Import" and select the benefit elections data. Follow the mapping instructions in Flatfile to complete the import. Once the data has been mapped, it will be loaded into Flatfile's table UI, where validations and transformations have been applied.</p>
+        <h2 style="margin-bottom: 0px;">3. Validate and Transform Data</h2>
+        <p style="margin-top: 0px; margin-bottom: 8px;">Make sure to verify that your data is correctly formatted and transformed by Flatfile. Flatfile will handle formatting dates, rounding amounts, and validating the existence of employees and benefit plans for you! If there are any issues or errors, you can easily address them within Flatfile's user interface.</p>
+        <h2 style="margin-bottom: 0px;">4. Load Data into HCM.Show</h2>
+        <p style="margin-top: 0px; margin-bottom: 12px;">Once the data has been validated and transformed, use the “Push records to HCM.show” button to load data into the HCM.Show application.</p>
+        <h2 style="margin-bottom: 0px;">5. Return to HCM.Show</h2>
+        <p style="margin-top: 0px; margin-bottom: 36px;">Once you have loaded the data from Flatfile to HCM Show, return to HCM.Show and navigate to the Data Templates section within the application to view the benefit elections data that you have just loaded.</p>
+        <h3 style="margin-top: 0px; margin-bottom: 12px;">Remember, if you need any assistance, you can always refer back to this page by clicking "Welcome" in the left-hand sidebar!</h3>
+      </div>`,
+      });
+
+      console.log('Created Document: ' + createDoc);
+
+      const documentId = createDoc.data.id;
+
       try {
         // Create a new workbook using the Flatfile API
         const createWorkbook = await api.workbooks.create({
@@ -79,6 +109,9 @@ export default function (listener) {
               userId,
               sidebarConfig: {
                 showSidebar: true,
+                defaultPage: {
+                  documentId,
+                },
                 // This property seems to break guest magic link functionality?
                 // showGuestInvite: true,
               },
@@ -165,30 +198,6 @@ export default function (listener) {
         console.log('Error creating workbook or updating space:', error);
       }
 
-      // IMPORTANT NOTE: The document created below does not effect change in the dynamic workflow. This is a copy of the document layout.
-      // To change the document in the dynamic workflow, you must set the document in the HCM.Show application within the props of useSpace.
-      // If you do change the theme settings in the HCM.Show application, please update the theme settings here to match.
-      const createDoc = await api.documents.create(spaceId, {
-        title: 'Welcome',
-        body: `<div> 
-        <h1 style="margin-bottom: 36px;">Welcome! We're excited to help you import your data to HCM Show.</h1>
-        <h2 style="margin-top: 0px; margin-bottom: 12px;">Follow the steps below to get started:</h2>
-        <h2 style="margin-bottom: 0px;">1. Upload your file</h2>
-        <p style="margin-top: 0px; margin-bottom: 8px;">Click "Files" in the left-hand sidebar, and upload the sample data you want to import into Flatfile. You can do this by clicking "Add files" or dragging and dropping the file onto the page.</p>
-        <h2 style="margin-bottom: 0px;">2. Import the Benefit Elections Data</h2>
-        <p style="margin-top: 0px; margin-bottom: 8px;">Click "Import" and select the benefit elections data. Follow the mapping instructions in Flatfile to complete the import. Once the data has been mapped, it will be loaded into Flatfile's table UI, where validations and transformations have been applied.</p>
-        <h2 style="margin-bottom: 0px;">3. Validate and Transform Data</h2>
-        <p style="margin-top: 0px; margin-bottom: 8px;">Make sure to verify that your data is correctly formatted and transformed by Flatfile. Flatfile will handle formatting dates, rounding amounts, and validating the existence of employees and benefit plans for you! If there are any issues or errors, you can easily address them within Flatfile's user interface.</p>
-        <h2 style="margin-bottom: 0px;">4. Load Data into HCM.Show</h2>
-        <p style="margin-top: 0px; margin-bottom: 12px;">Once the data has been validated and transformed, use the “Push records to HCM.show” button to load data into the HCM.Show application.</p>
-        <h2 style="margin-bottom: 0px;">5. Return to HCM.Show</h2>
-        <p style="margin-top: 0px; margin-bottom: 36px;">Once you have loaded the data from Flatfile to HCM Show, return to HCM.Show and navigate to the Data Templates section within the application to view the benefit elections data that you have just loaded.</p>
-        <h3 style="margin-top: 0px; margin-bottom: 12px;">Remember, if you need any assistance, you can always refer back to this page by clicking "Welcome" in the left-hand sidebar!</h3>
-      </div>`,
-      });
-
-      console.log('Created Document: ' + createDoc);
-
       // Update the job status to 'complete' using the Flatfile API
       const updateJob = await api.jobs.update(jobId, {
         status: 'complete',
@@ -262,11 +271,43 @@ export default function (listener) {
       keep: 'last',
     })
   );
-
-  // Attempt to parse XLSX files, and log any errors encountered during parsing
+  // Add the XLSX extractor plugin to the listener
+  // This allows the listener to parse XLSX files
   try {
     listener.use(xlsxExtractorPlugin({ rawNumbers: true }));
   } catch (error) {
     console.error('Failed to parse XLSX files:', error);
+  }
+
+  // Add the JSON extractor to the listener
+  // This allows the listener to parse JSON files
+  try {
+    listener.use(JSONExtractor());
+  } catch (error) {
+    console.error('Failed to parse JSON files:', error);
+  }
+
+  // Add the XML extractor to the listener
+  // This allows the listener to parse XML files
+  try {
+    listener.use(XMLExtractor());
+  } catch (error) {
+    console.error('Failed to parse XML files:', error);
+  }
+
+  // Add the Zip extractor to the listener
+  // This allows the listener to extract files from ZIP archives
+  try {
+    listener.use(ZipExtractor());
+  } catch (error) {
+    console.error('Failed to extract files from ZIP:', error);
+  }
+
+  // Add the delimiter extractor plugin to the listener
+  // This allows the listener to parse pipe-delimited TXT files
+  try {
+    listener.use(DelimiterExtractor('.txt', { delimiter: '|' }));
+  } catch (error) {
+    console.error('Failed to parse pipe-delimited TXT files:', error);
   }
 }

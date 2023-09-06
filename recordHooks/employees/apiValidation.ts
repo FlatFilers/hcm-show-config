@@ -7,14 +7,13 @@ export async function checkApiForExistingWorkers(record, employees) {
 
     // Check if the Applicant_ID matches an id from the API data
     const matchingEmployee = employees.find((employee) => {
-      return employee.employeeId === employeeId;
+      return String(employee.employeeId) === String(employeeId); // Convert both to strings for comparison
     });
 
-    console.log('Matching Employee:', matchingEmployee); // Log the matchingEmployee
-
     // If a match is found, add an error to the Applicant_ID field
+    console.log('Matching Employee:', matchingEmployee);
     if (matchingEmployee) {
-      console.log('Match found, adding error to Applicant_ID field'); // Log when a match is found
+      console.log('Match found, adding error to Applicant_ID field');
       record.addError(
         'employeeId',
         'Employee ID matches an existing ID in HCM.Show application.'
@@ -25,6 +24,5 @@ export async function checkApiForExistingWorkers(record, employees) {
     // If an error occurred during the check, add an error to the Applicant_ID field
     record.addError('employeeId', "Couldn't process data from the API.");
   }
-
   return record;
 }

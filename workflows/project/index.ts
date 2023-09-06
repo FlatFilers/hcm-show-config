@@ -9,6 +9,10 @@ import { validateReportingStructure } from '../../actions/validateReportingStruc
 import { FlatfileEvent } from '@flatfile/listener';
 import { RecordHook } from '@flatfile/plugin-record-hook';
 import { HcmShowApiService } from '../../common/hcm-show-api-service';
+import { JSONExtractor } from '@flatfile/plugin-json-extractor';
+import { XMLExtractor } from '@flatfile/plugin-xml-extractor';
+import { ZipExtractor } from '@flatfile/plugin-zip-extractor';
+import { DelimiterExtractor } from '@flatfile/plugin-delimiter-extractor';
 
 type Metadata = {
   userId: string;
@@ -49,6 +53,31 @@ export default function (listener) {
       console.log('spaceId: ' + spaceId);
       console.log('jobID: ' + jobId);
 
+      // Create a new document using the Flatfile API
+      const createDoc = await api.documents.create(spaceId, {
+        title: 'Welcome',
+        body: `<div> 
+              <h1 style="margin-bottom: 36px;">Welcome! We're excited to help you import your data to HCM Show.</h1>
+              <h2 style="margin-top: 0px; margin-bottom: 12px;">Follow the steps below to get started:</h2>
+              <h2 style="margin-bottom: 0px;">1. Upload your file</h2>
+              <p style="margin-top: 0px; margin-bottom: 8px;">Click "Files" in the left-hand sidebar, and upload the sample data you want to import into Flatfile. You can do this by clicking "Add files" or dragging and dropping the file onto the page.</p>
+              <h2 style="margin-bottom: 0px;">2. Import your Jobs Data</h2>
+              <p style="margin-top: 0px; margin-bottom: 8px;">Click "Import" and select the Jobs data. Follow the mapping instructions in Flatfile to complete the import. Once the data has been mapped, it will be loaded into Flatfile's table UI, where validations and transformations have been applied.</p>
+              <h2 style="margin-bottom: 0px;">3. Import your Employee Data</h2>
+              <p style="margin-top: 0px; margin-bottom: 8px;">Click "Import" and select the Employee data. Follow the mapping instructions in Flatfile to complete the import. Once the data has been mapped, it will be loaded into Flatfile's table UI, where validations and transformations have been applied.</p>
+              <h2 style="margin-bottom: 0px;">4. Validate and Transform Data</h2>
+              <p style="margin-top: 0px; margin-bottom: 8px;">Ensure that the data is correctly formatted and transformed By Flatfile. You can easily address any issues and errors within Flatfile's user interface.</p>
+              <h2 style="margin-bottom: 0px;">5. Load Data into HCM.Show</h2>
+              <p style="margin-top: 0px; margin-bottom: 12px;">Once the data has been validated and transformed, use the custom action on each sheet to load the data into HCM.Show application.</p>
+              <h2 style="margin-bottom: 0px;">6. Return to HCM.Show</h2>
+              <p style="margin-top: 0px; margin-bottom: 36px;">Once you have loaded the data from Flatfile to HCM Show, return to HCM.Show and navigate to the Data Templates section within the application to view the Jobs and Employees data that you have just loaded.</p>
+              <h3 style="margin-top: 0px; margin-bottom: 12px;">Remember, if you need any assistance, you can always refer back to this page by clicking "Welcome" in the left-hand sidebar!</h3>
+            </div>`,
+      });
+
+      console.log('Created Document: ' + createDoc.data.id);
+      const documentId = createDoc.data.id;
+
       try {
         // Create a new workbook
         const createWorkbook = await api.workbooks.create({
@@ -82,6 +111,9 @@ export default function (listener) {
               userId,
               sidebarConfig: {
                 showSidebar: true,
+                defaultPage: {
+                  documentId,
+                },
                 // This property seems to break guest magic link functionality?
                 // showGuestInvite: true,
               },
@@ -166,30 +198,6 @@ export default function (listener) {
         console.log('Error creating workbook or updating space:', error);
       }
 
-      // Create a new document using the Flatfile API
-      const createDoc = await api.documents.create(spaceId, {
-        title: 'Welcome',
-        body: `<div> 
-        <h1 style="margin-bottom: 36px;">Welcome! We're excited to help you import your data to HCM Show.</h1>
-        <h2 style="margin-top: 0px; margin-bottom: 12px;">Follow the steps below to get started:</h2>
-        <h2 style="margin-bottom: 0px;">1. Upload your file</h2>
-        <p style="margin-top: 0px; margin-bottom: 8px;">Click "Files" in the left-hand sidebar, and upload the sample data you want to import into Flatfile. You can do this by clicking "Add files" or dragging and dropping the file onto the page.</p>
-        <h2 style="margin-bottom: 0px;">2. Import your Jobs Data</h2>
-        <p style="margin-top: 0px; margin-bottom: 8px;">Click "Import" and select the Jobs data. Follow the mapping instructions in Flatfile to complete the import. Once the data has been mapped, it will be loaded into Flatfile's table UI, where validations and transformations have been applied.</p>
-        <h2 style="margin-bottom: 0px;">3. Import your Employee Data</h2>
-        <p style="margin-top: 0px; margin-bottom: 8px;">Click "Import" and select the Employee data. Follow the mapping instructions in Flatfile to complete the import. Once the data has been mapped, it will be loaded into Flatfile's table UI, where validations and transformations have been applied.</p>
-        <h2 style="margin-bottom: 0px;">4. Validate and Transform Data</h2>
-        <p style="margin-top: 0px; margin-bottom: 8px;">Ensure that the data is correctly formatted and transformed By Flatfile. You can easily address any issues and errors within Flatfile's user interface.</p>
-        <h2 style="margin-bottom: 0px;">5. Load Data into HCM.Show</h2>
-        <p style="margin-top: 0px; margin-bottom: 12px;">Once the data has been validated and transformed, use the custom action on each sheet to load the data into HCM.Show application.</p>
-        <h2 style="margin-bottom: 0px;">6. Return to HCM.Show</h2>
-        <p style="margin-top: 0px; margin-bottom: 36px;">Once you have loaded the data from Flatfile to HCM Show, return to HCM.Show and navigate to the Data Templates section within the application to view the Jobs and Employees data that you have just loaded.</p>
-        <h3 style="margin-top: 0px; margin-bottom: 12px;">Remember, if you need any assistance, you can always refer back to this page by clicking "Welcome" in the left-hand sidebar!</h3>
-      </div>`,
-      });
-
-      console.log('Created Document: ' + createDoc);
-
       // Mark the job as complete using api.jobs.complete
       const updateJob3 = await api.jobs.complete(jobId, {
         info: 'This job is now donezo.',
@@ -230,20 +238,15 @@ export default function (listener) {
         console.log('Calling API endpoint...');
 
         // Call the API endpoint at HcmShow to get a list of employees
-        const getEmpsFromShowListEmps = await HcmShowApiService.fetchEmployees(
-          event
-        );
+        const employees = await HcmShowApiService.fetchEmployees(event);
 
         console.log('Finished calling API endpoint. Processing response...');
 
         // Check if the response is as expected
-        if (!getEmpsFromShowListEmps) {
+        if (!employees) {
           console.log('Failed to fetch employees data from the API');
           return;
         }
-
-        // Extract the list of employees from the response data
-        const employees = JSON.parse(getEmpsFromShowListEmps);
 
         // Check if the list of employees is empty. If so, skip the RecordHook call
         if (employees.length === 0) {
@@ -255,6 +258,7 @@ export default function (listener) {
 
         // Log the number of employees fetched
         console.log(`Successfully fetched ${employees.length} employees.`);
+
         console.log('Proceeding to call RecordHook...');
         // Call the RecordHook function with event and a handler
         await RecordHook(event, async (record, event) => {
@@ -511,10 +515,43 @@ export default function (listener) {
     });
   });
 
-  // Attempt to parse XLSX files, and log any errors encountered during parsing
+  // Add the XLSX extractor plugin to the listener
+  // This allows the listener to parse XLSX files
   try {
     listener.use(xlsxExtractorPlugin({ rawNumbers: true }));
   } catch (error) {
     console.error('Failed to parse XLSX files:', error);
+  }
+
+  // Add the JSON extractor to the listener
+  // This allows the listener to parse JSON files
+  try {
+    listener.use(JSONExtractor());
+  } catch (error) {
+    console.error('Failed to parse JSON files:', error);
+  }
+
+  // Add the XML extractor to the listener
+  // This allows the listener to parse XML files
+  try {
+    listener.use(XMLExtractor());
+  } catch (error) {
+    console.error('Failed to parse XML files:', error);
+  }
+
+  // Add the Zip extractor to the listener
+  // This allows the listener to extract files from ZIP archives
+  try {
+    listener.use(ZipExtractor());
+  } catch (error) {
+    console.error('Failed to extract files from ZIP:', error);
+  }
+
+  // Add the delimiter extractor plugin to the listener
+  // This allows the listener to parse pipe-delimited TXT files
+  try {
+    listener.use(DelimiterExtractor('.txt', { delimiter: '|' }));
+  } catch (error) {
+    console.error('Failed to parse pipe-delimited TXT files:', error);
   }
 }

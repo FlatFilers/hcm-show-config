@@ -35,7 +35,11 @@ export class HcmShowApiService {
     console.log('Syncing filefeed in HCM.show.');
 
     const { spaceId } = event.context;
-    const topic = event.topic;
+    const topic = event.payload.job || event.topic;
+
+    if (!topic) {
+      return;
+    }
 
     return await post({
       apiBaseUrl: await this.getApiBaseUrl(event),
