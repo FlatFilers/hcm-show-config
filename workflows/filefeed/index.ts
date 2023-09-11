@@ -7,6 +7,8 @@ import { PipelineJobConfig } from '@flatfile/api/api';
 import { FlatfileEvent } from '@flatfile/listener';
 import { automap } from '@flatfile/plugin-automap';
 import { HcmShowApiService } from '../../common/hcm-show-api-service';
+import { dedupePlugin } from '@flatfile/plugin-dedupe';
+import * as R from 'remeda';
 import { JSONExtractor } from '@flatfile/plugin-json-extractor';
 import { XMLExtractor } from '@flatfile/plugin-xml-extractor';
 import { ZipExtractor } from '@flatfile/plugin-zip-extractor';
@@ -323,6 +325,12 @@ export default function (listener) {
     });
   });
 
+  listener.use(
+    dedupePlugin('dedupe-benefit-elections', {
+      on: 'employeeId',
+      keep: 'last',
+    })
+  );
   // Add the XLSX extractor plugin to the listener
   // This allows the listener to parse XLSX files
   try {

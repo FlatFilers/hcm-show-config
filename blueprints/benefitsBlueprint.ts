@@ -92,6 +92,14 @@ const sheet: SheetConfig = {
       },
     },
   ],
+  actions: [
+    {
+      operation: 'dedupe-benefit-elections',
+      mode: 'background',
+      label: 'Dedupe benefit elections',
+      description: 'Remove duplicate benefit elections',
+    },
+  ],
 };
 
 export const blueprintSheets = [{ ...sheet }];
