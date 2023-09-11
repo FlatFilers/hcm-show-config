@@ -19,7 +19,14 @@ export default function (listener) {
   // Log the event topic for all events
   listener.on('**', async (event) => {
     console.log('> event.topic: ' + event.topic);
-    HcmShowApiService.syncFilefeed(event);
+    console.log('> event.topic: ' + JSON.stringify(event));
+
+    if (
+      event.topic.includes('records:') ||
+      (event.topic === 'job:completed' && event?.payload?.status === 'complete')
+    ) {
+      HcmShowApiService.syncFilefeed(event);
+    }
   });
 
   // Add an event listener for the 'job:created' event
@@ -270,9 +277,10 @@ export default function (listener) {
     );
 
     // Split the recordIds array into chunks of 100
-    for (let i = 0; i < recordIds.length; i += 100) {
+    const chunk = 100;
+    for (let i = 0; i < recordIds.length; i += chunk) {
       const batch = recordIds
-        .slice(i, i + 100)
+        .slice(i, i + chunk)
         // Delete the records that were successfully synced
         .filter((id) => successfullySyncedFlatfileRecordIds.includes(id));
 
@@ -281,7 +289,7 @@ export default function (listener) {
         ids: batch,
       });
 
-      console.log(`Deleted batch from index ${i} to ${i + 100}`);
+      console.log(`Deleted batch from index ${i} to ${i + chunk}`);
     }
 
     console.log('Done');
