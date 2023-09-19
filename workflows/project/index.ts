@@ -80,25 +80,17 @@ export default function (listener) {
             spaceId,
           });
 
-          // Update the space to set the primary workbook and theme using api.spaces.update
-          const updatedSpace = await api.spaces.update(spaceId, {
-            environmentId: environmentId,
-            primaryWorkbookId: workbookId,
-            guestAuthentication: ['shared_link'],
-            metadata: {
-              userId,
-              sidebarConfig: {
-                showSidebar: true,
-                defaultPage: {
-                  documentId,
-                },
-              },
-              theme: theme,
-            },
+          // Update the space to set the primary workbook and theme
+          await FlatfileApiService.configureSpace({
+            spaceId,
+            environmentId,
+            workbookId,
+            userId,
+            documentId,
+            theme,
           });
 
-          // Log the ID of the updated space to the console
-          console.log('Updated Space with ID: ' + updatedSpace.data.id);
+          console.log('Updated Space with ID: ' + spaceId);
         } else {
           console.log('Unable to retrieve workbook ID from the response.');
         }

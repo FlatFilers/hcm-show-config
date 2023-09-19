@@ -20,4 +20,36 @@ export class FlatfileApiService {
 
     return userId;
   }
+
+  static async configureSpace({
+    spaceId,
+    environmentId,
+    workbookId,
+    userId,
+    documentId,
+    theme,
+  }: {
+    spaceId: string;
+    environmentId: string;
+    workbookId: string;
+    userId: string;
+    documentId: string;
+    theme: any;
+  }) {
+    await api.spaces.update(spaceId, {
+      environmentId,
+      primaryWorkbookId: workbookId,
+      guestAuthentication: ['shared_link'],
+      metadata: {
+        userId,
+        sidebarConfig: {
+          showSidebar: true,
+          defaultPage: {
+            documentId,
+          },
+        },
+        theme,
+      },
+    });
+  }
 }
