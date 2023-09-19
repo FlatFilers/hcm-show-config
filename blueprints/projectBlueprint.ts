@@ -365,7 +365,7 @@ const departmentsSheet: SheetConfig = {
   ],
 };
 
-export const blueprintSheets = [
+export const blueprint = [
   { ...jobsSheet },
   { ...employeesSheet },
   { ...departmentsSheet },

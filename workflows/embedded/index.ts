@@ -1,7 +1,7 @@
 import { recordHook } from '@flatfile/plugin-record-hook';
 import api from '@flatfile/api';
 import { xlsxExtractorPlugin } from '@flatfile/plugin-xlsx-extractor';
-import { blueprintSheets as blueprint } from '../../blueprints/benefitsBlueprint';
+import { blueprint } from '../../blueprints/benefitsBlueprint';
 import { benefitElectionsValidations } from '../../recordHooks/benefits/benefitElectionsValidations';
 import { FlatfileEvent } from '@flatfile/listener';
 import { HcmShowApiService } from '../../common/hcm-show-api-service';

@@ -1,6 +1,6 @@
 import { FlatfileRecord } from '@flatfile/hooks';
-import { blueprintSheets as hcmBlueprintSheets } from '../blueprints/hcmBlueprint';
-import { blueprintSheets as benefitsBlueprintSheets } from '../blueprints/benefitsBlueprint';
+import { blueprint as hcmBlueprintSheets } from '../blueprints/projectBlueprint';
+import { blueprint as benefitsBlueprintSheets } from '../blueprints/benefitsBlueprint';
 import { isNotNil } from './helpers';
 
 // Combine both blueprints
