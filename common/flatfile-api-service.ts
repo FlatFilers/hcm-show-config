@@ -20,7 +20,7 @@ export class FlatfileApiService {
     // Create a new workbook using the Flatfile API
     let workbookId;
     try {
-      const workbookId = await FlatfileApiService.createWorkbook({
+      workbookId = await FlatfileApiService.createWorkbook({
         name,
         spaceId,
         environmentId,
@@ -140,7 +140,7 @@ export class FlatfileApiService {
       ],
     });
 
-    if (workbook.data.id) {
+    if (!workbook.data.id) {
       throw new Error(`Error creating workbook for spaceId ${spaceId}`);
     }
 
