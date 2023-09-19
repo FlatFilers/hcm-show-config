@@ -1,5 +1,5 @@
 import { FlatfileRecord } from '@flatfile/hooks';
-import { blueprint as hcmBlueprintSheets } from '../blueprints/projectBlueprint';
+import { blueprint as hcmBlueprintSheets } from '../blueprints/jobsBlueprint';
 import { blueprint as benefitsBlueprintSheets } from '../blueprints/benefitsBlueprint';
 import { isNotNil } from './helpers';
 

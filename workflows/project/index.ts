@@ -4,7 +4,7 @@ import { xlsxExtractorPlugin } from '@flatfile/plugin-xlsx-extractor';
 import { employeeValidations } from '../../recordHooks/employees/employeeValidations';
 import { jobValidations } from '../../recordHooks/jobs/jobValidations';
 import { dedupeEmployees } from '../../actions/dedupe';
-import { blueprint } from '../../blueprints/projectBlueprint';
+import { blueprint } from '../../blueprints/jobsBlueprint';
 import { validateReportingStructure } from '../../actions/validateReportingStructure';
 import { FlatfileEvent } from '@flatfile/listener';
 import { RecordHook } from '@flatfile/plugin-record-hook';

@@ -1,7 +1,7 @@
 // Importing necessary modules and objects
 import moment from 'moment';
 import { momentFormats } from './dateFormats';
-import { blueprint as hcmBlueprintSheets } from '../blueprints/projectBlueprint';
+import { blueprint as hcmBlueprintSheets } from '../blueprints/jobsBlueprint';
 import { blueprint as benefitsBlueprintSheets } from '../blueprints/benefitsBlueprint';
 
 // Combine all the blueprints into one array
