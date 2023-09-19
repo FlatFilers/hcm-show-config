@@ -15,10 +15,6 @@ import { theme } from './theme';
 import { document } from './document';
 import { FlatfileApiService } from '../../common/flatfile-api-service';
 
-type Metadata = {
-  userId: string;
-};
-
 // Define the main function that sets up the listener
 export default function (listener) {
   // Log the event topic for all events
@@ -54,47 +50,31 @@ export default function (listener) {
 
       try {
         // Create a new workbook using the Flatfile API
-        const createWorkbook = await api.workbooks.create({
-          spaceId: spaceId,
-          environmentId: environmentId,
-          labels: ['primary'],
+        const workbookId = await FlatfileApiService.createWorkbook({
           name: 'Benefits Workbook',
-          sheets: blueprintSheets,
-          actions: [
-            {
-              operation: 'submitAction',
-              mode: 'foreground',
-              label: 'Submit',
-              type: 'string',
-              description: 'Submit Data to HCM Show',
-              primary: true,
-            },
-          ],
+          spaceId,
+          environmentId,
+          blueprint: blueprintSheets,
         });
 
-        const workbookId = createWorkbook.data.id;
-        if (workbookId) {
-          console.log('Created Workbook with ID:' + workbookId);
+        console.log('Created Workbook with ID:' + workbookId);
 
-          // Currently updating a space overwrites instead of merging, so query and re-set userId.
-          const userId = await FlatfileApiService.getUserIdFromSpace({
-            spaceId,
-          });
+        // Currently updating a space overwrites instead of merging, so query and re-set userId.
+        const userId = await FlatfileApiService.getUserIdFromSpace({
+          spaceId,
+        });
 
-          // Update the space to set the primary workbook and theme
-          await FlatfileApiService.configureSpace({
-            spaceId,
-            environmentId,
-            workbookId,
-            userId,
-            documentId,
-            theme,
-          });
+        // Update the space to set the primary workbook and theme
+        await FlatfileApiService.configureSpace({
+          spaceId,
+          environmentId,
+          workbookId,
+          userId,
+          documentId,
+          theme,
+        });
 
-          console.log('Updated Space with ID: ' + spaceId);
-        } else {
-          console.log('Unable to retrieve workbook ID from the response.');
-        }
+        console.log('Updated Space with ID: ' + spaceId);
       } catch (error) {
         console.log('Error creating workbook or updating space:', error);
       }

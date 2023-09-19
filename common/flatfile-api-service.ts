@@ -1,4 +1,5 @@
 import api from '@flatfile/api';
+import { SheetConfig } from '@flatfile/api/api';
 
 export class FlatfileApiService {
   static async getUserIdFromSpace({
@@ -19,6 +20,43 @@ export class FlatfileApiService {
     }
 
     return userId;
+  }
+
+  static async createWorkbook({
+    name,
+    spaceId,
+    environmentId,
+    blueprint,
+  }: {
+    name: string;
+    spaceId: string;
+    environmentId: string;
+    blueprint: SheetConfig[];
+  }) {
+    // Create a new workbook using the Flatfile API
+    const workbook = await api.workbooks.create({
+      name,
+      spaceId: spaceId,
+      environmentId: environmentId,
+      labels: ['primary'],
+      sheets: blueprint,
+      actions: [
+        {
+          operation: 'submitAction',
+          mode: 'foreground',
+          label: 'Submit',
+          type: 'string',
+          description: 'Submit Data to HCM Show',
+          primary: true,
+        },
+      ],
+    });
+
+    if (workbook.data.id) {
+      throw new Error(`Error creating workbook for spaceId ${spaceId}`);
+    }
+
+    return workbook.data.id;
   }
 
   static async configureSpace({
