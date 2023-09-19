@@ -2,7 +2,95 @@ import api from '@flatfile/api';
 import { SheetConfig } from '@flatfile/api/api';
 
 export class FlatfileApiService {
-  static async getUserIdFromSpace({
+  static async setupSpace({
+    name,
+    spaceId,
+    environmentId,
+    blueprint,
+    document,
+    theme,
+  }: {
+    name: string;
+    spaceId: string;
+    environmentId: string;
+    blueprint: SheetConfig[];
+    document: any;
+    theme: any;
+  }) {
+    // Create a new workbook using the Flatfile API
+    let workbookId;
+    try {
+      const workbookId = await FlatfileApiService.createWorkbook({
+        name,
+        spaceId,
+        environmentId,
+        blueprint,
+      });
+
+      console.log('Created Workbook with ID:' + workbookId);
+    } catch (error) {
+      console.error('Error creating workbook:', JSON.stringify(error, null, 2));
+      throw new Error(`Error creating workbook for spaceId ${spaceId}`);
+    }
+
+    // Currently updating a space overwrites instead of merging, so query and re-set userId.
+    let userId;
+    try {
+      userId = await FlatfileApiService.getUserIdFromSpace({
+        spaceId,
+      });
+    } catch (error) {
+      console.error(
+        `Error getting userId for spaceId ${spaceId}: ${JSON.stringify(
+          error,
+          null,
+          2
+        )}`
+      );
+      throw new Error(`Error getting userId for spaceId ${spaceId}`);
+    }
+
+    let documentId;
+    try {
+      const createDoc = await api.documents.create(spaceId, document);
+
+      documentId = createDoc.data.id;
+    } catch (error) {
+      console.error(
+        `Error creating document for spaceId ${spaceId}: ${JSON.stringify(
+          error,
+          null,
+          2
+        )}`
+      );
+      throw new Error(`Error creating document for spaceId ${spaceId}`);
+    }
+
+    // Update the space to set the primary workbook and theme
+    try {
+      await FlatfileApiService.configureSpace({
+        spaceId,
+        environmentId,
+        workbookId,
+        userId,
+        documentId,
+        theme,
+      });
+
+      console.log('Updated Space with ID: ' + spaceId);
+    } catch (error) {
+      console.error(
+        `Error configuring space for spaceId ${spaceId}: ${JSON.stringify(
+          error,
+          null,
+          2
+        )}`
+      );
+      throw new Error(`Error configuring space for spaceId ${spaceId}`);
+    }
+  }
+
+  private static async getUserIdFromSpace({
     spaceId,
   }: {
     spaceId: string;
@@ -22,7 +110,7 @@ export class FlatfileApiService {
     return userId;
   }
 
-  static async createWorkbook({
+  private static async createWorkbook({
     name,
     spaceId,
     environmentId,
@@ -59,7 +147,7 @@ export class FlatfileApiService {
     return workbook.data.id;
   }
 
-  static async configureSpace({
+  private static async configureSpace({
     spaceId,
     environmentId,
     workbookId,

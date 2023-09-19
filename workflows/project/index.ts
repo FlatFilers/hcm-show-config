@@ -4,7 +4,7 @@ import { xlsxExtractorPlugin } from '@flatfile/plugin-xlsx-extractor';
 import { employeeValidations } from '../../recordHooks/employees/employeeValidations';
 import { jobValidations } from '../../recordHooks/jobs/jobValidations';
 import { dedupeEmployees } from '../../actions/dedupe';
-import { blueprintSheets } from '../../blueprints/hcmBlueprint';
+import { blueprintSheets as blueprint } from '../../blueprints/hcmBlueprint';
 import { validateReportingStructure } from '../../actions/validateReportingStructure';
 import { FlatfileEvent } from '@flatfile/listener';
 import { RecordHook } from '@flatfile/plugin-record-hook';
@@ -45,42 +45,15 @@ export default function (listener) {
       console.log('spaceId: ' + spaceId);
       console.log('jobID: ' + jobId);
 
-      // Create a new document using the Flatfile API
-      const createDoc = await api.documents.create(spaceId, document);
-
-      console.log('Created Document: ' + createDoc.data.id);
-      const documentId = createDoc.data.id;
-
-      try {
-        // Create a new workbook using the Flatfile API
-        const workbookId = await FlatfileApiService.createWorkbook({
-          name: 'HCM Workbook',
-          spaceId,
-          environmentId,
-          blueprint: blueprintSheets,
-        });
-
-        console.log('Created Workbook with ID:' + workbookId);
-
-        // Currently updating a space overwrites instead of merging, so query and re-set userId.
-        const userId = await FlatfileApiService.getUserIdFromSpace({
-          spaceId,
-        });
-
-        // Update the space to set the primary workbook and theme
-        await FlatfileApiService.configureSpace({
-          spaceId,
-          environmentId,
-          workbookId,
-          userId,
-          documentId,
-          theme,
-        });
-
-        console.log('Updated Space with ID: ' + spaceId);
-      } catch (error) {
-        console.log('Error creating workbook or updating space:', error);
-      }
+      // Setup the space
+      await FlatfileApiService.setupSpace({
+        name: 'HCM Workbook',
+        spaceId,
+        environmentId,
+        blueprint,
+        document,
+        theme,
+      });
 
       // Mark the job as complete using api.jobs.complete
       const updateJob3 = await api.jobs.complete(jobId, {

@@ -1,14 +1,13 @@
 import { recordHook } from '@flatfile/plugin-record-hook';
 import api from '@flatfile/api';
 import { xlsxExtractorPlugin } from '@flatfile/plugin-xlsx-extractor';
-import { blueprintSheets } from '../../blueprints/benefitsBlueprint';
+import { blueprintSheets as blueprint } from '../../blueprints/benefitsBlueprint';
 import { benefitElectionsValidations } from '../../recordHooks/benefits/benefitElectionsValidations';
 import { PipelineJobConfig } from '@flatfile/api/api';
 import { FlatfileEvent } from '@flatfile/listener';
 import { automap } from '@flatfile/plugin-automap';
 import { HcmShowApiService } from '../../common/hcm-show-api-service';
 import { dedupePlugin } from '@flatfile/plugin-dedupe';
-import * as R from 'remeda';
 import { JSONExtractor } from '@flatfile/plugin-json-extractor';
 import { XMLExtractor } from '@flatfile/plugin-xml-extractor';
 import { ZipExtractor } from '@flatfile/plugin-zip-extractor';
@@ -52,42 +51,15 @@ export default function (listener) {
       console.log('spaceId ' + spaceId);
       console.log('jobID: ' + jobId);
 
-      const createDoc = await api.documents.create(spaceId, document);
-
-      console.log('Created Document: ' + createDoc);
-
-      const documentId = createDoc.data.id;
-
-      try {
-        // Create a new workbook using the Flatfile API
-        const workbookId = await FlatfileApiService.createWorkbook({
-          name: 'Benefits Workbook',
-          spaceId,
-          environmentId,
-          blueprint: blueprintSheets,
-        });
-
-        console.log('Created Workbook with ID:' + workbookId);
-
-        // Currently updating a space overwrites instead of merging, so query and re-set userId.
-        const userId = await FlatfileApiService.getUserIdFromSpace({
-          spaceId,
-        });
-
-        // Update the space to set the primary workbook and theme
-        await FlatfileApiService.configureSpace({
-          spaceId,
-          environmentId,
-          workbookId,
-          userId,
-          documentId,
-          theme,
-        });
-
-        console.log('Updated Space with ID: ' + spaceId);
-      } catch (error) {
-        console.log('Error creating workbook or updating space:', error);
-      }
+      // Setup the space
+      await FlatfileApiService.setupSpace({
+        name: 'Benefits Workbook',
+        spaceId,
+        environmentId,
+        blueprint,
+        document,
+        theme,
+      });
 
       // Update the job status to 'complete' using the Flatfile API
       const updateJob = await api.jobs.update(jobId, {
