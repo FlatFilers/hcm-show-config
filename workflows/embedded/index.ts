@@ -13,6 +13,7 @@ import { ZipExtractor } from '@flatfile/plugin-zip-extractor';
 import { DelimiterExtractor } from '@flatfile/plugin-delimiter-extractor';
 import { theme } from './theme';
 import { document } from './document';
+import { FlatfileApiService } from '../../common/flatfile-api-service';
 
 type Metadata = {
   userId: string;
@@ -32,14 +33,6 @@ export default function (listener) {
 
       // Destructure the 'context' object from the event object to get the necessary IDs
       const { spaceId, environmentId, jobId } = event.context;
-
-      const space = await api.spaces.get(spaceId);
-
-      console.log('Space: ' + JSON.stringify(space));
-
-      const metadata = space.data.metadata as Metadata;
-
-      const userId = metadata?.userId;
 
       const updateJob1 = await api.jobs.ack(jobId, {
         info: 'Creating Space',
@@ -82,6 +75,11 @@ export default function (listener) {
         const workbookId = createWorkbook.data.id;
         if (workbookId) {
           console.log('Created Workbook with ID:' + workbookId);
+
+          // Currently updating a space overwrites instead of merging, so query and re-set userId.
+          const userId = await FlatfileApiService.getUserIdFromSpace({
+            spaceId,
+          });
 
           // Update the space to set the primary workbook and theme using api.spaces.update
           const updatedSpace = await api.spaces.update(spaceId, {
