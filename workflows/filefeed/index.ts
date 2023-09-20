@@ -1,18 +1,20 @@
 import { recordHook } from '@flatfile/plugin-record-hook';
 import api from '@flatfile/api';
 import { xlsxExtractorPlugin } from '@flatfile/plugin-xlsx-extractor';
-import { blueprintSheets } from '../../blueprints/benefitsBlueprint';
+import { blueprint } from '../../blueprints/benefitsBlueprint';
 import { benefitElectionsValidations } from '../../recordHooks/benefits/benefitElectionsValidations';
 import { PipelineJobConfig } from '@flatfile/api/api';
 import { FlatfileEvent } from '@flatfile/listener';
 import { automap } from '@flatfile/plugin-automap';
 import { HcmShowApiService } from '../../common/hcm-show-api-service';
 import { dedupePlugin } from '@flatfile/plugin-dedupe';
-import * as R from 'remeda';
 import { JSONExtractor } from '@flatfile/plugin-json-extractor';
 import { XMLExtractor } from '@flatfile/plugin-xml-extractor';
 import { ZipExtractor } from '@flatfile/plugin-zip-extractor';
 import { DelimiterExtractor } from '@flatfile/plugin-delimiter-extractor';
+import { theme } from './theme';
+import { document } from './document';
+import { FlatfileApiService } from '../../common/flatfile-api-service';
 
 // Define the main function that sets up the listener
 export default function (listener) {
@@ -37,16 +39,6 @@ export default function (listener) {
       // Destructure the 'context' object from the event object to get the necessary IDs
       const { spaceId, environmentId, jobId } = event.context;
 
-      const space = await api.spaces.get(spaceId);
-
-      console.log('Space: ' + JSON.stringify(space));
-
-      const metadata = space.data.metadata as {
-        userId: string;
-      };
-
-      const userId = metadata?.userId;
-
       const updateJob1 = await api.jobs.ack(jobId, {
         info: 'Creating Space',
         progress: 10,
@@ -59,146 +51,15 @@ export default function (listener) {
       console.log('spaceId ' + spaceId);
       console.log('jobID: ' + jobId);
 
-      const createDoc = await api.documents.create(spaceId, {
-        title: 'Welcome',
-        body: `<div> 
-    <h1 style="margin-bottom: 36px;">Welcome! We're excited to offer you a seamless, one-click experience for loading your data into HCM Show.</h1>
-    <h2 style="margin-top: 0px; margin-bottom: 12px;">To get started, follow these steps:</h2>
-    <h2 style="margin-bottom: 0px;">1. Inspect the Automatically Uploaded File</h2>
-    <p style="margin-top: 0px; margin-bottom: 8px;">Click "Files" in the left-hand sidebar. Here, you can view the original file that was automatically imported into Flatfile from Google Drive.</p>
-    <h2 style="margin-bottom: 0px;">2. Examine the Imported Benefit Elections Data</h2>
-    <p style="margin-top: 0px; margin-bottom: 8px;">Click on the "Benefit Elections" workbook in the left-hand sidebar. This will display the data the remaining invalid values from the Google Drive file.</p>
-    <h2 style="margin-bottom: 0px;">3. Confirm the Data Load into HCM.Show</h2>
-    <p style="margin-top: 0px; margin-bottom: 12px;">As part of this process, we've automatically uploaded a file, mapped the data, and loaded all valid records into HCM Show.</p>
-    <h2 style="margin-bottom: 0px;">4. Return to HCM.Show</h2>
-    <p style="margin-top: 0px; margin-bottom: 36px;">Once you have inspected the files and data in Flatfile, return to HCM.Show. Navigate to the Data Templates section within the application to view the benefit elections data that was just loaded.</p>
-    <h3 style="margin-top: 0px; margin-bottom: 12px;">Remember, if you need any assistance, you can always refer back to this page by clicking "Welcome" in the left-hand sidebar!</h3>
-</div>`,
+      // Setup the space
+      await FlatfileApiService.setupSpace({
+        name: 'Benefits Workbook',
+        spaceId,
+        environmentId,
+        blueprint,
+        document,
+        theme,
       });
-
-      console.log('Created Document: ' + createDoc);
-
-      const documentId = createDoc.data.id;
-
-      try {
-        // Create a new workbook using the Flatfile API
-        const createWorkbook = await api.workbooks.create({
-          spaceId: spaceId,
-          environmentId: environmentId,
-          labels: ['primary'],
-          name: 'Benefits Workbook',
-          sheets: blueprintSheets,
-          actions: [
-            {
-              operation: 'submitAction',
-              mode: 'foreground',
-              label: 'Submit',
-              type: 'string',
-              description: 'Submit Data to HCM Show',
-              primary: true,
-            },
-          ],
-        });
-
-        const workbookId = createWorkbook.data.id;
-        if (workbookId) {
-          console.log('Created Workbook with ID:' + workbookId);
-
-          // Update the space to set the primary workbook and theme using api.spaces.update
-          const updatedSpace = await api.spaces.update(spaceId, {
-            environmentId: environmentId,
-            primaryWorkbookId: workbookId,
-            guestAuthentication: ['shared_link'],
-            metadata: {
-              userId,
-              sidebarConfig: {
-                showSidebar: true,
-                defaultPage: {
-                  documentId,
-                },
-                // This property seems to break guest magic link functionality?
-                // showGuestInvite: true,
-              },
-              theme: {
-                root: {
-                  primaryColor: '#090B2B',
-                  warningColor: '#FF9800',
-                },
-                sidebar: {
-                  logo: `https://images.ctfassets.net/e8fqfbar73se/4c9ouGKgET1qfA4uxp4qLZ/e3f1a8b31be67a798c1e49880581fd3d/white-logo-w-padding.png`,
-                  textColor: '#FFFFFF',
-                  titleColor: '#FFFFFF',
-                  focusBgColor: '#616A7D',
-                  focusTextColor: '#FFFFFF',
-                  backgroundColor: '#090B2B',
-                  footerTextColor: '#FFFFFF',
-                  textUltralightColor: '#FF0000',
-                },
-                table: {
-                  inputs: {
-                    radio: {
-                      color: 'rgb(8 117 225)',
-                    },
-                    checkbox: {
-                      color: 'rgb(8 117 225)',
-                    },
-                  },
-                  filters: {
-                    color: '#808080',
-                    active: {
-                      backgroundColor: 'rgb(8 117 225)',
-                    },
-                    error: {
-                      activeBackgroundColor: '#FA8072',
-                    },
-                  },
-                  column: {
-                    header: {
-                      fontSize: '12px',
-                      backgroundColor: 'rgb(240 240 240)',
-                      color: '#678090',
-                      dragHandle: {
-                        idle: 'rgb(8 117 225)',
-                        dragging: '#0000FF',
-                      },
-                    },
-                  },
-                  fontFamily: 'Arial',
-                  indexColumn: {
-                    backgroundColor: 'rgb(240 240 240)',
-                    selected: {
-                      color: 'rgb(240 240 240)',
-                      backgroundColor: 'rgb(200 200 200)',
-                    },
-                  },
-                  cell: {
-                    selected: {
-                      backgroundColor: 'rgb(235 245 255)',
-                    },
-                    active: {
-                      borderColor: 'rgb(8 117 225)',
-                      spinnerColor: '#808080',
-                    },
-                  },
-                  boolean: {
-                    toggleChecked: 'rgb(240 240 240)',
-                  },
-                  loading: {
-                    color: 'rgb(240 240 240)',
-                  },
-                },
-              },
-            },
-          });
-
-          // Log the ID of the updated space to the console
-          console.log('Updated Space with ID: ' + updatedSpace.data.id);
-        } else {
-          console.log('Unable to retrieve workbook ID from the response.');
-        }
-      } catch (error) {
-        console.log('Error creating workbook or updating space:', error);
-      }
 
       // Update the job status to 'complete' using the Flatfile API
       const updateJob = await api.jobs.update(jobId, {
