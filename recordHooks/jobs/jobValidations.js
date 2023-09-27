@@ -12,7 +12,7 @@ export function jobValidations(record) {
   }
 
   try {
-    validateJobNameLength(record); // Call the new function here
+    validateJobNameLength(record);
   } catch (error) {
     console.log('Error occurred during job name length validation:', error);
   }
