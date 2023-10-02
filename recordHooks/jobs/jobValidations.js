@@ -2,12 +2,19 @@ import { defaultInactiveAndWarnEffectiveDate } from './defaultInactiveAndWarnEff
 import { formatRecordDates } from '../../common/dateFormatting';
 import { generateJobCode } from './generateJobCode';
 import { validateBooleanFields } from '../../common/validateBooleanFields';
+import { validateJobNameLength } from './validateJobNameLength';
 
 export function jobValidations(record) {
   // Validate the input record parameter
   if (!record || typeof record !== 'object') {
     console.log('Invalid record input. Expecting a valid record object.');
     return record;
+  }
+
+  try {
+    validateJobNameLength(record);
+  } catch (error) {
+    console.log('Error occurred during job name length validation:', error);
   }
 
   try {
