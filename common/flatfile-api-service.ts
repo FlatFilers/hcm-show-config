@@ -166,6 +166,8 @@ export class FlatfileApiService {
       environmentId,
       primaryWorkbookId: workbookId,
       guestAuthentication: ['shared_link'],
+      translationsPath:
+        'https://raw.githubusercontent.com/FlatFilers/Platform-Translations/kitchen-sink/locales/en/translation.json',
       metadata: {
         userId,
         sidebarConfig: {
