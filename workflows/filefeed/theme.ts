@@ -1,15 +1,15 @@
 export const theme = {
   root: {
-    primaryColor: '#090B2B',
+    primaryColor: '#CD2659',
     warningColor: '#FF9800',
   },
   sidebar: {
     logo: `https://images.ctfassets.net/e8fqfbar73se/4c9ouGKgET1qfA4uxp4qLZ/e3f1a8b31be67a798c1e49880581fd3d/white-logo-w-padding.png`,
     textColor: '#FFFFFF',
     titleColor: '#FFFFFF',
-    focusBgColor: '#616A7D',
+    focusBgColor: '#e26189',
     focusTextColor: '#FFFFFF',
-    backgroundColor: '#090B2B',
+    backgroundColor: '#CD2659',
     footerTextColor: '#FFFFFF',
     textUltralightColor: '#FF0000',
   },
