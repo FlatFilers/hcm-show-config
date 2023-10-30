@@ -296,6 +296,20 @@ const employeesSheet: SheetConfig = {
       readonly: false,
     },
     {
+      key: 'password',
+      type: 'string',
+      label: 'Password',
+      description:
+        'The password for the account. Ensure that the password is strong and includes a combination of letters, numbers, and special characters.',
+      constraints: [
+        {
+          type: 'required',
+        },
+      ],
+      readonly: false,
+    },
+
+    {
       //Validation
       //Numbers only, must match format specified by country - have used npm package in the past for this
       //Can we "clean" this field to remove all foreign characters, but present the original value in an info message?
