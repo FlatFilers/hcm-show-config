@@ -149,11 +149,11 @@ export const document = {
   
   <div>
   <p style="margin-bottom: 8px;">View the code for this workflow on Github</p>
-  <a href="#" style="display: inline-block; color: white; text-decoration: none; background-color: #000; padding: 16px 24px;">View on Github</a>
+  <a href="https://github.com/FlatFilers/hcm-show-config/blob/main/workflows/project/index.ts" target="_blank" style="display: inline-block; color: white; text-decoration: none; background-color: #000; padding: 16px 24px;">View on Github</a>
   </div>
   
-  <div style="display: flex; align-items: center; background-color: #17B9A7; padding: 24px; border-radius: 8px; color: white; max-width: 320px;">
-  <svg width="75" height="75" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px;">
+  <div style="display: flex; flex-direction: column; background-color: #17B9A7; padding: 24px; border-radius: 8px; color: white; max-width: 320px;">
+  <svg width="32" height="32" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px;">
   <path d="M9.66347 17.8464H14.3364M11.9999 3.84644V4.84644M18.3639 6.48247L17.6568 7.18958M21 12.8464H20M4 12.8464H3M6.34309 7.18958L5.63599 6.48247M8.46441 16.382C6.51179 14.4294 6.51179 11.2635 8.46441 9.31092C10.417 7.3583 13.5829 7.3583 15.5355 9.31092C17.4881 11.2635 17.4881 14.4294 15.5355 16.382L14.9884 16.9291C14.3555 17.562 13.9999 18.4204 13.9999 19.3154V19.8464C13.9999 20.951 13.1045 21.8464 11.9999 21.8464C10.8954 21.8464 9.99995 20.951 9.99995 19.8464V19.3154C9.99995 18.4204 9.6444 17.562 9.01151 16.9291L8.46441 16.382Z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
   <p style="">Remember, if you need any assistance, you can always refer back to this page by clicking "Welcome" in the left-hand sidebar!</p>
