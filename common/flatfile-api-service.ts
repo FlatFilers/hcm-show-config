@@ -14,7 +14,7 @@ export class FlatfileApiService {
     spaceId: string;
     environmentId: string;
     blueprint: SheetConfig[];
-    document: any;
+    document?: any;
     theme: any;
   }) {
     // Create a new workbook using the Flatfile API
@@ -52,9 +52,11 @@ export class FlatfileApiService {
 
     let documentId;
     try {
-      const createDoc = await api.documents.create(spaceId, document);
+      if (document) {
+        const createDoc = await api.documents.create(spaceId, document);
 
-      documentId = createDoc.data.id;
+        documentId = createDoc.data.id;
+      }
     } catch (error) {
       console.error(
         `Error creating document for spaceId ${spaceId}: ${JSON.stringify(

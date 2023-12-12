@@ -11,7 +11,6 @@ import { XMLExtractor } from '@flatfile/plugin-xml-extractor';
 import { ZipExtractor } from '@flatfile/plugin-zip-extractor';
 import { DelimiterExtractor } from '@flatfile/plugin-delimiter-extractor';
 import { theme } from './theme';
-import { document } from './document';
 import { FlatfileApiService } from '../../common/flatfile-api-service';
 
 // Define the main function that sets up the listener
@@ -47,7 +46,6 @@ export default function (listener) {
         spaceId,
         environmentId,
         blueprint,
-        document,
         theme,
       });
 
