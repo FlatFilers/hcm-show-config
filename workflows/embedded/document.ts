@@ -67,7 +67,7 @@ export const document = {
   <div class="left">
   <div style="margin-bottom: 36px;">
   <h1>Welcome!</h1>
-  <p style="font-weight: 600;">We're excited to offer you a seamless, one-click experience for loading your data into HCM Show.</p>
+  <p style="font-weight: 600;">We're excited to help you import your data to HCM Show.</p>
   </div>
   
   <div>
