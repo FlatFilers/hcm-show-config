@@ -16,6 +16,11 @@ import { theme } from './theme';
 import { document } from './document';
 import { FlatfileApiService } from '../../common/flatfile-api-service';
 
+/**
+ * View the application code for HCM.show for this workflow here:
+ * https://github.com/FlatFilers/HCMShow/blob/main/pages/file-feed.tsx
+ */
+
 // Define the main function that sets up the listener
 export default function (listener) {
   // Log the event topic for all events
