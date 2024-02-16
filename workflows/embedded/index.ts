@@ -14,6 +14,11 @@ import { theme } from './theme';
 import { document } from './document';
 import { FlatfileApiService } from '../../common/flatfile-api-service';
 
+/**
+ * View the application code for HCM.show for this workflow here:
+ * https://github.com/FlatFilers/HCMShow/blob/main/pages/embedded-portal.tsx
+ */
+
 // Define the main function that sets up the listener
 export default function (listener) {
   // Add an event listener for the 'job:created' event
