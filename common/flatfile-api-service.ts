@@ -33,7 +33,7 @@ export class FlatfileApiService {
       throw new Error(`Error creating workbook for spaceId ${spaceId}`);
     }
 
-    // Currently updating a space overwrites instead of merging, so query and re-set userId.
+    // Fetch the userId from the Space metadata
     let userId;
     try {
       userId = await FlatfileApiService.getUserIdFromSpace({
@@ -50,6 +50,7 @@ export class FlatfileApiService {
       throw new Error(`Error getting userId for spaceId ${spaceId}`);
     }
 
+    // Create a document for the Space
     let documentId;
     try {
       if (document) {
@@ -68,7 +69,7 @@ export class FlatfileApiService {
       throw new Error(`Error creating document for spaceId ${spaceId}`);
     }
 
-    // Update the space to set the primary workbook and theme
+    // Update the space to set the primary workbook, theme, document, etc.
     try {
       await FlatfileApiService.configureSpace({
         spaceId,
@@ -98,8 +99,6 @@ export class FlatfileApiService {
     spaceId: string;
   }): Promise<string> {
     const space = await api.spaces.get(spaceId);
-
-    // console.log('Space: ' + JSON.stringify(space));
 
     const userId = space.data.metadata.userId;
 

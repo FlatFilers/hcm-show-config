@@ -28,6 +28,7 @@ export default function (listener) {
     console.log('> event.topic: ' + event.topic);
     console.log('> event.topic: ' + JSON.stringify(event));
 
+    // Send certain events to HCM.show for syncing
     if (
       event.topic.includes('records:') ||
       (event.topic === 'job:completed' && event?.payload?.status === 'complete')
@@ -51,7 +52,6 @@ export default function (listener) {
 
       console.log('Updated Job: ' + JSON.stringify(updateJob1));
 
-      // Log the environment ID to the console
       console.log('env: ' + environmentId);
       console.log('spaceId ' + spaceId);
       console.log('jobID: ' + jobId);
@@ -71,7 +71,6 @@ export default function (listener) {
         status: 'complete',
       });
 
-      // Log the result of the updateJob function to the console as a string
       console.log(
         'Updated Job With ID to Status Complete: ' + updateJob.data.id
       );
@@ -93,18 +92,19 @@ export default function (listener) {
 
   // Attach a record hook to the 'benefit-elections-sheet' of the Flatfile importer
   listener.use(
-    // When a record is processed, invoke the 'jobValidations' function to check for any errors
     recordHook('benefit-elections-sheet', (record) => {
+      // When a record is processed, invoke the 'benefitElectionsValidations' function to check for any errors
       const results = benefitElectionsValidations(record);
-      // Log the results of the validations to the console as a JSON string
+
       console.log('Benefits Hooks: ' + JSON.stringify(results));
+
       // Return the record, potentially with additional errors added by the 'benefitValidations' function
       return record;
     })
   );
 
   listener.on('job:completed', { job: 'workbook:map' }, async (event) => {
-    // get key identifiers, including destination sheet Id
+    // Get key identifiers, including destination sheet Id
     const { jobId, spaceId, environmentId, workbookId } = event.context;
 
     const job = await api.jobs.get(jobId);
@@ -112,7 +112,7 @@ export default function (listener) {
 
     const destinationSheetId = config?.destinationSheetId;
 
-    // get the valid records from the sheet
+    // Get the valid records from the sheet
     const importedData = await api.records.get(destinationSheetId, {
       filter: 'valid',
     });
@@ -128,7 +128,6 @@ export default function (listener) {
       result as { successfullySyncedFlatfileRecordIds: string[] }
     ).successfullySyncedFlatfileRecordIds;
 
-    // console.log('result from HCM.show: ' + JSON.stringify(result));
     console.log(
       successfullySyncedFlatfileRecordIds.length +
         ' successfully synced records from HCM.show. '
@@ -176,12 +175,9 @@ export default function (listener) {
           // Call the submit function with the event as an argument to push the data to HCM Show
           result = await HcmShowApiService.syncSpace(event);
 
-          // Log the action as a string to the console
           console.log('Action: ' + JSON.stringify(event?.payload?.operation));
         } catch (error) {
-          // Handle the error gracefully, log an error message, and potentially take appropriate action
           console.log('Error occurred during HCM workbook submission:', error);
-          // Perform error handling, such as displaying an error message to the user or triggering a fallback behavior
         }
 
         if (result.success) {

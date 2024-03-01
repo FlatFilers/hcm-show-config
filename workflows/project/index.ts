@@ -45,7 +45,6 @@ export default function (listener) {
 
       console.log('Updated Job: ' + JSON.stringify(updateJob));
 
-      // Log the environment ID, space ID, and job ID to the console
       console.log('env: ' + environmentId);
       console.log('spaceId: ' + spaceId);
       console.log('jobID: ' + jobId);
@@ -95,22 +94,18 @@ export default function (listener) {
       // Verify that the sheetSlug matches 'employees-sheet'
       if (sheet.data.config?.slug === 'employees-sheet') {
         console.log("Confirmed: sheetSlug matches 'employees-sheet'.");
-        // Log before calling RecordHook
-
-        console.log('Calling API endpoint...');
 
         // Call the API endpoint at HcmShow to get a list of employees
         const employees = await HcmShowApiService.fetchEmployees(event);
 
         console.log('Finished calling API endpoint. Processing response...');
 
-        // Check if the response is as expected
         if (!employees) {
           console.log('Failed to fetch employees data from the API');
           return;
         }
 
-        // Check if the list of employees is empty. If so, skip the RecordHook call
+        // If the list of employees is empty. If so, skip the RecordHook call
         if (employees.length === 0) {
           console.log(
             'List of employees from API is empty. Skipping RecordHook.'
@@ -118,13 +113,12 @@ export default function (listener) {
           return;
         }
 
-        // Log the number of employees fetched
         console.log(`Successfully fetched ${employees.length} employees.`);
 
-        console.log('Proceeding to call RecordHook...');
         // Call the RecordHook function with event and a handler
         await RecordHook(event, async (record, event) => {
-          console.log("Inside RecordHook's handler function"); // Log inside the handler function
+          console.log('Inside RecordHook'); // Log inside the handler function
+
           try {
             // Pass the fetched employees to the employeeValidations function along with the record
             await employeeValidations(record, employees);
@@ -132,29 +126,29 @@ export default function (listener) {
             // Handle errors that might occur within employeeValidations
             console.error('Error in employeeValidations:', error);
           }
-          // Clean up or perform any necessary actions after the try/catch block
-          console.log("Exiting RecordHook's handler function"); // Log when exiting the handler function
+
           return record;
         });
-        console.log('Finished calling RecordHook'); // Log after calling RecordHook
+
+        console.log('Finished calling RecordHook');
       } else {
         console.log(
           "Failed: sheetSlug does not match 'employees-sheet'. Aborting RecordHook call..."
         );
       }
     } catch (error) {
-      // Handle errors that might occur in the event handler
       console.error('Error in commit:created event handler:', error);
     }
   });
 
   // Attach a record hook to the 'jobs-sheet' of the Flatfile importer
   listener.use(
-    // When a record is processed, invoke the 'jobValidations' function to check for any errors
     recordHook('jobs-sheet', (record) => {
+      // When a record is processed, invoke the 'jobValidations' function to check for any errors
       const results = jobValidations(record);
-      // Log the results of the validations to the console as a JSON string
+
       console.log('Jobs Hooks: ' + JSON.stringify(results));
+
       // Return the record, potentially with additional errors added by the 'jobValidations' function
       return record;
     })
@@ -172,7 +166,6 @@ export default function (listener) {
             progress: 10,
           });
 
-          // run the dedupe employees function
           let count = 0;
           try {
             console.log('Sheet ID: ' + sheetId);
@@ -182,7 +175,6 @@ export default function (listener) {
 
             // Check if the response is valid and contains records
             if (response?.data?.records) {
-              // Get the records from the response data
               const records = response.data.records;
 
               // Call the dedupeEmployees function with the records
@@ -201,11 +193,9 @@ export default function (listener) {
               console.log('No records found in the response.');
             }
 
-            // Log the action as a string to the console
             console.log('Listener: ' + JSON.stringify(configure?.operation));
           } catch (error) {
             console.log('Error occurred:', error);
-            // Handle the error or log it for debugging
           }
 
           await api.jobs.complete(jobId, {
@@ -233,7 +223,6 @@ export default function (listener) {
             progress: 10,
           });
 
-          // run the validate reporting structure function
           let count = 0;
           try {
             console.log('Sheet ID: ' + sheetId);
@@ -243,16 +232,12 @@ export default function (listener) {
 
             // Check if the response is valid and contains records
             if (response?.data?.records) {
-              // Get the records from the response data
               const records = response.data.records;
 
               // Call the validateReportingStructure function with the records
               const reportingErrors = validateReportingStructure(records);
-
-              // Log the reporting errors to the console
-              //console.log('Reporting Errors:' + JSON.stringify(reportingErrors));
-
               count = reportingErrors.length;
+
               // Update the records if there are any reporting errors
               if (reportingErrors.length > 0) {
                 await api.records.update(sheetId, reportingErrors);
@@ -264,12 +249,8 @@ export default function (listener) {
             } else {
               console.log('No records found in the response.');
             }
-
-            // Log the action as a string to the console
-            //console.log('Listener: ' + JSON.stringify(action));
           } catch (error) {
             console.log('Error occurred:' + error);
-            // Handle the error or log it for debugging
           }
 
           await api.jobs.complete(jobId, {
@@ -306,8 +287,6 @@ export default function (listener) {
       workbook.data && workbook.data.name ? workbook.data.name : '';
 
     if (workbookName.includes('HCM Workbook')) {
-      // console.log('Workbook matches the expected name')
-
       const sheets =
         workbook.data && workbook.data.sheets ? workbook.data.sheets : [];
 
@@ -315,6 +294,8 @@ export default function (listener) {
       const departmentsSheet = sheets.find((s) =>
         s.config.slug.includes('departments')
       );
+
+      console.log('Fetching departments from HCM.show...');
 
       // Fetch departments from HCM.show API
       const departments = await HcmShowApiService.fetchDepartments(event);
@@ -354,14 +335,11 @@ export default function (listener) {
           // Call the submit function with the event as an argument to push the data to HCM Show
           await HcmShowApiService.syncSpace(event);
 
-          // Log the action as a string to the console
           console.log('Action: ' + JSON.stringify(event?.payload?.operation));
         } catch (error) {
-          // Handle the error gracefully, log an error message, and potentially take appropriate action
           console.log(
             'Error occurred during HCM workbook submission: ' + error
           );
-          // Perform error handling, such as displaying an error message to the user or triggering a fallback behavior
         }
 
         await api.jobs.complete(jobId, {

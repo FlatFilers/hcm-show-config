@@ -36,7 +36,6 @@ export default function (listener) {
 
       console.log('Updated Job: ' + JSON.stringify(updateJob1));
 
-      // Log the environment ID to the console
       console.log('env: ' + environmentId);
       console.log('spaceId ' + spaceId);
       console.log('jobID: ' + jobId);
@@ -69,11 +68,12 @@ export default function (listener) {
 
   // Attach a record hook to the 'benefit-elections-sheet' of the Flatfile importer
   listener.use(
-    // When a record is processed, invoke the 'jobValidations' function to check for any errors
+    // When a record is processed, invoke the 'benefitElectionsValidations' function to check for any errors
     recordHook('benefit-elections-sheet', (record) => {
       const results = benefitElectionsValidations(record);
-      // Log the results of the validations to the console as a JSON string
+
       console.log('Benefits Hooks: ' + JSON.stringify(results));
+
       // Return the record, potentially with additional errors added by the 'benefitValidations' function
       return record;
     })
@@ -94,12 +94,9 @@ export default function (listener) {
           // Call the submit function with the event as an argument to push the data to HCM Show
           result = await HcmShowApiService.syncSpace(event, 'embed');
 
-          // Log the action as a string to the console
           console.log('Action: ' + JSON.stringify(event?.payload?.operation));
         } catch (error) {
-          // Handle the error gracefully, log an error message, and potentially take appropriate action
           console.log('Error occurred during HCM workbook submission:', error);
-          // Perform error handling, such as displaying an error message to the user or triggering a fallback behavior
         }
 
         if (result.success) {
